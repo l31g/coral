@@ -1,2 +1,2 @@
-CoRAL
+CORaL
 =====
