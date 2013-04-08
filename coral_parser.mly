@@ -1,51 +1,37 @@
+%{ open Ast %}
+
 %token SEMICOLON LPAREN RPAREN LBRACKET RBRACKET
-%token VOID STRING
+%token VOID
 %token <string> IDENTIFIER
-%token <string> STRING_LIT
+%token <string> STRING
 %token EOF
 
 %start	program
-%type <int> program
+%type <Ast.program> program
 
 %%
 
 program:
-	function_list
-	{}
-;
+	/* nothing */						{ []. [] }
+	| program fdef						{ fst $1, ($2 :: snd $1) }
 
-function_list:
-	function_definition
-	{}
-	| function_list function_definition
-	{}
-;
+fdef:
+	IDENTIFIER LPAREN RPAREN LBRACKET stmt_list RBRACKET
+										{ { fname	= $1;
+											formals = $3;
+											locals	= List.rev $6;
+											body	= List.rev $7	}}
 
-function_definition:
-	type_specifier IDENTIFIER LPAREN RPAREN LBRACKET statement_list RBRACKET
-	{}
-;
+stmt_list:
+	/* Nothing */						{ [] }
+	| stmt_list stmt 					{ $2 :: $1 }
 
-type_specifier:
-	VOID
-	{}
-	| STRING
-	{}
-;
 
-statement_list:
-	statement
-	{}
-	| statement_list statement
-	{}
-;
+stmt:
+	expr SEMICOLON						{ Expr ($1) }
+	| LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
 
-statement:
-	function_call
-	{}
-;
-
-function_call:
-	IDENTIFIER LPAREN STRING_LIT RPAREN SEMICOLON
-	{}
-;		
+expr:
+	STRING 								{ Literal($1)}
+	| IDENTIFIER						{ Id ($1) }
+	| IDENTIFIER LPAREN STRING RPAREN	{ Call ($1, $3) }
