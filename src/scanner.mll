@@ -1,7 +1,7 @@
 {
 	open Parser
 }
-let letter = ['a' - 'z' 'A' - 'Z']
+let letter = ['a' - 'z' 'A' - 'Z' ' ']
 let digit = ['0' - '9']
 let whitespace = [' ' '\t' '\n' '\r']
 
