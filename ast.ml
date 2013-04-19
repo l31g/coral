@@ -7,12 +7,10 @@ type expr =
     Literal of int
 	| Id of string	(* Expressions *)
 	| Call of string * expr list
-    | Noexpr
 
 type stmt =
     Block of stmt list
 	| Expr of expr
-    | Nostmt
 
 type func_def = {
 		fname	: string;
