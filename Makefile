@@ -2,7 +2,7 @@ LEX = ocamllex
 YACC = ocamlyacc
 OCAML = ocamlc
 
-OBJS = parser.cmo scanner.cmo ast.cmo generator.cmo
+OBJS = parser.cmo scanner.cmo ast.cmo generator.cmo coral.cmo
 
 OUTPUTS = coral *.cmo *.cmi *.mli *~ scanner.ml parser.ml parser.output IR.py *.pyc
 
@@ -31,6 +31,7 @@ ast.cmo:
 ast.cmx:
 generator.cmo: ast.cmo
 generator.cmx: ast.cmx
+coral.cmo: scanner.cmo parser.cmi generator.cmo ast.cmo
 coral.cmx: scanner.cmx parser.cmx generator.cmx ast.cmx
 parser.cmo: ast.cmo parser.cmi
 parser.cmx: ast.cmx parser.cmi

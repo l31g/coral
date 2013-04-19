@@ -20,15 +20,15 @@
 %%
 
 program:
-	/* nothing */						{ [], [] }
-	| program fdef						{ fst $1, ($2 :: snd $1) }
+	/* nothing */						{ [] }
+	| program fdef						{ $2 :: $1 }
 
 fdef:
-	ID LPAREN RPAREN LBRACKET stmt_list RBRACKET
-										{ { fname	= $1;
+	dtype ID LPAREN RPAREN LBRACKET stmt_list RBRACKET
+										{ { fname	= $2;
 											formals = [];
 											locals = [];
-											body	= List.rev $5	} }
+											body	= List.rev $6	} }
 
 stmt_list:
 	/* Nothing */						{ [] }
@@ -46,5 +46,11 @@ expr:
 
 actuals_opt:
 					{ [] }
-	| expr 			{ [$1] }
-	| LITERAL 		{ [Literal($1)] }
+	| actuals_list 	{ List.rev $1 }
+
+actuals_list:
+	expr 			{ [] }
+	| actuals_list COMMA expr { $3 :: $1 }
+
+dtype:
+	VOID   { VoidType }
