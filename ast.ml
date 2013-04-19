@@ -1,11 +1,15 @@
-(* Borrowed from Prof. Edwards' webiste *)
+(* Borrowed from Prof. Edwards' website *)
+
+type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater
 
 type expr =
-	Id of string	(* Expressions *)
+    Literal of int
+	| Id of string	(* Expressions *)
 	| Call of string * expr list
 
 type stmt =
-	Expr of expr
+    Block of stmt list
+	| Expr of expr
 
 type func_def = {
 		fname	: string;
@@ -14,4 +18,4 @@ type func_def = {
 		body	: stmt list;
 }
 
-type program = string list * funct_def list
+type program = string list * func_def list
