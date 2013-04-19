@@ -1,9 +1,12 @@
 {
 	open Parser
 }
+let letter = ['a' - 'z' 'A' - 'Z']
+let digit = ['0' - '9']
+let whitespace = [' ' '\t' '\n' '\r']
 
 rule token = parse
-		[' ' '\t' '\r' '\n']	{ token lexbuf }
+		whitespace+	{ token lexbuf }
 	| "/*"						{ comment lexbuf }
 
 	|	'+'						{ PLUS }
@@ -43,7 +46,8 @@ rule token = parse
 
 
 	|	eof						{ EOF }
-	| ['0' - '9']+ as lxm { LITERAL(int_of_string lxm) } (* integers *)
+	| digit+ as lxm { INTLITERAL(int_of_string lxm) } (* integers *)
+	| "\""(letter*)"\"" as lxm { STRINGLITERAL(lxm) }
 	| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '_' '0'-'9']* as lxm { ID(lxm) }
 
 and comment = parse

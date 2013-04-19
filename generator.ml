@@ -5,7 +5,8 @@ let tab lvl =
   String.make lvl '\t'
 
 let rec str_of_expr = function
-    | Literal(l) -> string_of_int(l)
+    | IntLiteral(l) -> string_of_int(l)
+    | StringLiteral(l) -> l
     | Id(s) -> s
     | Call(f, e) -> f ^ "(" ^ (String.concat ", " (List.map str_of_expr e)) ^ ")"
     | Print(e) -> "print " ^ (str_of_expr e)

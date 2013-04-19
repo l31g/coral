@@ -4,7 +4,8 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater
 type dtype = VoidType
 
 type expr =
-    Literal of int
+    IntLiteral of int
+    | StringLiteral of string
 	| Id of string	(* Expressions *)
 	| Call of string * expr list
     | Print of expr

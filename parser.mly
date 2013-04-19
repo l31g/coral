@@ -3,7 +3,8 @@
 %token PLUS MINUS TIMES MOD DIVIDE LPAREN RPAREN SEMI COLON EQUAL
 %token LBRACKET RBRACKET CARAT DOT COMMA GT LT GEQ LEQ NEQ OR AND
 %token EQ ELSE WHILE INT IF FOR RETURN PRINT VOID
-%token <int> LITERAL
+%token <int> INTLITERAL
+%token <string> STRINGLITERAL
 %token <string> ID
 %token EOF
 
@@ -42,7 +43,8 @@ stmt:
 	| LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
 
 expr:
-	  LITERAL					{ Literal($1) }
+	  INTLITERAL					{ IntLiteral($1) }
+	| STRINGLITERAL					{ StringLiteral($1) }
 	| ID						{ Id ($1) }
 	| PRINT LPAREN expr RPAREN		{ Print($3) }
 	| ID LPAREN actuals_opt RPAREN	{ Call ($1, $3) }
