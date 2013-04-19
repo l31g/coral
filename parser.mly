@@ -2,7 +2,7 @@
 
 %token PLUS MINUS TIMES MOD DIVIDE LPAREN RPAREN SEMI COLON EQUAL
 %token LBRACKET RBRACKET CARAT DOT COMMA GT LT GEQ LEQ NEQ OR AND
-%token EQ ELSE WHILE INT IF FOR RETURN VOID
+%token EQ ELSE WHILE INT IF FOR RETURN PRINT VOID
 %token <int> LITERAL
 %token <string> ID
 %token EOF
@@ -25,7 +25,9 @@ program:
 
 fdef:
 	dtype ID LPAREN RPAREN LBRACKET stmt_list RBRACKET
-										{ { fname	= $2;
+										{ {
+											return_type = $1;
+											fname	= $2;
 											formals = [];
 											locals = [];
 											body	= List.rev $6	} }
@@ -42,6 +44,7 @@ stmt:
 expr:
 	  LITERAL					{ Literal($1) }
 	| ID						{ Id ($1) }
+	| PRINT LPAREN expr RPAREN		{ Print($3) }
 	| ID LPAREN actuals_opt RPAREN	{ Call ($1, $3) }
 
 actuals_opt:

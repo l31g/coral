@@ -7,12 +7,15 @@ type expr =
     Literal of int
 	| Id of string	(* Expressions *)
 	| Call of string * expr list
+    | Print of expr
 
 type stmt =
     Block of stmt list
 	| Expr of expr
 
+
 type func_def = {
+        return_type : dtype;
 		fname	: string;
 		formals	: string list;
 		locals	: string list;

@@ -38,6 +38,7 @@ rule token = parse
 	|	"if"					{ IF }
 	|	"for"					{ FOR }
 	|	"return"				{ RETURN }
+	|	"printf"					{ PRINT }
 	|	"void"					{ VOID }
 
 

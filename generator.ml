@@ -8,7 +8,7 @@ let rec str_of_expr = function
     | Literal(l) -> string_of_int(l)
     | Id(s) -> s
     | Call(f, e) -> f ^ "(" ^ (String.concat ", " (List.map str_of_expr e)) ^ ")"
-
+    | Print(e) -> "print " ^ (str_of_expr e)
 
 let rec str_of_stmt s =
     match s with
