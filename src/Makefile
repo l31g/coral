@@ -4,10 +4,13 @@ OCAML = ocamlc
 
 OBJS = parser.cmo scanner.cmo ast.cmo generator.cmo coral.cmo
 
-OUTPUTS = coral *.cmo *.cmi *.mli *~ scanner.ml parser.ml parser.output IR.py *.pyc
+OUTPUTS = *.cmo *.cmi *.mli *~ scanner.ml parser.ml parser.output
+BINDIR = ./build
 
 coral : $(OBJS)
+	mkdir $(BINDIR)
 	$(OCAML) -o coral $(OBJS)
+	mv coral $(BINDIR)
 
 parser.ml parser.mli : parser.mly
 	$(YACC) -v parser.mly
@@ -24,6 +27,7 @@ scanner.ml : scanner.mll
 .PHONY : clean
 clean:
 	rm -rf $(OUTPUTS)
+	rm -rf $(BINDIR)
 
 
 
