@@ -8,8 +8,13 @@ let rec str_of_expr = function
     | IntLiteral(l) -> string_of_int(l)
     | StringLiteral(l) -> l
     | Id(s) -> s
-    | Call(f, e) -> f ^ "(" ^ (String.concat ", " (List.map str_of_expr e)) ^ ")"
+    | Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | Print(e) -> "print " ^ (str_of_expr e)
+    | Math(a, b) -> (str_of_expr a) ^ "+" ^ (str_of_expr b)
+
+let rec str_of_formal f =
+    match f with
+    | Formal(t, n) -> "" ^ n
 
 let rec str_of_stmt s =
     match s with
@@ -18,7 +23,7 @@ let rec str_of_stmt s =
     | Expr(expr) -> str_of_expr expr
 
 let str_of_fdef fdef =
-    "def " ^ fdef.fname ^ "():\n"
+    "def " ^ fdef.fname ^ "(" ^ (String.concat "," (List.map str_of_formal fdef.formals)) ^ "):\n"
     ^ "\t" ^ (String.concat "\t" (List.map str_of_stmt fdef.body))
 
-let str_of_program program = (String.concat "\n" (List.map str_of_fdef program))
+let str_of_program program = "import backend\n " ^ (String.concat "\n" (List.map str_of_fdef program))

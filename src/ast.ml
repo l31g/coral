@@ -8,7 +8,11 @@ type expr =
     | StringLiteral of string
 	| Id of string	(* Expressions *)
 	| Call of string * expr list
+    | Math of expr * expr
     | Print of expr
+
+type formal =
+    Formal of dtype * string
 
 type stmt =
     Block of stmt list
@@ -18,7 +22,7 @@ type stmt =
 type func_def = {
         return_type : dtype;
 		fname	: string;
-		formals	: string list;
+		formals	: formal list;
 		locals	: string list;
 		body	: stmt list;
 }

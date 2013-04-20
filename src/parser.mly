@@ -25,13 +25,13 @@ program:
 	| program fdef						{ $2 :: $1 }
 
 fdef:
-	dtype ID LPAREN RPAREN LBRACKET stmt_list RBRACKET
+	dtype ID LPAREN formals_opt RPAREN LBRACKET stmt_list RBRACKET
 										{ {
 											return_type = $1;
 											fname	= $2;
-											formals = [];
+											formals = $4;
 											locals = [];
-											body	= List.rev $6	} }
+											body	= List.rev $7	} }
 
 stmt_list:
 	/* Nothing */						{ [] }
@@ -45,9 +45,21 @@ stmt:
 expr:
 	  INTLITERAL					{ IntLiteral($1) }
 	| STRINGLITERAL					{ StringLiteral($1) }
-	| ID						{ Id ($1) }
+	| expr PLUS expr 	{ Math($1, $3) }
+	| ID						{ Id($1) }
 	| PRINT LPAREN expr RPAREN		{ Print($3) }
 	| ID LPAREN actuals_opt RPAREN	{ Call ($1, $3) }
+
+formals_opt:
+					{ [] }
+	| formal_list	{ List.rev $1 }
+
+formal_list:
+	 formal				{ [$1] }
+	| formal_list COMMA formal { $3 :: $1 }
+
+formal:
+	dtype ID { Formal ($1, $2) }
 
 actuals_opt:
 					{ [] }
