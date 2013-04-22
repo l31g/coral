@@ -1,7 +1,8 @@
 (* Borrowed from Prof. Edwards' website *)
 
 type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Geq
-type dtype = VoidType
+type dtype = VoidType | IntType | StringType
+
 
 type expr =
     IntLiteral of int
@@ -10,6 +11,10 @@ type expr =
 	| Call of string * expr list
     | Binop of expr * op * expr
     | Print of expr
+    | Assign of string * expr
+
+type var_decl =
+    VarDecl of dtype * string * expr
 
 type formal =
     Formal of dtype * string
@@ -23,8 +28,10 @@ type func_def = {
         return_type : dtype;
 		fname	: string;
 		formals	: formal list;
-		locals	: string list;
+		locals	: var_decl list;
 		body	: stmt list;
 }
+
+
 
 type program = func_def list

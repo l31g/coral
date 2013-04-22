@@ -19,7 +19,7 @@ rule token = parse
 	|	')'						{ RPAREN }
 	|	';'						{ SEMI }
 	|	':'						{ COLON }
-	|	'='						{ EQUAL }
+	|	'='						{ ASSIGN }
 	|	'{'						{ LBRACKET }
 	|	'}'						{ RBRACKET }
 	|	'^'						{ CARAT }
@@ -43,6 +43,9 @@ rule token = parse
 	|	"return"				{ RETURN }
 	|	"printf"				{ PRINT }
 	|	"void"					{ VOID }
+	|	"break"					{ BREAK }
+	|	"continue"				{ CONTINUE }
+	|	"sizeof"				{ SIZEOF }
 
 
 	|	eof						{ EOF }

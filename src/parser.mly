@@ -1,8 +1,8 @@
 %{ open Ast %}
 
-%token PLUS MINUS TIMES MOD DIVIDE LPAREN RPAREN SEMI COLON EQUAL
+%token PLUS MINUS TIMES MOD DIVIDE LPAREN RPAREN SEMI COLON ASSIGN
 %token LBRACKET RBRACKET CARAT DOT COMMA GT LT GEQ LEQ NEQ OR AND
-%token EQ ELSE WHILE INT IF FOR RETURN PRINT VOID
+%token EQ ELSE WHILE INT IF FOR RETURN PRINT VOID BREAK CONTINUE SIZEOF
 %token <int> INTLITERAL
 %token <string> STRINGLITERAL
 %token <string> ID
@@ -25,13 +25,13 @@ program:
 	| program fdef						{ $2 :: $1 }
 
 fdef:
-	dtype ID LPAREN formals_opt RPAREN LBRACKET stmt_list RBRACKET
+	dtype ID LPAREN formals_opt RPAREN LBRACKET var_decl_list stmt_list RBRACKET
 										{ {
 											return_type = $1;
 											fname	= $2;
 											formals = $4;
-											locals = [];
-											body	= List.rev $7	} }
+											locals = List.rev $7 ;
+											body	= List.rev $8	} }
 
 stmt_list:
 	/* Nothing */						{ [] }
@@ -45,6 +45,7 @@ stmt:
 expr:
 	  INTLITERAL					{ IntLiteral($1) }
 	| STRINGLITERAL					{ StringLiteral($1) }
+	| ID ASSIGN expr 				{ Assign($1, $3) }
 	| expr PLUS expr 				{ Binop($1, Add, $3) }
 	| expr MINUS expr 				{ Binop($1, Sub, $3) }
 	| expr TIMES expr 				{ Binop($1, Mult, $3) }
@@ -79,5 +80,14 @@ actuals_list:
 	expr 			{ [] }
 	| actuals_list COMMA expr { $3 :: $1 }
 
+var_decl_list:
+							 { [] }
+	| var_decl_list var_decl { $2 :: $1 }
+
+var_decl:
+	dtype ID ASSIGN expr SEMI		{ VarDecl($1, $2, $4) }
+
+
 dtype:
 	VOID   { VoidType }
+	| INT  { IntType }
