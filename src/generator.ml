@@ -43,6 +43,6 @@ let str_of_fdef fdef lvl =
                             (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) fdef.body)))
 
 let str_of_program program =
-        (let l = "\n" in
+        "#!/usr/bin/env python\n" ^ (let l = "\n" in
         (String.concat l (List.map (fun x-> str_of_fdef x 0) program)) ^ "\n\nif __name__ == '__main__':\n\tmain()")
 

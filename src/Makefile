@@ -7,10 +7,10 @@ OBJS = parser.cmo scanner.cmo ast.cmo generator.cmo coral.cmo
 OUTPUTS = *.cmo *.cmi *.mli *~ scanner.ml parser.ml parser.output
 BINDIR = ./build
 
-coral : $(OBJS)
+coralc : $(OBJS)
 	mkdir $(BINDIR)
-	$(OCAML) -o coral $(OBJS)
-	mv coral $(BINDIR)
+	$(OCAML) -o coralc $(OBJS)
+	mv coralc $(BINDIR)
 
 parser.ml parser.mli : parser.mly
 	$(YACC) -v parser.mly
