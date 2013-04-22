@@ -1,6 +1,6 @@
 (* Borrowed from Prof. Edwards' website *)
 
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater
+type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Geq
 type dtype = VoidType
 
 type expr =
@@ -8,7 +8,7 @@ type expr =
     | StringLiteral of string
 	| Id of string	(* Expressions *)
 	| Call of string * expr list
-    | Math of expr * expr
+    | Binop of expr * op * expr
     | Print of expr
 
 type formal =

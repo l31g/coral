@@ -45,8 +45,18 @@ stmt:
 expr:
 	  INTLITERAL					{ IntLiteral($1) }
 	| STRINGLITERAL					{ StringLiteral($1) }
-	| expr PLUS expr 	{ Math($1, $3) }
-	| ID						{ Id($1) }
+	| expr PLUS expr 				{ Binop($1, Add, $3) }
+	| expr MINUS expr 				{ Binop($1, Sub, $3) }
+	| expr TIMES expr 				{ Binop($1, Mult, $3) }
+	| expr DIVIDE expr 				{ Binop($1, Div, $3) }
+	| expr MOD expr 				{ Binop($1, Mod, $3) }
+	| expr EQ expr 					{ Binop($1, Equal, $3) }
+	| expr NEQ expr 				{ Binop($1, Neq, $3) }
+	| expr LT expr 					{ Binop($1, Less, $3) }
+	| expr LEQ expr 				{ Binop($1, Leq, $3) }
+	| expr GT expr 					{ Binop($1, Greater, $3) }
+	| expr GEQ expr 				{ Binop($1, Geq, $3) }
+	| ID							{ Id($1) }
 	| PRINT LPAREN expr RPAREN		{ Print($3) }
 	| ID LPAREN actuals_opt RPAREN	{ Call ($1, $3) }
 

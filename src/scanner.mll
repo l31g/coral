@@ -41,7 +41,7 @@ rule token = parse
 	|	"if"					{ IF }
 	|	"for"					{ FOR }
 	|	"return"				{ RETURN }
-	|	"printf"					{ PRINT }
+	|	"printf"				{ PRINT }
 	|	"void"					{ VOID }
 
 

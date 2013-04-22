@@ -4,13 +4,27 @@ open Printf
 let tab lvl =
   String.make lvl '\t'
 
+let rec str_of_op o =
+    match o with
+    | Add -> "+"
+    | Sub -> "-"
+    | Mult -> "*"
+    | Div -> "/"
+    | Mod -> "%"
+    | Equal -> "=="
+    | Neq -> "!="
+    | Less -> "<"
+    | Leq -> "<="
+    | Greater -> ">"
+    | Geq -> ">="
+
 let rec str_of_expr = function
     | IntLiteral(l) -> string_of_int(l)
     | StringLiteral(l) -> l
     | Id(s) -> s
     | Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | Print(e) -> "print " ^ (str_of_expr e)
-    | Math(a, b) -> (str_of_expr a) ^ "+" ^ (str_of_expr b)
+    | Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
 
 let rec str_of_formal f =
     match f with
