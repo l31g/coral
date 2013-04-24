@@ -47,6 +47,10 @@ rule token = parse
 	|	"continue"				{ CONTINUE }
 	|	"sizeof"				{ SIZEOF }
 
+	|	"Table"					{ TABLE }
+	|	"#cordb"				{ CORDB }
+	|	"#enddb"				{ ENDDB }
+
 
 	|	eof						{ EOF }
 	| digit+ as lxm { INTLITERAL(int_of_string lxm) } (* integers *)

@@ -1,7 +1,9 @@
 (* Borrowed from Prof. Edwards' website *)
 
 type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Geq
-type dtype = VoidType | IntType | StringType
+type dtype = VoidType | IntType | StringType | TableType
+
+
 
 
 type expr =
@@ -24,6 +26,10 @@ type stmt =
 	| Expr of expr
 
 
+type table = {
+    tbname : string;
+}
+
 type func_def = {
         return_type : dtype;
 		fname	: string;
@@ -34,4 +40,10 @@ type func_def = {
 
 
 
-type program = func_def list
+type program = {
+            tables : table list;
+            funcs  : func_def list;
+}
+
+
+

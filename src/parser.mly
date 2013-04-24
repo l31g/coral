@@ -8,6 +8,9 @@
 %token <string> ID
 %token EOF
 
+/*CoRAL*/
+%token CORDB, ENDDB, TABLE
+
 %nonassoc ELSE
 %right EQUAL
 %left EQ NEQ
@@ -21,8 +24,15 @@
 %%
 
 program:
-	/* nothing */						{ [] }
-	| program fdef						{ $2 :: $1 }
+	CORDB tables_list ENDDB fdef_list 	{ {
+							tables = List.rev $2;
+							funcs = List.rev $4
+		} }
+
+fdef_list:
+					 { [] }
+	| fdef_list fdef { $2 :: $1 }
+
 
 fdef:
 	dtype ID LPAREN formals_opt RPAREN LBRACKET var_decl_list stmt_list RBRACKET
@@ -87,6 +97,14 @@ var_decl_list:
 var_decl:
 	dtype ID ASSIGN expr SEMI		{ VarDecl($1, $2, $4) }
 
+table:
+	TABLE ID SEMI	{ {
+						tbname = $2;
+	} }
+
+tables_list:
+							  { [] }
+	| tables_list table { $2 :: $1 }
 
 dtype:
 	VOID   { VoidType }

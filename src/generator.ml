@@ -18,6 +18,10 @@ let rec str_of_op o =
     | Greater -> ">"
     | Geq -> ">="
 
+
+let rec str_of_table tb =
+    "class " ^ tb.tbname ^ "(Base):\n\t \"\"\"to be filled in\"\"\"\n\t pass"
+
 let rec str_of_expr = function
     | IntLiteral(l) -> string_of_int(l)
     | StringLiteral(l) -> l
@@ -52,6 +56,10 @@ let str_of_fdef fdef lvl =
                             (String.concat l (List.map (fun x-> str_of_stmt x (lvl)) fdef.body)))
 
 let str_of_program program =
-        "#!/usr/bin/env python\n" ^ (let l = "\n" in
-        (String.concat l (List.map (fun x-> str_of_fdef x 0) program)) ^ "\n\nif __name__ == '__main__':\n\tmain()")
+        "#!/usr/bin/env python\n" ^
+        "import backend\n\n" ^
+
+        (String.concat "\n" (List.map str_of_table program.tables)) ^ "\n\n" ^
+        (let l = "\n" in
+        (String.concat l (List.map (fun x-> str_of_fdef x 0) program.funcs)) ^ "\n\nif __name__ == '__main__':\n\tmain()")
 
