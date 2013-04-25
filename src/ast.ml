@@ -25,9 +25,12 @@ type stmt =
     Block of stmt list
 	| Expr of expr
 
+type table_label =
+    TableLabel of string
 
 type table = {
-    tbname : string;
+    tbname : table_label list;
+    tbbody : stmt list;
 }
 
 type func_def = {

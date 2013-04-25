@@ -19,8 +19,7 @@ let rec str_of_op o =
     | Geq -> ">="
 
 
-let rec str_of_table tb =
-    "class " ^ tb.tbname ^ "(Base):\n\t \"\"\"to be filled in\"\"\"\n\t pass"
+
 
 let rec str_of_expr = function
     | IntLiteral(l) -> string_of_int(l)
@@ -44,6 +43,16 @@ let rec str_of_stmt s lvl =
     | Block(stmts) -> (let l = "\n" ^ (tab lvl) in
                         (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (List.rev(stmts)))))
     | Expr(expr) -> str_of_expr expr
+
+let rec str_of_table_label tl =
+    match tl with
+    | TableLabel(l) -> "" ^ l
+
+let rec str_of_table tb =
+    "class " ^ (String.concat " : " (List.map str_of_table_label tb.tbname)) ^ "(Base):\n" ^
+            (* cleanup these 1's later *)
+    (tab 1) ^   (let l = "\n" ^ (tab 1) in
+                (String.concat l (List.map (fun x-> str_of_stmt x (1)) (List.rev(tb.tbbody)))))
 
 let str_of_fdef fdef lvl =
     (tab lvl) ^ "def " ^ fdef.fname ^ "(" ^

@@ -17,6 +17,7 @@
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE
+%left ASSIGN
 
 %start	program
 %type <Ast.program> program
@@ -97,9 +98,20 @@ var_decl_list:
 var_decl:
 	dtype ID ASSIGN expr SEMI		{ VarDecl($1, $2, $4) }
 
+table_label:
+	ID 		{ TableLabel($1) }
+
+table_label_list:
+	table_label 	{ [$1] }
+	| table_label_list COLON table_label { $3 :: $1 }
+
+table_body:
+	stmt_list	{ $1 }
+
 table:
-	TABLE ID SEMI	{ {
+	TABLE table_label_list LBRACKET table_body RBRACKET	SEMI { {
 						tbname = $2;
+						tbbody = $4
 	} }
 
 tables_list:

@@ -1,5 +1,7 @@
 #cordb
-Table test;
+Table test {
+    printf("Table");
+ };
 #enddb
 void main() {
 
