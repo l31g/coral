@@ -1,0 +1,6 @@
+#cordb
+#enddb
+void main(){
+
+	
+}

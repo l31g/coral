@@ -66,7 +66,8 @@ let str_of_fdef fdef lvl =
 
 let str_of_program program =
         "#!/usr/bin/env python\n" ^
-        "import backend\n\n" ^
+        (*"import backend\n\n" ^ 
+        commenting out for now until we have actual import backend functionality *)
 
         (String.concat "\n" (List.map str_of_table program.tables)) ^ "\n\n" ^
         (let l = "\n" in
