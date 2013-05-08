@@ -18,6 +18,7 @@ let rec str_of_op o =
     | Mult -> "*"
     | Div -> "/"
     | Mod -> "%"
+    | Exp -> "**"
     | Equal -> "=="
     | Neq -> "!="
     | Less -> "<"

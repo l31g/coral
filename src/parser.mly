@@ -2,6 +2,7 @@
 
 %token PLUS MINUS TIMES MOD DIVIDE LPAREN RPAREN SEMI COLON ASSIGN
 %token LBRACKET RBRACKET CARAT DOT COMMA GT LT GEQ LEQ NEQ OR AND
+%token EXP INCR DECR PLEQ MIEQ MUEQ DVEQ
 %token EQ ELSE WHILE INT IF FOR RETURN PRINT VOID BREAK CONTINUE SIZEOF
 %token STRING
 %token <int> INTLITERAL
@@ -54,7 +55,6 @@ stmt_list:
 
 stmt:
 	expr SEMI							{ Expr ($1) }
-	| LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
 	| RETURN expr SEMI 						{ Return($2) }
 	| IF LPAREN expr RPAREN LBRACKET stmt_list RBRACKET
 											{ If($3, (List.rev $6)) }
@@ -72,6 +72,7 @@ expr:
 	| expr TIMES expr 				{ Binop($1, Mult, $3) }
 	| expr DIVIDE expr 				{ Binop($1, Div, $3) }
 	| expr MOD expr 				{ Binop($1, Mod, $3) }
+	| expr EXP expr 				{ Binop($1, Exp, $3) }
 	| expr EQ expr 					{ Binop($1, Equal, $3) }
 	| expr NEQ expr 				{ Binop($1, Neq, $3) }
 	| expr LT expr 					{ Binop($1, Less, $3) }
