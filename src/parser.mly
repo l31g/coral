@@ -134,6 +134,10 @@ attribute_group:
      attribute               { [$1] }
     | attribute_group COMMA attribute { $3 :: $1 }
 
+key_decls_list:
+								{ [] }
+	| key_decls_list key_decls    { $2 :: $1 }
+
 key_decls:
     PRIMARYKEY LPAREN attribute_label RPAREN SEMI { PrimaryKey($3) }
     | FOREIGNKEY LPAREN attribute_label RPAREN SEMI { ForeignKey($3) }
@@ -147,7 +151,7 @@ table_label_list:
 	| table_label_list COLON table_label { $3 :: $1 }
 
 table_body:
-    attribute_group key_decls fdef_list { TableBody($1,$2,$3) }
+    attribute_group key_decls_list fdef_list { TableBody($1,$2,$3) }
 
 table:
 	TABLE table_label_list LBRACKET table_body RBRACKET	SEMI { {

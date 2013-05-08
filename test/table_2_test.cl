@@ -1,16 +1,19 @@
 #cordbconn
 server="server";
-port="1337";
-user="user";
-password="pass";
-type="dbType";
-DBName="DBName";
+user="server";
+password="server";
+port="server";
+DBName="server";
+type="server";
 #enddbconn
 
 #cordb
 Table test {
     score : void;
     primary_key(score);
+    void main() {
+        printf("hi");
+    }
  };
 #enddb
 
