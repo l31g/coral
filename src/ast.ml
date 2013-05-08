@@ -1,6 +1,6 @@
 (* Borrowed from Prof. Edwards' website *)
 
-type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Geq
+type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Geq | And | Or
 type dtype = VoidType | IntType | StringType | TableType
 
 

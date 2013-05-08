@@ -17,6 +17,8 @@ let rec str_of_op o =
     | Leq -> "<="
     | Greater -> ">"
     | Geq -> ">="
+    | Or -> "or"
+    | And -> "and"
 
 let rec str_of_conn_label co =
     match co with
