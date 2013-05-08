@@ -74,7 +74,7 @@ let rec str_of_formal f =
     match f with
     | Formal(t, n) -> "" ^ n
 
-let rec str_of_stmt s lvl =
+let rec str_of_stmt s lvl = 
     match s with
     | Block(stmts) -> (let l = "\n" ^ (tab lvl) in
                         (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (List.rev(stmts)))))
@@ -89,6 +89,7 @@ let rec str_of_stmt s lvl =
 let rec str_of_table_label tl =
     match tl with
     | TableLabel(l) -> "" ^ l
+    | TableLabelRel(l,r) -> "" ^ l ^ " : " ^ r
 
 let str_of_fdef fdef lvl =
     (tab lvl) ^ "def " ^ fdef.fname ^ "(" ^
