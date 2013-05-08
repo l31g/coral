@@ -35,6 +35,14 @@ rule token = parse
 	|	"&&"					{ AND }
 	|	"=="					{ EQ }
 
+	|	"**"					{ EXP }
+	|	"++"					{ INCR }
+	|	"--"					{ DECR }
+	|	"+="					{ PLEQ }
+	|	"-="					{ MIEQ }
+	|	"*="					{ MUEQ }
+	|	"/="					{ DVEQ } 
+
 	|	"else"					{ ELSE }
 	|	"while"					{ WHILE }
 	|	"int"					{ INT }
