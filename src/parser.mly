@@ -19,7 +19,7 @@
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
-%left TIMES DIVIDE
+%left TIMES DIVIDE MOD
 %left ASSIGN
 
 %start	program
@@ -55,13 +55,13 @@ stmt_list:
 
 stmt:
 	expr SEMI							{ Expr ($1) }
-	| RETURN expr SEMI 						{ Return($2) }
-	| IF LPAREN expr RPAREN LBRACKET stmt_list RBRACKET
-											{ If($3, (List.rev $6)) }
-	| WHILE LPAREN expr RPAREN LBRACKET stmt_list RBRACKET
-											{ While($3, (List.rev $6)) }
-	| FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN LBRACKET stmt_list RBRACKET
-											{ For($3, $5, $7, (List.rev $10))}
+	| LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
+	| RETURN expr SEMI 					{ Return($2) }
+
+	| IF LPAREN expr RPAREN stmt 		{ If($3, $5) }
+	| WHILE LPAREN expr RPAREN stmt 	{ While($3, $5) }
+	| FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
+											{ For($3, $5, $7, $9)}
 
 expr:
 	  INTLITERAL					{ IntLiteral($1) }

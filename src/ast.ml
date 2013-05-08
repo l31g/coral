@@ -46,9 +46,9 @@ type stmt =
     Block of stmt list
 	| Expr of expr
     | Return of expr
-    | If of expr * stmt list
-    | For of expr * expr * expr * stmt list
-    | While of expr * stmt list
+    | If of expr * stmt
+    | For of expr * expr * expr * stmt
+    | While of expr * stmt
 
 
 type func_def = {
