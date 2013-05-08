@@ -9,7 +9,8 @@
 %token EOF
 
 /*CoRAL*/
-%token CORDB, ENDDB, TABLE
+%token CORDB, ENDDB, TABLE, SERVER, PORT, USER, PASS, TYPE, DBNAME
+%token CORDBCONN, ENDDBCONN, FOREIGNKEY, PRIMARYKEY
 
 %nonassoc ELSE
 %right EQUAL
@@ -25,9 +26,10 @@
 %%
 
 program:
-	CORDB tables_list ENDDB fdef_list 	{ {
-							tables = List.rev $2;
-							funcs = List.rev $4
+	CORDBCONN conn_block ENDDBCONN CORDB tables_list ENDDB fdef_list 	{ {
+							conn = $2;
+                            tables = List.rev $5;
+							funcs = List.rev $7
 		} }
 
 fdef_list:
@@ -98,15 +100,52 @@ var_decl_list:
 var_decl:
 	dtype ID ASSIGN expr SEMI		{ VarDecl($1, $2, $4) }
 
+dtype:
+    VOID   { VoidType }
+    | INT  { IntType }
+
+/* CoRAL segment of grammar */
+
+conn_label:
+    SERVER      { ServerConn }
+    | PORT      { PortConn }
+    | USER      { UserConn }
+    | PASS      { PassConn }
+    | TYPE      { TypeConn }
+    | DBNAME    { DBConn }
+
+conn_attribute:
+    conn_label ASSIGN STRINGLITERAL SEMI { ConnAttr($1, $3) }
+
+conn_block:
+    conn_attribute conn_attribute
+    conn_attribute conn_attribute
+    conn_attribute conn_attribute { ConnBlock($1, $2, $3, $4, $5, $6) }
+
+attribute_label:
+    ID      { AttrLabel($1) }
+
+attribute:
+    attribute_label COLON dtype SEMI { Attr($1, $3) }
+
+attribute_group:
+     attribute               { [$1] }
+    | attribute_group COMMA attribute { $3 :: $1 }
+
+key_decls:
+    PRIMARYKEY LPAREN attribute_label RPAREN SEMI { PrimaryKey($3) }
+    | FOREIGNKEY LPAREN attribute_label RPAREN SEMI { ForeignKey($3) }
+
 table_label:
 	ID 		{ TableLabel($1) }
+	| ID COLON ID { TableLabelRel($1, $3) }
 
 table_label_list:
 	table_label 	{ [$1] }
 	| table_label_list COLON table_label { $3 :: $1 }
 
 table_body:
-	stmt_list	{ $1 }
+    attribute_group key_decls fdef_list { TableBody($1,$2,$3) }
 
 table:
 	TABLE table_label_list LBRACKET table_body RBRACKET	SEMI { {
@@ -118,6 +157,4 @@ tables_list:
 							  { [] }
 	| tables_list table { $2 :: $1 }
 
-dtype:
-	VOID   { VoidType }
-	| INT  { IntType }
+

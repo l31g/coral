@@ -50,6 +50,16 @@ rule token = parse
 	|	"Table"					{ TABLE }
 	|	"#cordb"				{ CORDB }
 	|	"#enddb"				{ ENDDB }
+	|	"server"				{ SERVER }
+	|	"port"					{ PORT }
+	| 	"user"					{ USER }
+	|	"password"				{ PASS }
+	| 	"type"					{ TYPE }
+	| 	"DBName"				{ DBNAME }
+	|	"#cordbconn"			{ CORDBCONN }
+	|	"#enddbconn"			{ ENDDBCONN }
+	|	"primary_key"			{ PRIMARYKEY }
+	| 	"foreign_key"			{ FOREIGNKEY }
 
 
 	|	eof						{ EOF }
