@@ -1,12 +1,39 @@
 import global
 from global import session_maker, session, engine
 
+server = None
+port = None
+user = None
+password = None
+dbtype = None
+DBName = None
+
+
 def sizeof(table_name):
     size = session.query(table_name).count()
     return size
 
-def connectDB(dialect):
-    engine = create_engine(dialect, echo=True)
+def setServer(s):
+    server = s
+
+def setPort(p):
+    port = p
+
+def setUser(u):
+    user = u
+
+def setPass(p):
+    password = p
+
+def setConnType(ct):
+    dbtype = ct
+
+def setDBName(db):
+    DBName = db
+
+def connectDB():
+    uri = "%s://%s:%s@%s:%s/%s" % (dbtype, user, password, server, port, DBName)
+    engine = create_engine(uri, echo=True)
 
     session_maker.configure(bind=engine)
     session = session_maker()

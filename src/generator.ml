@@ -29,11 +29,14 @@ let rec str_of_conn_label co =
 
 let rec str_of_conn_attr ca =
     match ca with
-    | ConnAttr(cl, a) -> (str_of_conn_label cl) ^ "(" ^ a ^ ")"
+    | ConnAttr(cl, a) -> (str_of_conn_label cl) ^ "(\"" ^ a ^ "\")"
 
 let rec str_of_conn_block cb =
     match cb with
-    | ConnBlock(a1, a2, a3, a4, a5, a6) -> (str_of_conn_attr a1) ^ "\n" ^ (str_of_conn_attr a2) ^ "\n" ^ (str_of_conn_attr a3) ^ "\n" ^ (str_of_conn_attr a4) ^ "\n" ^ (str_of_conn_attr a5) ^ "\n" ^ (str_of_conn_attr a6) ^ "\n"
+    | ConnBlock(a1, a2, a3, a4, a5, a6) -> (str_of_conn_attr a1) ^
+        "\n" ^ (str_of_conn_attr a2) ^ "\n" ^ (str_of_conn_attr a3)
+        ^ "\n" ^ (str_of_conn_attr a4) ^ "\n" ^ (str_of_conn_attr a5)
+        ^ "\n" ^ (str_of_conn_attr a6) ^ "\n"
 
 let rec str_of_attr_label al =
     match al with
