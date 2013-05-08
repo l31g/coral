@@ -6,3 +6,5 @@
 *.mli
 *.cmo
 *.cmi
+*.clx
+src/build
