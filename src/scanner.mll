@@ -59,6 +59,7 @@ rule token = parse
 	|	"#enddbconn"			{ ENDDBCONN }
 	|	"primary_key"			{ PRIMARYKEY }
 	| 	"foreign_key"			{ FOREIGNKEY }
+	|	"String"				{ STRING }
 
 
 	|	eof						{ EOF }

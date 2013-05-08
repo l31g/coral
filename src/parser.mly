@@ -3,6 +3,7 @@
 %token PLUS MINUS TIMES MOD DIVIDE LPAREN RPAREN SEMI COLON ASSIGN
 %token LBRACKET RBRACKET CARAT DOT COMMA GT LT GEQ LEQ NEQ OR AND
 %token EQ ELSE WHILE INT IF FOR RETURN PRINT VOID BREAK CONTINUE SIZEOF
+%token STRING
 %token <int> INTLITERAL
 %token <string> STRINGLITERAL
 %token <string> ID
@@ -79,7 +80,7 @@ expr:
 	| expr OR expr 					{ Binop($1, Or, $3)}
 	| expr AND expr 				{ Binop($1, And, $3)}
 	| ID							{ Id($1) }
-	| PRINT LPAREN expr RPAREN		{ Print($3) }
+	| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }
 	| ID LPAREN actuals_opt RPAREN	{ Call ($1, $3) }
 
 expr_opt:
@@ -102,7 +103,7 @@ actuals_opt:
 	| actuals_list 	{ List.rev $1 }
 
 actuals_list:
-	expr 			{ [] }
+	expr 			{ [$1] }
 	| actuals_list COMMA expr { $3 :: $1 }
 
 var_decl_list:
@@ -115,6 +116,7 @@ var_decl:
 dtype:
     VOID   { VoidType }
     | INT  { IntType }
+    | STRING { StringType }
 
 /* CORaL segment of grammar */
 
@@ -142,7 +144,7 @@ attribute:
 
 attribute_group:
      attribute               { [$1] }
-    | attribute_group COMMA attribute { $3 :: $1 }
+    | attribute_group attribute { $2 :: $1 }
 
 key_decls_list:
 								{ [] }

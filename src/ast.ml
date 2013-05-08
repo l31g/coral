@@ -31,7 +31,7 @@ type expr =
 	| Id of string	(* Expressions *)
 	| Call of string * expr list
     | Binop of expr * op * expr
-    | Print of expr
+    | Print of expr list
     | Assign of string * expr
     | Noexpr
 

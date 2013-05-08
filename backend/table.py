@@ -10,11 +10,13 @@ def findBy(table_name, *kwargs):
     result = session.query(table_name).filter_by(kwargs)
     return result
 
+def add(self):
+    session.add(self)
 #Default constructor for classes:
 #ClassName(attr1='', attr2='') or ClassName('', '')
 
 #Other translations:
 #CoRAL: semesters = <“fall”, 2009 | “spring”, 2010>
-semesters_class = objClass(semesters)
-semesters_class("fall", 2009)
-semesters_class("spring", 2010)
+# semesters_class = objClass(semesters)
+# semesters_class("fall", 2009)
+# semesters_class("spring", 2010)

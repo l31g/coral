@@ -8,16 +8,14 @@ type="server";
 #enddbconn
 
 #cordb
-Table test {
-    score : void;
-    primary_key(score);
-    void main() {
-        printf("hi");
-    }
+Table User {
+    name : String;
+    primary_key(name);
  };
 #enddb
 
 void main() {
 
-    printf("Hello");
+    ed_user = User(name="ed");
+    printf("a", "b", "c", "d");
 }

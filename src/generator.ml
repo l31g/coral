@@ -4,6 +4,11 @@ open Printf
 let tab lvl =
   String.make lvl '\t'
 
+let rec str_of_type t =
+    match t with
+    | IntType -> "Integer"
+    | StringType -> "String"
+
 let rec str_of_op o =
     match o with
     | Add -> "+"
@@ -31,7 +36,7 @@ let rec str_of_conn_label co =
 
 let rec str_of_conn_attr ca =
     match ca with
-    | ConnAttr(cl, a) -> (str_of_conn_label cl) ^ "(\"" ^ a ^ "\")"
+    | ConnAttr(cl, a) -> (str_of_conn_label cl) ^ "(" ^ a ^ ")"
 
 let rec str_of_conn_block cb =
     match cb with
@@ -46,23 +51,25 @@ let rec str_of_attr_label al =
 
 let rec str_of_attr a =
     match a with
-    | Attr(a, t) -> (str_of_attr_label a)
+    | Attr(a, t) -> (str_of_attr_label a) ^ " = Column(" ^ (str_of_type t) ^ ")"
 
-let rec str_of_attr_group ag =
-   (String.concat "," (List.map str_of_attr ag))
+let rec str_of_attr_group ag lvl =
+    (let l = "\n" ^ (tab (lvl+1)) in
+        (String.concat l (List.map str_of_attr ag)))
 
 let rec str_of_key k =
     match k with
-    | PrimaryKey(al) -> "setPrimaryKey(" ^ (str_of_attr_label al) ^ ")"
-    | ForeignKey(al) -> "setForeignKey(" ^ (str_of_attr_label al) ^ ")"
+    | PrimaryKey(al) -> "PrimaryKeyConstraint('" ^ (str_of_attr_label al) ^ "')"
+    | ForeignKey(al) -> "ForeignKey('" ^ (str_of_attr_label al) ^ "')"
 
 
-let rec str_of_expr = function
+let rec str_of_expr exp =
+    match exp with
     | IntLiteral(l) -> string_of_int(l)
     | StringLiteral(l) -> l
     | Id(s) -> s
     | Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
-    | Print(e) -> "print " ^ (str_of_expr e)
+    | Print(e) -> "print " ^ (String.concat "," (List.map str_of_expr e))
     | Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
     | Assign(l, r) -> l ^ " = " ^ (str_of_expr r)
 
@@ -106,20 +113,21 @@ let str_of_fdef fdef lvl =
     ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
                             (String.concat l (List.map (fun x-> str_of_stmt x (lvl)) fdef.body)))
 
-let rec str_of_table_body tbb =
+let rec str_of_table_body tbb lvl =
     match tbb with
-    | TableBody(ag, kd, fd) -> (str_of_attr_group ag) ^ "\n" ^ (String.concat "\n" (List.map str_of_key kd)) ^ "\n" ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x (0)) fd))
+    | TableBody(ag, kd, fd) -> (tab (lvl)) ^ (str_of_attr_group ag (lvl+1)) ^ "\n" ^ (tab lvl) ^ (String.concat ("\n"^(tab lvl)^"__table_args__= ") (List.map str_of_key kd)) ^ "\n" ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x (lvl)) fd))
 
 let rec str_of_table tb =
     "class " ^ (String.concat " : " (List.map str_of_table_label tb.tbname)) ^ "(Base):\n" ^
             (* cleanup these 1's later *)
     (tab 1) ^   (let l = "\n" ^ (tab 1) in
-                (str_of_table_body tb.tbbody))
+                "__tablename__ = '" ^ (String.concat "" (List.map str_of_table_label tb.tbname) )^ "'" ^ "\n" ^
+                (str_of_table_body tb.tbbody 1 ))
 
 
 let str_of_program program =
         "#!/usr/bin/env python\n" ^
-        "import backend\n from backend import *\n" ^
+        "import backend\nfrom backend import *\n" ^
         (str_of_conn_block program.conn) ^ "\n\n" ^
         (String.concat "\n" (List.map str_of_table program.tables)) ^ "\n\n" ^
         (let l = "\n" in
