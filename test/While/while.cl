@@ -16,5 +16,5 @@ void main() {
 	while(1 == 1){
 		i++;
 	}
-	printf("%d",i);
+	printf(i);
 }

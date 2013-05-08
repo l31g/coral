@@ -105,14 +105,14 @@ let rec str_of_stmt s lvl =
                         (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (stmts))))
     | Expr(expr) -> str_of_expr expr
     | Return(expr) -> "return " ^ (str_of_expr expr)
-    | If(expr, stmts) -> (let l = "\n" ^ (tab (lvl+1)) in
+    | If(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
                         "if " ^ (str_of_expr expr) ^ ":" ^ l ^ 
-                        "\n" ^ (tab (lvl+2))) ^ (str_of_stmt stmts (lvl+2))
-    | While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+1)) in
-                        "while " ^ (str_of_expr expr) ^ ":" ^ "\n" ^ (tab (lvl+2)) ^
+                        (str_of_stmt stmts (lvl+2)))
+    | While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
+                        "while " ^ (str_of_expr expr) ^ ":" ^
                         l ^ (str_of_stmt stmts (lvl+3)) )
-    | For(expr1, expr2, expr3, stmts) -> (let l = "\n" ^ (tab lvl) in
-                        (str_of_expr expr1) ^ "\n" ^ (tab (lvl+1)) ^ "while " ^ (str_of_expr expr2) ^ ":" ^ "\n" ^ (tab (lvl+1)) ^
+    | For(expr1, expr2, expr3, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
+                        (str_of_expr expr1) ^ "\n" ^ (tab (lvl+1)) ^ "while " ^ (str_of_expr expr2) ^ ":" ^
                         l ^ (str_of_stmt stmts (lvl+2)) ^
                         "\n" ^ (tab (lvl+2)) ^ (str_of_expr expr3))
 
