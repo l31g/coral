@@ -20,7 +20,9 @@
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
-%left ASSIGN
+%left ASSIGN PLEQ MIEQ MUEQ DVEQ 
+%left DECR INCR EXP
+%left AND OR
 
 %start	program
 %type <Ast.program> program
@@ -160,15 +162,11 @@ table_label:
 	ID 		{ TableLabel($1) }
 	| ID COLON ID { TableLabelRel($1, $3) }
 
-table_label_list:
-	table_label 	{ [$1] }
-	| table_label_list COLON table_label { $3 :: $1 }
-
 table_body:
     attribute_group key_decls_list fdef_list { TableBody($1,$2,$3) }
 
 table:
-	TABLE table_label_list LBRACKET table_body RBRACKET	SEMI { {
+	TABLE table_label LBRACKET table_body RBRACKET	SEMI { {
 						tbname = $2;
 						tbbody = $4
 	} }

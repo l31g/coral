@@ -64,7 +64,7 @@ type table_body =
     TableBody of attribute list * key_decls list * func_def list
 
 type table = {
-    tbname : table_label list;
+    tbname : table_label;
     tbbody : table_body;
 }
 

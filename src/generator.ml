@@ -122,10 +122,10 @@ let rec str_of_table_body tbb lvl =
     | TableBody(ag, kd, fd) -> (tab (lvl)) ^ (str_of_attr_group ag (lvl+1)) ^ "\n" ^ (tab lvl) ^ "__table_args__= (" ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n" ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x (lvl)) fd))
 
 let rec str_of_table tb =
-    "class " ^ (String.concat " : " (List.map str_of_table_label tb.tbname)) ^ "(Base):\n" ^
+    "class " ^ " : " ^ (str_of_table_label tb.tbname) ^ "(Base):\n" ^
             (* cleanup these 1's later *)
     (tab 1) ^
-                "__tablename__ = '" ^ (String.concat "" (List.map str_of_table_label tb.tbname) )^ "'" ^ "\n" ^
+                "__tablename__ = '" ^ "" ^ (str_of_table_label tb.tbname)^ "'" ^ "\n" ^
                 (str_of_table_body tb.tbbody 1 ) ^
                 (*Add this method for every object for easing adding into DB*)
                 (tab 1) ^ "def add(self):\n" ^ (tab 2) ^ "session.add(self)"
