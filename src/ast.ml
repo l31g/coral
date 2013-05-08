@@ -18,7 +18,6 @@ type attr_label =
 type attribute =
     Attr of attr_label * dtype
 
-
 type key_decls =
     PrimaryKey of attr_label
     | ForeignKey of attr_label
@@ -60,7 +59,7 @@ type func_def = {
 
 
 type table_body =
-    TableBody of attribute list * key_decls * func_def list
+    TableBody of attribute list * key_decls list * func_def list
 
 type table = {
     tbname : table_label list;

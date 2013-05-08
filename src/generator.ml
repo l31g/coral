@@ -94,7 +94,7 @@ let str_of_fdef fdef lvl =
 
 let rec str_of_table_body tbb =
     match tbb with
-    | TableBody(ag, kd, fd) -> (str_of_attr_group ag) ^ "\n" ^ (str_of_key kd) ^ "\n" ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x (0)) fd))
+    | TableBody(ag, kd, fd) -> (str_of_attr_group ag) ^ "\n" ^ (String.concat "\n" (List.map str_of_key kd)) ^ "\n" ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x (0)) fd))
 
 let rec str_of_table tb =
     "class " ^ (String.concat " : " (List.map str_of_table_label tb.tbname)) ^ "(Base):\n" ^
@@ -105,7 +105,7 @@ let rec str_of_table tb =
 
 let str_of_program program =
         "#!/usr/bin/env python\n" ^
-        "import backend\n\n" ^
+       (* "import backend\n\n" ^ *)
         (str_of_conn_block program.conn) ^ "\n\n" ^
         (String.concat "\n" (List.map str_of_table program.tables)) ^ "\n\n" ^
         (let l = "\n" in
