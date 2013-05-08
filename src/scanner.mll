@@ -45,7 +45,6 @@ rule token = parse
 	|	"void"					{ VOID }
 	|	"break"					{ BREAK }
 	|	"continue"				{ CONTINUE }
-	|	"sizeof"				{ SIZEOF }
 
 	|	"Table"					{ TABLE }
 	|	"#cordb"				{ CORDB }

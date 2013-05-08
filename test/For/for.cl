@@ -9,18 +9,13 @@ type="server";
 
 #cordb
 #enddb
-void main(){
 
-	int a = 5+3;
-	printf("%d",a);
+void main() {
 
-	a = 5*8;
-	printf("%d",a);
+	int i = 0;
+	for(i = 0; i < 10; i++){
+		i = i*2;
+	}
+	printf("%d",i);
 
-	a = 8/4;
-	printf("%d",a);
-
-	a = 6-2;
-	printf("%d",a);
-	
 }
