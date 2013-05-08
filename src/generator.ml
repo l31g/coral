@@ -8,6 +8,8 @@ let rec str_of_type t =
     match t with
     | IntType -> "Integer"
     | StringType -> "String"
+    | VoidType -> "Void"
+    | TableType -> "Table"
 
 let rec str_of_op o =
     match o with
@@ -72,6 +74,7 @@ let rec str_of_expr exp =
     | Print(e) -> "print " ^ (String.concat "," (List.map str_of_expr e))
     | Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
     | Assign(l, r) -> l ^ " = " ^ (str_of_expr r)
+    | Noexpr -> ""
 
 let rec str_of_var_decl v lvl =
     match v with
@@ -120,9 +123,9 @@ let rec str_of_table_body tbb lvl =
 let rec str_of_table tb =
     "class " ^ (String.concat " : " (List.map str_of_table_label tb.tbname)) ^ "(Base):\n" ^
             (* cleanup these 1's later *)
-    (tab 1) ^   (let l = "\n" ^ (tab 1) in
+    (tab 1) ^   
                 "__tablename__ = '" ^ (String.concat "" (List.map str_of_table_label tb.tbname) )^ "'" ^ "\n" ^
-                (str_of_table_body tb.tbbody 1 ))
+                (str_of_table_body tb.tbbody 1 )
 
 
 let str_of_program program =
