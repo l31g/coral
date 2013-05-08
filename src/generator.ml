@@ -102,18 +102,18 @@ let rec str_of_formal f =
 let rec str_of_stmt s lvl =
     match s with
     | Block(stmts) -> (let l = "\n" ^ (tab lvl) in
-                        (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (List.rev(stmts)))))
+                        (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (stmts))))
     | Expr(expr) -> str_of_expr expr
     | Return(expr) -> "return " ^ (str_of_expr expr)
-    | If(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
-                        "if " ^ (str_of_expr expr) ^ ":" ^ l ^
-                        (String.concat ("\n" ^ (tab (lvl+2))) (List.map (fun x-> str_of_stmt x (lvl+2)) stmts)))
-    | While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
-                        "while " ^ (str_of_expr expr) ^ ":" ^ "\n" ^ l ^
-                        (String.concat (tab (lvl+2)) (List.map (fun x-> str_of_stmt x (lvl+2)) (stmts))))
-    | For(expr1, expr2, expr3, stmts) -> (let l = "\n" ^ (tab (lvl+1)) in
-                        (str_of_expr expr1) ^ "\n" ^ l ^ "while (" ^ (str_of_expr expr2) ^ "):" ^ "\n" ^ (tab (lvl+2)) ^
-                        (String.concat l (List.map (fun x-> str_of_stmt x (lvl+2)) (stmts))) ^
+    | If(expr, stmts) -> (let l = "\n" ^ (tab (lvl+1)) in
+                        "if " ^ (str_of_expr expr) ^ ":" ^ l ^ 
+                        "\n" ^ (tab (lvl+2))) ^ (str_of_stmt stmts (lvl+2))
+    | While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+1)) in
+                        "while " ^ (str_of_expr expr) ^ ":" ^ "\n" ^ (tab (lvl+2)) ^
+                        l ^ (str_of_stmt stmts (lvl+3)) )
+    | For(expr1, expr2, expr3, stmts) -> (let l = "\n" ^ (tab lvl) in
+                        (str_of_expr expr1) ^ "\n" ^ (tab (lvl+1)) ^ "while " ^ (str_of_expr expr2) ^ ":" ^ "\n" ^ (tab (lvl+1)) ^
+                        l ^ (str_of_stmt stmts (lvl+2)) ^
                         "\n" ^ (tab (lvl+2)) ^ (str_of_expr expr3))
 
 let rec str_of_table_label tl =
@@ -136,10 +136,10 @@ let rec str_of_table_body tbb lvl =
     | TableBody(ag, kd, fd) -> (tab (lvl)) ^ (str_of_attr_group ag (lvl+1)) ^ "\n" ^ (tab lvl) ^ "__table_args__= (" ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n" ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x (lvl)) fd))
 
 let rec str_of_table tb =
-    "class " ^ (String.concat " : " (List.map str_of_table_label tb.tbname)) ^ "(Base):\n" ^
+    "class " ^ " : " ^ (str_of_table_label tb.tbname) ^ "(Base):\n" ^
             (* cleanup these 1's later *)
     (tab 1) ^
-                "__tablename__ = '" ^ (String.concat "" (List.map str_of_table_label tb.tbname) )^ "'" ^ "\n" ^
+                "__tablename__ = '" ^ "" ^ (str_of_table_label tb.tbname)^ "'" ^ "\n" ^
                 (str_of_table_body tb.tbbody 1 ) ^
                 (*Add this method for every object for easing adding into DB*)
                 (tab 1) ^ "def add(self):\n" ^ (tab 2) ^ "session.add(self)"

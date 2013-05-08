@@ -20,7 +20,9 @@
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MOD EXP
-%left ASSIGN PLEQ MIEQ MUEQ DVEQ
+%left ASSIGN PLEQ MIEQ MUEQ DVEQ 
+%left DECR INCR
+%left AND OR
 
 %start	program
 %type <Ast.program> program
@@ -55,13 +57,13 @@ stmt_list:
 
 stmt:
 	expr SEMI							{ Expr ($1) }
-	| RETURN expr SEMI 						{ Return($2) }
-	| IF LPAREN expr RPAREN LBRACKET stmt_list RBRACKET
-											{ If($3, (List.rev $6)) }
-	| WHILE LPAREN expr RPAREN LBRACKET stmt_list RBRACKET
-											{ While($3, (List.rev $6)) }
-	| FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN LBRACKET stmt_list RBRACKET
-											{ For($3, $5, $7, (List.rev $10))}
+	| LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
+	| RETURN expr SEMI 					{ Return($2) }
+
+	| IF LPAREN expr RPAREN stmt 		{ If($3, $5) }
+	| WHILE LPAREN expr RPAREN stmt 	{ While($3, $5) }
+	| FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
+											{ For($3, $5, $7, $9)}
 
 expr:
 	  INTLITERAL					{ IntLiteral($1) }
@@ -166,15 +168,11 @@ table_label:
 	ID 		{ TableLabel($1) }
 	| ID COLON ID { TableLabelRel($1, $3) }
 
-table_label_list:
-	table_label 	{ [$1] }
-	| table_label_list COLON table_label { $3 :: $1 }
-
 table_body:
     attribute_group key_decls_list fdef_list { TableBody($1,$2,$3) }
 
 table:
-	TABLE table_label_list LBRACKET table_body RBRACKET	SEMI { {
+	TABLE table_label LBRACKET table_body RBRACKET	SEMI { {
 						tbname = $2;
 						tbbody = $4
 	} }
