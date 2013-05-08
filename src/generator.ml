@@ -79,6 +79,12 @@ let rec str_of_stmt s lvl =
     | Block(stmts) -> (let l = "\n" ^ (tab lvl) in
                         (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (List.rev(stmts)))))
     | Expr(expr) -> str_of_expr expr
+    | Return(expr) -> "return " ^ (str_of_expr expr)
+    | If(expr, stmt) -> "if " ^ (str_of_expr expr) ^ ":" ^ "\n" ^ (tab (lvl+1))
+    | While(expr, stmt) -> "while " ^ (str_of_expr expr) ^ ":" ^ "\n" ^ (tab (lvl+1))
+    | For(expr1, expr2, expr3, stmt) -> (str_of_expr expr1) ^ "\n" ^ (tab lvl) 
+                        ^ "while " ^ (str_of_expr expr2) ^ ":" ^ "\n" ^ (tab (lvl+1))
+                        ^ (str_of_stmt stmt) ^ "\n" ^ (tab (lvl+1)) ^ (str_of_expr expr3)
 
 let rec str_of_table_label tl =
     match tl with

@@ -8,7 +8,7 @@
 %token <string> ID
 %token EOF
 
-/*CoRAL*/
+/*CORaL*/
 %token CORDB, ENDDB, TABLE, SERVER, PORT, USER, PASS, TYPE, DBNAME
 %token CORDBCONN, ENDDBCONN, FOREIGNKEY, PRIMARYKEY
 
@@ -54,6 +54,11 @@ stmt_list:
 stmt:
 	expr SEMI							{ Expr ($1) }
 	| LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
+	| IF LPAREN expr RPAREN stmt 		{ If($3, $5)}
+	| FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
+										{ For($3, $5, $7, $9)}
+	| WHILE LPAREN expr RPAREN			{ While($3, $5)}
+	| RETURN expr 						{ Return($2)}
 
 expr:
 	  INTLITERAL					{ IntLiteral($1) }
