@@ -119,7 +119,7 @@ let rec str_of_table tb =
 
 let str_of_program program =
         "#!/usr/bin/env python\n" ^
-       (* "import backend\n\n" ^ *)
+        "import backend\n from backend import *\n" ^
         (str_of_conn_block program.conn) ^ "\n\n" ^
         (String.concat "\n" (List.map str_of_table program.tables)) ^ "\n\n" ^
         (let l = "\n" in
