@@ -19,8 +19,8 @@
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
-%left TIMES DIVIDE
-%left ASSIGN
+%left TIMES DIVIDE MOD EXP
+%left ASSIGN PLEQ MIEQ MUEQ DVEQ
 
 %start	program
 %type <Ast.program> program
@@ -66,7 +66,11 @@ stmt:
 expr:
 	  INTLITERAL					{ IntLiteral($1) }
 	| STRINGLITERAL					{ StringLiteral($1) }
-	| ID ASSIGN expr 				{ Assign($1, $3) }
+	| ID ASSIGN expr 				{ Assign($1, Eql, $3) }
+	| ID PLEQ expr 					{ Assign($1, Ple, $3) }
+	| ID MIEQ expr 					{ Assign($1, Mie, $3) }
+	| ID MUEQ expr 					{ Assign($1, Mue, $3) }
+	| ID DVEQ expr 					{ Assign($1, Dve, $3) }
 	| expr PLUS expr 				{ Binop($1, Add, $3) }
 	| expr MINUS expr 				{ Binop($1, Sub, $3) }
 	| expr TIMES expr 				{ Binop($1, Mult, $3) }
@@ -82,6 +86,8 @@ expr:
 	| expr OR expr 					{ Binop($1, Or, $3)}
 	| expr AND expr 				{ Binop($1, And, $3)}
 	| ID							{ Id($1) }
+	| ID INCR 						{ Unop($1, Incr) }
+	| ID DECR 						{ Unop($1, Decr) }
 	| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }
 	| ID LPAREN actuals_opt RPAREN	{ Call ($1, $3) }
 

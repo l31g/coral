@@ -1,5 +1,10 @@
 type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Geq
         | And | Or | Exp
+
+type uop = Incr | Decr
+
+type asignmt = Eql | Ple | Mie | Mue | Dve
+
 type dtype = VoidType | IntType | StringType | TableType
 
 
@@ -29,11 +34,12 @@ type table_label =
 type expr =
     IntLiteral of int
     | StringLiteral of string
-	| Id of string	(* Expressions *)
+	| Id of string
 	| Call of string * expr list
     | Binop of expr * op * expr
+    | Unop of string * uop
     | Print of expr list
-    | Assign of string * expr
+    | Assign of string * asignmt * expr
     | Noexpr
 
 type var_decl =

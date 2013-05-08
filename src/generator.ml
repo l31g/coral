@@ -11,6 +11,14 @@ let rec str_of_type t =
     | VoidType -> "Void"
     | TableType -> "Table"
 
+let rec str_of_asgn a =
+    match a with
+    | Eql -> "="
+    | Ple -> "+="
+    | Mie -> "-="
+    | Mue -> "*="
+    | Dve -> "/="
+
 let rec str_of_op o =
     match o with
     | Add -> "+"
@@ -27,6 +35,11 @@ let rec str_of_op o =
     | Geq -> ">="
     | Or -> "or"
     | And -> "and"
+
+let rec str_of_uop u = 
+    match u with
+    | Incr -> "+1"
+    | Decr -> "-1"
 
 let rec str_of_conn_label co =
     match co with
@@ -74,12 +87,13 @@ let rec str_of_expr exp =
     | Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | Print(e) -> "print " ^ (String.concat "," (List.map str_of_expr e))
     | Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
-    | Assign(l, r) -> l ^ " = " ^ (str_of_expr r)
+    | Unop(a, uop) -> a ^ "=" ^ a ^ (str_of_uop uop)
+    | Assign(l, asgn, r) -> l ^ (str_of_asgn asgn) ^ (str_of_expr r)
     | Noexpr -> ""
 
 let rec str_of_var_decl v lvl =
     match v with
-    | VarDecl(t, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, e)))
+    | VarDecl(t, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
 
 let rec str_of_formal f =
     match f with
