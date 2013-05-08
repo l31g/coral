@@ -1,5 +1,3 @@
-(* Borrowed from Prof. Edwards' website *)
-
 type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Geq | And | Or
 type dtype = VoidType | IntType | StringType | TableType
 
@@ -35,6 +33,7 @@ type expr =
     | Binop of expr * op * expr
     | Print of expr
     | Assign of string * expr
+    | Noexpr
 
 type var_decl =
     VarDecl of dtype * string * expr
@@ -46,9 +45,9 @@ type stmt =
     Block of stmt list
 	| Expr of expr
     | Return of expr
-    | If of expr * stmt
-    | For of expr * expr * expr * stmt
-    | While of expr * stmt
+    | If of expr * stmt list
+    | For of expr * expr * expr * stmt list
+    | While of expr * stmt list
 
 
 type func_def = {

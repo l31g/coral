@@ -54,10 +54,11 @@ stmt_list:
 stmt:
 	expr SEMI							{ Expr ($1) }
 	| LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
-	| IF LPAREN expr RPAREN stmt 		{ If($3, $5)}
-	| FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
+	| IF LPAREN expr RPAREN stmt_list 	{ If($3, $5)}
+	| FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt_list
 										{ For($3, $5, $7, $9)}
-	| WHILE LPAREN expr RPAREN			{ While($3, $5)}
+	| WHILE LPAREN expr RPAREN stmt_list		
+										{ While($3, $5)}
 	| RETURN expr 						{ Return($2)}
 
 expr:
@@ -80,6 +81,10 @@ expr:
 	| ID							{ Id($1) }
 	| PRINT LPAREN expr RPAREN		{ Print($3) }
 	| ID LPAREN actuals_opt RPAREN	{ Call ($1, $3) }
+
+expr_opt:
+					{ Noexpr }
+	| expr 			{ $1 }
 
 formals_opt:
 					{ [] }
@@ -111,7 +116,7 @@ dtype:
     VOID   { VoidType }
     | INT  { IntType }
 
-/* CoRAL segment of grammar */
+/* CORaL segment of grammar */
 
 conn_label:
     SERVER      { ServerConn }
