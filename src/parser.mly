@@ -55,12 +55,13 @@ stmt_list:
 stmt:
 	expr SEMI							{ Expr ($1) }
 	| LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
-	| IF LPAREN expr RPAREN stmt_list 	{ If($3, $5)}
-	| FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt_list
-										{ For($3, $5, $7, $9)}
-	| WHILE LPAREN expr RPAREN stmt_list		
-										{ While($3, $5)}
-	| RETURN expr 						{ Return($2)}
+	| RETURN expr SEMI 						{ Return($2) }
+	| IF LPAREN expr RPAREN LBRACKET stmt_list RBRACKET
+											{ If($3, (List.rev $6)) }
+	| WHILE LPAREN expr RPAREN LBRACKET stmt_list RBRACKET
+											{ While($3, (List.rev $6)) }
+	| FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN LBRACKET stmt_list RBRACKET
+											{ For($3, $5, $7, (List.rev $10))}
 
 expr:
 	  INTLITERAL					{ IntLiteral($1) }

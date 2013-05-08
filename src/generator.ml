@@ -90,16 +90,16 @@ let rec str_of_stmt s lvl =
                         (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (List.rev(stmts)))))
     | Expr(expr) -> str_of_expr expr
     | Return(expr) -> "return " ^ (str_of_expr expr)
-    | If(expr, stmts) -> (let l = "\n" ^ (tab lvl) in
-                        "if " ^ (str_of_expr expr) ^ ":" ^ "\n" ^ (tab (lvl+1)) ^
-                        (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (List.rev(stmts)))))
-    | While(expr, stmts) -> (let l = "\n" ^ (tab lvl) in
-                        "while " ^ (str_of_expr expr) ^ ":" ^ "\n" ^ (tab (lvl+1)) ^
-                        (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (List.rev(stmts)))))
+    | If(expr, stmts) -> (let l = "\n" ^ (tab (lvl+1)) in
+                        "if " ^ (str_of_expr expr) ^ ":" ^ l ^ 
+                        (String.concat ("\n" ^ (tab (lvl+2))) (List.map (fun x-> str_of_stmt x (lvl+2)) stmts)))
+    | While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+1)) in
+                        "while " ^ (str_of_expr expr) ^ ":" ^ "\n" ^ (tab (lvl+2)) ^
+                        (String.concat l (List.map (fun x-> str_of_stmt x (lvl+3)) (List.rev(stmts)))))
     | For(expr1, expr2, expr3, stmts) -> (let l = "\n" ^ (tab lvl) in
-                        (str_of_expr expr1) ^ "\n" ^ (tab lvl) ^ "while " ^ (str_of_expr expr2) ^ ":" ^ "\n" ^ (tab (lvl+1)) ^
-                        (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (List.rev(stmts)))) ^
-                        "\n" ^ (tab (lvl+1)) ^ (str_of_expr expr3))
+                        (str_of_expr expr1) ^ "\n" ^ (tab (lvl+1)) ^ "while " ^ (str_of_expr expr2) ^ ":" ^ "\n" ^ (tab (lvl+1)) ^
+                        (String.concat l (List.map (fun x-> str_of_stmt x (lvl+2)) (List.rev(stmts)))) ^
+                        "\n" ^ (tab (lvl+2)) ^ (str_of_expr expr3))
 
 let rec str_of_table_label tl =
     match tl with
@@ -125,7 +125,7 @@ let rec str_of_table tb =
             (* cleanup these 1's later *)
     (tab 1) ^
                 "__tablename__ = '" ^ (String.concat "" (List.map str_of_table_label tb.tbname) )^ "'" ^ "\n" ^
-                (str_of_table_body tb.tbbody 1 )) ^
+                (str_of_table_body tb.tbbody 1 ) ^
                 (*Add this method for every object for easing adding into DB*)
                 (tab 1) ^ "def add(self):\n" ^ (tab 2) ^ "session.add(self)"
 
