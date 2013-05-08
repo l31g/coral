@@ -84,14 +84,14 @@ let rec str_of_formal f =
     match f with
     | Formal(t, n) -> "" ^ n
 
-let rec str_of_stmt s lvl = 
+let rec str_of_stmt s lvl =
     match s with
     | Block(stmts) -> (let l = "\n" ^ (tab lvl) in
                         (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (List.rev(stmts)))))
     | Expr(expr) -> str_of_expr expr
     | Return(expr) -> "return " ^ (str_of_expr expr)
     | If(expr, stmts) -> (let l = "\n" ^ (tab lvl) in
-                        "if " ^ (str_of_expr expr) ^ ":" ^ "\n" ^ (tab (lvl+1)) ^ 
+                        "if " ^ (str_of_expr expr) ^ ":" ^ "\n" ^ (tab (lvl+1)) ^
                         (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (List.rev(stmts)))))
     | While(expr, stmts) -> (let l = "\n" ^ (tab lvl) in
                         "while " ^ (str_of_expr expr) ^ ":" ^ "\n" ^ (tab (lvl+1)) ^
@@ -118,19 +118,21 @@ let str_of_fdef fdef lvl =
 
 let rec str_of_table_body tbb lvl =
     match tbb with
-    | TableBody(ag, kd, fd) -> (tab (lvl)) ^ (str_of_attr_group ag (lvl+1)) ^ "\n" ^ (tab lvl) ^ (String.concat ("\n"^(tab lvl)^"__table_args__= ") (List.map str_of_key kd)) ^ "\n" ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x (lvl)) fd))
+    | TableBody(ag, kd, fd) -> (tab (lvl)) ^ (str_of_attr_group ag (lvl+1)) ^ "\n" ^ (tab lvl) ^ "__table_args__= (" ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n" ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x (lvl)) fd))
 
 let rec str_of_table tb =
     "class " ^ (String.concat " : " (List.map str_of_table_label tb.tbname)) ^ "(Base):\n" ^
             (* cleanup these 1's later *)
-    (tab 1) ^   
+    (tab 1) ^
                 "__tablename__ = '" ^ (String.concat "" (List.map str_of_table_label tb.tbname) )^ "'" ^ "\n" ^
-                (str_of_table_body tb.tbbody 1 )
-
+                (str_of_table_body tb.tbbody 1 )) ^
+                (*Add this method for every object for easing adding into DB*)
+                (tab 1) ^ "def add(self):\n" ^ (tab 2) ^ "session.add(self)"
 
 let str_of_program program =
         "#!/usr/bin/env python\n" ^
-        "import backend\nfrom backend import *\n" ^
+        "import sys\nsys.path.append(\"../backend\")\n" ^
+        "import controller, cor_global\nfrom controller import *\nfrom cor_global import *\n\n" ^
         (str_of_conn_block program.conn) ^ "\n\n" ^
         (String.concat "\n" (List.map str_of_table program.tables)) ^ "\n\n" ^
         (let l = "\n" in

@@ -1,5 +1,6 @@
-import global
-from global import session_maker, session, engine
+import cor_global
+from cor_global import session_maker, session, engine
+from sqlalchemy import create_engine
 
 server = None
 port = None
@@ -14,25 +15,33 @@ def sizeof(table_name):
     return size
 
 def setServer(s):
+    global server
     server = s
 
 def setPort(p):
+    global port
     port = p
 
 def setUser(u):
+    global user
     user = u
 
 def setPass(p):
+    global password
     password = p
 
 def setConnType(ct):
+    global dbtype
     dbtype = ct
 
 def setDBName(db):
+    global DBName
     DBName = db
 
 def connectDB():
-    uri = "%s://%s:%s@%s:%s/%s" % (dbtype, user, password, server, port, DBName)
+    #remember to add the @
+    uri = "%s:///%s:%s%s:%s%s" % (dbtype, user, password, server, port, DBName)
+    #print uri + "\n"
     engine = create_engine(uri, echo=True)
 
     session_maker.configure(bind=engine)

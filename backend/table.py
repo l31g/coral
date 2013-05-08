@@ -1,5 +1,5 @@
-import global
-from global import session_maker, session, engine, Base
+import cor_global
+from cor_global import session_maker, session, engine, Base
 
 #Table definitions from Code Generator
 #Plus add the following functions:
@@ -10,8 +10,6 @@ def findBy(table_name, *kwargs):
     result = session.query(table_name).filter_by(kwargs)
     return result
 
-def add(self):
-    session.add(self)
 #Default constructor for classes:
 #ClassName(attr1='', attr2='') or ClassName('', '')
 
