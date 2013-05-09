@@ -108,7 +108,7 @@ let rec str_of_stmt s lvl =
     | Return(expr) -> "return " ^ (str_of_expr expr)
     | If(e, s, Nostmt) -> "if " ^ str_of_expr e ^ ":\n" ^ (tab (lvl+2)) ^ str_of_stmt s (lvl+2)
     | If(e, s1, s2) -> "if (" ^ str_of_expr e ^ "):\n" ^ (tab (lvl+2)) ^ str_of_stmt s1 (lvl+2) 
-                    ^ "\n" ^ (tab (lvl)) ^ "else:\n" ^ (tab (lvl+2)) ^ str_of_stmt s2 (lvl+2)
+                    ^ "\n" ^ (tab (lvl+1)) ^ "else:\n" ^ (tab (lvl+2)) ^ str_of_stmt s2 (lvl+2)
 
     | While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
                         "while " ^ (str_of_expr expr) ^ ":" ^

@@ -17,7 +17,9 @@ void main() {
 	if (a > 5) {
 		a = 4;
 		return a;
-	} else {
+	} 
+	else {
+		a = 5;
 		return a;
 	}
 }
