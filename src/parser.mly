@@ -1,7 +1,7 @@
 %{ open Ast %}
 
 %token PLUS MINUS TIMES MOD DIVIDE LPAREN RPAREN SEMI COLON ASSIGN
-%token LBRACKET RBRACKET CARAT DOT COMMA GT LT GEQ LEQ NEQ OR AND
+%token LBRACKET RBRACKET CARAT DOT COMMA GT LT GEQ LEQ NEQ OR AND NOT
 %token EXP INCR DECR PLEQ MIEQ MUEQ DVEQ
 %token EQ ELSE WHILE INT IF FOR RETURN PRINT VOID BREAK CONTINUE SIZEOF
 %token STRING
@@ -15,7 +15,7 @@
 %token CORDBCONN, ENDDBCONN, FOREIGNKEY, PRIMARYKEY
 
 %nonassoc ELSE
-%right EQUAL
+%right EQUAL NOT
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
@@ -88,6 +88,7 @@ expr:
 	| expr OR expr 					{ Binop($1, Or, $3)}
 	| expr AND expr 				{ Binop($1, And, $3)}
 	| ID							{ Id($1) }
+	| NOT expr 						{ Notop($2) }
 	| ID INCR 						{ Unop($1, Incr) }
 	| ID DECR 						{ Unop($1, Decr) }
 	| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }

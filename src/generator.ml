@@ -88,6 +88,7 @@ let rec str_of_expr exp =
     | Print(e) -> "print " ^ (String.concat "," (List.map str_of_expr e))
     | Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
     | Unop(a, uop) -> a ^ "=" ^ a ^ (str_of_uop uop)
+    | Notop(e) -> "not " ^ (str_of_expr e)
     | Assign(l, asgn, r) -> l ^ (str_of_asgn asgn) ^ (str_of_expr r)
     | Noexpr -> ""
 

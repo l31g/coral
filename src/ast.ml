@@ -38,6 +38,7 @@ type expr =
 	| Call of string * expr list
     | Binop of expr * op * expr
     | Unop of string * uop
+    | Notop of expr
     | Print of expr list
     | Assign of string * asignmt * expr
     | Noexpr
