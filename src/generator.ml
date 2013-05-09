@@ -105,9 +105,10 @@ let rec str_of_stmt s lvl =
                         (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (stmts))))
     | Expr(expr) -> str_of_expr expr
     | Return(expr) -> "return " ^ (str_of_expr expr)
-    | If(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
-                        "if " ^ (str_of_expr expr) ^ ":" ^ l ^
-                        (str_of_stmt stmts (lvl+2)))
+    | If(e, s, Nostmt) -> "if " ^ str_of_expr e ^ ":\n" ^ (tab (lvl+2)) ^ str_of_stmt s (lvl+2)
+    | If(e, s1, s2) -> "if (" ^ str_of_expr e ^ "):\n" ^ (tab (lvl+2)) ^ str_of_stmt s1 (lvl+2) 
+                    ^ "\n" ^ (tab (lvl)) ^ "else:\n" ^ (tab (lvl+2)) ^ str_of_stmt s2 (lvl+2)
+
     | While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
                         "while " ^ (str_of_expr expr) ^ ":" ^
                         l ^ (str_of_stmt stmts (lvl+3)) )
@@ -115,6 +116,7 @@ let rec str_of_stmt s lvl =
                         (str_of_expr expr1) ^ "\n" ^ (tab (lvl+1)) ^ "while " ^ (str_of_expr expr2) ^ ":" ^
                         l ^ (str_of_stmt stmts (lvl+2)) ^
                         "\n" ^ (tab (lvl+2)) ^ (str_of_expr expr3))
+    | Nostmt -> ""
 
 let rec str_of_table_label tl =
     match tl with

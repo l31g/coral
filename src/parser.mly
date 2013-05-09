@@ -3,7 +3,8 @@
 %token PLUS MINUS TIMES MOD DIVIDE LPAREN RPAREN SEMI COLON ASSIGN
 %token LBRACKET RBRACKET CARAT DOT COMMA GT LT GEQ LEQ NEQ OR AND
 %token EXP INCR DECR PLEQ MIEQ MUEQ DVEQ
-%token EQ ELSE WHILE INT IF FOR RETURN PRINT VOID BREAK CONTINUE SIZEOF
+%token EQ WHILE INT FOR RETURN PRINT VOID BREAK CONTINUE SIZEOF
+%token IF ELSE
 %token STRING
 %token <int> INTLITERAL
 %token <string> STRINGLITERAL
@@ -15,6 +16,7 @@
 %token CORDBCONN, ENDDBCONN, FOREIGNKEY, PRIMARYKEY
 
 %nonassoc ELSE
+%nonassoc NOELSE
 %right EQUAL
 %left EQ NEQ
 %left LT GT LEQ GEQ
@@ -59,11 +61,11 @@ stmt:
 	expr SEMI							{ Expr ($1) }
 	| LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
 	| RETURN expr SEMI 					{ Return($2) }
-
-	| IF LPAREN expr RPAREN stmt 		{ If($3, $5) }
-	| WHILE LPAREN expr RPAREN stmt 	{ While($3, $5) }
+	| IF LPAREN expr RPAREN stmt %prec NOELSE		{ If($3, $5, Nostmt)}
+	| IF LPAREN expr RPAREN stmt ELSE stmt 			{ If($3, $5, $7) }
+	| WHILE LPAREN expr RPAREN stmt 				{ While($3, $5) }
 	| FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
-											{ For($3, $5, $7, $9)}
+													{ For($3, $5, $7, $9)}
 
 expr:
 	  INTLITERAL					{ IntLiteral($1) }
@@ -127,6 +129,7 @@ dtype:
     VOID   { VoidType }
     | INT  { IntType }
     | STRING { StringType }
+    | TABLE { TableType }
 
 /* CORaL segment of grammar */
 
