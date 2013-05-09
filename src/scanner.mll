@@ -26,6 +26,7 @@ rule token = parse
 	|	'.'						{ DOT }
 	|	','						{ COMMA }
 
+	|	'!'						{ NOT }
 	|	'>'						{ GT }
 	|	'<'						{ LT }
 	|	">="					{ GEQ }
