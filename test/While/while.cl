@@ -15,6 +15,8 @@ void main() {
 	int i = 0;
 	while(1 == 1){
 		i++;
+		i = 5+10;
+		i = 7+8;
 	}
 	printf(i);
 }
