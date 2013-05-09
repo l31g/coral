@@ -12,15 +12,17 @@ type="server";
 void main(){
 
 	int a = 5+3;
-	printf("%d",a);
+	//printf(a);
 
 	a = 5*8;
-	printf("%d",a);
+	//printf(a);
 
 	a = 8/4;
-	printf("%d",a);
+	//printf(a);
 
 	a = 6-2;
-	printf("%d",a);
+	//printf(a);
+
+	a = 6*(2+3);
 	
 }

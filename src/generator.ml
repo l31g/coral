@@ -91,6 +91,7 @@ let rec str_of_expr exp =
     | Unop(a, uop) -> a ^ "=" ^ a ^ (str_of_uop uop)
     | Notop(e) -> "not " ^ (str_of_expr e)
     | Assign(l, asgn, r) -> l ^ (str_of_asgn asgn) ^ (str_of_expr r)
+    | Parens(p) -> "(" ^ (str_of_expr p) ^ ")"
     | Noexpr -> ""
 
 let rec str_of_var_decl v lvl =

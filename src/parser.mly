@@ -96,8 +96,9 @@ expr:
 	| ID INCR 						{ Unop($1, Incr) }
 	| ID DECR 						{ Unop($1, Decr) }
 	| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }
-	| ID LPAREN actuals_opt RPAREN	{ Call ($1, $3) }
+	| ID LPAREN actuals_opt RPAREN	{ Call($1, $3) }
 	| ID DOT ID LPAREN actuals_opt RPAREN { TableCall($1, $3, $5) }
+	| LPAREN expr RPAREN			{ Parens($2) }
 
 expr_opt:
 					{ Noexpr }
