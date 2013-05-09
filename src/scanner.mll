@@ -8,6 +8,8 @@ let whitespace = [' ' '\t' '\n' '\r']
 rule token = parse
 		whitespace+	{ token lexbuf }
 	| "/*"						{ comment lexbuf }
+	| "//"						{ singleComment lexbuf }
+	| '\n'						{ NEWLINE }
 
 	|	'+'						{ PLUS }
 	|	'-'						{ MINUS }
@@ -79,3 +81,7 @@ rule token = parse
 and comment = parse
 		"*/" { token lexbuf }
 		| _	 { comment lexbuf }
+
+and singleComment = parse 
+		"\n" { token lexbuf }
+		| _ { singleComment lexbuf }

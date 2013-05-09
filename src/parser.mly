@@ -6,6 +6,7 @@
 %token EQ WHILE INT FOR RETURN PRINT VOID BREAK CONTINUE
 %token IF ELSE
 %token STRING
+%token NEWLINE
 %token <int> INTLITERAL
 %token <string> STRINGLITERAL
 %token <string> ID
