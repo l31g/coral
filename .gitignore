@@ -8,3 +8,6 @@
 *.cmi
 *.clx
 src/build
+scanner.ml
+parser.ml
+parser.output
