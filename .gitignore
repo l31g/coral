@@ -3,6 +3,7 @@
 *.log
 .DS_STORE
 *.swp
+*.pyc
 *.mli
 *.cmo
 *.cmi
