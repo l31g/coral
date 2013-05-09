@@ -1,10 +1,10 @@
 #cordbconn
-server="server";
-user="server";
-password="server";
-port="server";
-DBName="server";
-type="server";
+server="";
+user="";
+password="memory";
+port="";
+DBName="";
+type="sqlite";
 #enddbconn
 
 #cordb
@@ -16,6 +16,8 @@ Table User {
 
 void main() {
 
+    connectDB();
     ed_user = User(name="ed");
+    printf(ed_user);
     printf("a", "b", "c", "d");
 }

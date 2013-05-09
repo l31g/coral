@@ -12,9 +12,12 @@ type="server";
 
 void main() {
 
-	int a = 1;
-	if(a == 1){
-		printf("1 is equal to 1");
+	a = 1;
+
+	if (a > 5) {
+		a = 4;
+		return a;
+	} else {
+		return a;
 	}
-    
 }
