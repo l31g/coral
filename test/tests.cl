@@ -20,6 +20,8 @@ void main() {
     ed_user = User(name="ed");
     printf(ed_user);
     printf("a", "b", "c", "d");
-	x = 1;
+	int x = 1;
+	p = "pollo";
 	printf(x);
+	printf(p);
 }
