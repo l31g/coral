@@ -14,14 +14,21 @@ type symbol_table = {
 (* check operators *)
 
 (* check functions *)
-
-(* check variables
-let rec check_variable v env =
+let rec find_function fname env =
 	try
-		List.find (fun var_decl.VarDecl[1] -> vname = v) env.variables
+		List.find (fun func_def -> func_def.fname = fname) env.functions
 	with Not_found ->
 		match env.parent with
-			Some(parent) -> check_variable v parent
+			Some(parent) -> find_function fname parent
+			| _ -> raise (Failure ("Declare your function bro"))
+
+(* check variables
+let rec find_variable vname env =
+	try
+		List.find (fun var_decl -> vname = v) env.variables
+	with Not_found ->
+		match env.parent with
+			Some(parent) -> find_variable v parent
 			| _ -> raise (Failure ("Declare your variable bro"))
 *)
 
