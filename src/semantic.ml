@@ -3,6 +3,10 @@ open Ast
 (* make the symbol table *)
 
 
+let rec check_str s =
+  match s with
+  | s -> StringLiteral(s)
+
 let rec check_conn_label co =
     match co with
     | ServerConn -> co
