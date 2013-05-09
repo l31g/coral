@@ -1,4 +1,4 @@
-open Ast
+2open Ast
 open Printf
 
 let tab lvl =
@@ -113,7 +113,7 @@ let rec str_of_stmt s lvl =
 
     | While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
                         "while " ^ (str_of_expr expr) ^ ":" ^
-                        l ^ (str_of_stmt stmts (lvl+3)) )
+                        l ^ (str_of_stmt stmts (lvl+2)) )
     | For(expr1, expr2, expr3, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
                         (str_of_expr expr1) ^ "\n" ^ (tab (lvl+1)) ^ "while " ^ (str_of_expr expr2) ^ ":" ^
                         l ^ (str_of_stmt stmts (lvl+2)) ^
