@@ -85,6 +85,7 @@ let rec str_of_expr exp =
     | StringLiteral(l) -> l
     | Id(s) -> s
     | Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
+    | TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"  
     | Print(e) -> "print " ^ (String.concat "," (List.map str_of_expr e))
     | Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
     | Unop(a, uop) -> a ^ "=" ^ a ^ (str_of_uop uop)
