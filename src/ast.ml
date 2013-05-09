@@ -41,6 +41,7 @@ type expr =
     | Notop of expr
     | Print of expr list
     | Assign of string * asignmt * expr
+    | TableCall of string * string * expr list
     | Noexpr
 
 type var_decl =
