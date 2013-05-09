@@ -17,7 +17,6 @@
 
 %nonassoc ELSE
 %nonassoc NOELSE
-%right EQUAL
 %right EQUAL NOT
 %left EQ NEQ
 %left LT GT LEQ GEQ
