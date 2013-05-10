@@ -92,6 +92,12 @@ let rec check_expr exp env =
     | IntLiteral(l) -> IntType
     | StringLiteral(l) -> StringType
     | FPLiteral(l) -> FloatType
+
+    (* TODO ID need variable symbol table *)
+    (* TODO Call() *)
+    (* TODO TablCall() *)
+
+    | Print(e) -> NoType
     | Binop(a, op, b) -> (let t1 = (check_expr a env) in
                          (let t2 = (check_expr b env) in
                             if(t1=FloatType && t2=IntType) then
@@ -102,14 +108,12 @@ let rec check_expr exp env =
                             	else
                             		(check_type t1 t2)
                          ))
-  (*  | Call(f, e) -> if((function_exists f env)) then
-    					(let f1 = (find_function f env)
-    						(check_actual f1 e env)
-    					)
-    *)
-    | Assign(l, asgn, r) -> (check_expr r env)
+
+    (* TODO Unop  need variable symbol table *)
+
 	| Notop(e) -> (check_expr e env)
 	| Neg(e) -> (check_expr e env)
+    | Assign(l, asgn, r) -> (check_expr r env)
     | Parens(p) -> (check_expr p env)
     | Noexpr -> NoType
 
@@ -138,6 +142,13 @@ let rec check_stmt s env =
     match s with
     | Block(stmts) -> let l = (List.map check_stmt stmts) in NoType
     | Expr(expr) -> (check_expr expr env)
+
+    (*TODO Return need to check against function definition *)
+
+    | If(e, s, Nostmt) -> NoType
+    | If(e, s1, s2) -> NoType
+    | While(expr, stmts) -> NoType
+    | For(expr1, expr2, expr3, stmts) -> NoType
     | Nostmt -> NoType
 
 let rec check_fdef fdef env =

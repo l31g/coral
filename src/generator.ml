@@ -11,6 +11,7 @@ let rec str_of_type t =
     | VoidType -> "Void"
     | TableType -> "Table"
     | FloatType -> "Float"
+    | NoType -> "" (* should never actually happen *)
 
 let rec str_of_asgn a =
     match a with
