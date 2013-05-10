@@ -154,7 +154,7 @@ let rec str_of_table tb =
 
 let str_of_program program =
         "#!/usr/bin/env python\n" ^
-        "import sys\nsys.path.append(\"../backend\")\n" ^
+        "import sys\nsys.path.append(\"../../backend\")\n" ^
         "import controller, cor_global\nfrom controller import *\nfrom cor_global import *\n\n" ^
         (str_of_conn_block program.conn) ^ "\n\n" ^
         (String.concat "\n" (List.map str_of_table program.tables)) ^ "\n\n" ^

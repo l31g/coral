@@ -108,7 +108,10 @@ let rec check_expr exp env =
     					)
     *)
     | Assign(l, asgn, r) -> (check_expr r env)
-
+	| Notop(e) -> (check_expr e env)
+	| Neg(e) -> (check_expr e env)
+    | Parens(p) -> (check_expr p env)
+    | Noexpr -> NoType
 
 let rec check_var_decl v env =
     match v with
