@@ -5,7 +5,7 @@ type uop = Incr | Decr
 
 type asignmt = Eql | Ple | Mie | Mue | Dve
 
-type dtype = VoidType | IntType | StringType | TableType | NoType
+type dtype = VoidType | IntType | StringType | TableType | NoType | FloatType
 
 
 type conn_label = ServerConn | PortConn | UserConn | PassConn | TypeConn | DBConn

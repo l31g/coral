@@ -139,6 +139,7 @@ dtype:
     | INT  { IntType }
     | STRING { StringType }
     | TABLE { TableType }
+    | FLOAT { FloatType }
 
 /* CORaL segment of grammar */
 

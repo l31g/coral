@@ -67,6 +67,7 @@ let rec check_expr exp =
     match exp with
     | IntLiteral(l) -> IntType
     | StringLiteral(l) -> StringType
+    | FPLiteral(l) -> FloatType
     | Binop(a, op, b) -> (let t1 = (check_expr a) in
                          (let t2 = (check_expr b) in
                             (check_type t1 t2)
@@ -77,8 +78,14 @@ let rec check_expr exp =
 
 let rec check_var_decl v =
     match v with
-    | VarDecl(t, v, e) ->   let t2 = (check_expr e) in
-                                (check_type t t2)
+    | VarDecl(t, v, e) ->   if(not (t=FloatType)) then
+    							(let t2 = (check_expr e) in
+                                	(check_type t t2))
+    						else
+    							if(IntType = (check_expr e)) then
+    								t
+    							else 
+    								(check_type t (check_expr e))
 
 
 let rec check_formal f =

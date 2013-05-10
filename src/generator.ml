@@ -10,6 +10,7 @@ let rec str_of_type t =
     | StringType -> "String"
     | VoidType -> "Void"
     | TableType -> "Table"
+    | FloatType -> "Float"
 
 let rec str_of_asgn a =
     match a with
