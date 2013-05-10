@@ -1,7 +1,7 @@
 type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Geq
         | And | Or | Exp
 
-type uop = Incr | Decr
+type uop = Incr | Decr 
 
 type asignmt = Eql | Ple | Mie | Mue | Dve
 
@@ -39,6 +39,7 @@ type expr =
 	| Call of string * expr list
     | Binop of expr * op * expr
     | Unop of string * uop
+    | Neg of expr
     | Notop of expr
     | Print of expr list
     | Assign of string * asignmt * expr
