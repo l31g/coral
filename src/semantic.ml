@@ -3,9 +3,9 @@ open Ast
 (* make the symbol table *)
 type symbol_table = {
 	parent : symbol_table option;
-	variables : var_decl list;
-	functions : func_def list;
-	table_list : table list;
+	mutable variables : var_decl list;
+	mutable functions : func_def list;
+	mutable table_list : table list;
 	in_loop : bool;
 }
 
@@ -17,21 +17,42 @@ let check_type t1 t2 =
         raise(Error("Type Mismatch Exception"))
     else t1
 
-(* check operators *)
-
-(* check functions *)
-
-(* check variables
-let rec check_variable v env =
+(* find functions in symbol table *)
+let rec function_exists fname env =
 	try
-		List.find (fun var_decl.VarDecl[1] -> vname = v) env.variables
+		let _ = List.find (fun func_def -> func_def.fname = fname) env.functions in true
 	with Not_found ->
 		match env.parent with
-			Some(parent) -> check_variable v parent
+			Some(parent) -> function_exists fname parent
+			| _ -> false
+
+let rec find_function fname env =
+	try
+		List.find (fun func_def -> func_def.fname = fname) env.functions
+	with Not_found ->
+		match env.parent with
+			Some(parent) -> find_function fname parent
+			| _ -> raise (Failure ("Declare your function bro"))
+
+(* check variables
+let rec find_variable vname env =
+	try
+		List.find (fun var_decl -> vname = v) env.variables
+	with Not_found ->
+		match env.parent with
+			Some(parent) -> find_variable v parent
 			| _ -> raise (Failure ("Declare your variable bro"))
 *)
 
-(* check tables *)
+(* find tables in symbol table *)
+let rec table_exists tname env =
+	try
+		let _ = List.find (fun table -> table.tbname = tname) env.table_list in true
+	with Not_found ->
+		match env.parent with
+			Some(parent) -> table_exists tname parent
+			| -> false
+
 let rec find_table tname env =
 	try
 		List.find (fun table -> table.tbname = tname) env.table_list
@@ -50,7 +71,6 @@ let rec check_conn_label co =
     | TypeConn -> co
     | DBConn -> co
 
-
 let rec check_conn_attr ca  =
     match ca with
     | ConnAttr(cl, a) -> try
@@ -61,7 +81,11 @@ let rec check_conn_attr ca  =
 let rec check_conn_block cb =
     match cb with
     | ConnBlock(a1, a2, a3, a4, a5, a6) ->
-        (check_conn_attr a1), (check_conn_attr a2), (check_conn_attr a3), (check_conn_attr a4), (check_conn_attr a5), (check_conn_attr a6)
+        (check_conn_attr a1), (check_conn_attr a2), (check_conn_attr a3),
+        (check_conn_attr a4), (check_conn_attr a5), (check_conn_attr a6)
+
+(* check table declarations *)
+
 
 let rec check_expr exp =
     match exp with
@@ -111,8 +135,21 @@ let rec check_stmt s =
 
 
 let rec check_fdef fdef =
-        (List.map check_formal fdef.formals) , (List.map check_var_decl fdef.locals), (List.map check_stmt fdef.body)
-(*
+	(List.map check_formal fdef.formals), 
+	(List.map check_var_decl fdef.locals), 
+	(List.map check_stmt fdef.body)
+
+let rec sys_check_fdef fdef env =
+	let f_name = fdef.fname in
+
+	if (function_exists f_name env) then
+		raise (Error ("you already declared a function " ^ f_name ^ " bro"))
+	(* check rest of function def *)
+	else 
+		let _ = (check_fdef fdef) in
+		(* no error thrown, add function to symbol table *)
+		(env.functions <- fdef::env.functions)
+
 let rec check_program (p:program) =
 
 	let global_env = {
@@ -123,8 +160,6 @@ let rec check_program (p:program) =
 		in_loop = false;
 	} in
 
-    let _ = check_conn_block p.conn in
-    	true
-*)
-let rec check_program program =
-        (check_conn_block program.conn), (List.map check_fdef program.funcs)
+    let _ = (check_conn_block p.conn) in
+    	let _ = (List.map (fun x -> sys_check_fdef x (global_env)) p.funcs) in
+    		true
