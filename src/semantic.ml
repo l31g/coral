@@ -140,7 +140,6 @@ let rec check_stmt s env =
     | Expr(expr) -> (check_expr expr env)
     | Nostmt -> NoType
 
-
 let rec check_fdef fdef env =
 	(List.map (fun x -> check_formal x env) fdef.formals), 
 	(List.map (fun x -> check_var_decl x env) fdef.locals), 
@@ -150,7 +149,7 @@ let rec sys_check_fdef fdef env =
 	let f_name = fdef.fname in
 
 	if (function_exists f_name env) then
-		raise (Error ("you already declared a function " ^ f_name ^ " bro"))
+		raise (Error ("you already declared function " ^ f_name ^ " bro"))
 	(* check rest of function def *)
 	else 
 		let _ = (check_fdef fdef env) in
