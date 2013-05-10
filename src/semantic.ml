@@ -51,7 +51,7 @@ let rec table_exists tname env =
 	with Not_found ->
 		match env.parent with
 			Some(parent) -> table_exists tname parent
-			| -> false
+			| _ -> false
 
 let rec find_table tname env =
 	try
@@ -120,7 +120,6 @@ let rec check_stmt s =
     | Expr(expr) -> (check_expr expr)
     | Nostmt -> NoType
 
-
 let rec check_fdef fdef =
 	(List.map check_formal fdef.formals), 
 	(List.map check_var_decl fdef.locals), 
@@ -130,7 +129,7 @@ let rec sys_check_fdef fdef env =
 	let f_name = fdef.fname in
 
 	if (function_exists f_name env) then
-		raise (Error ("you already declared a function " ^ f_name ^ " bro"))
+		raise (Error ("you already declared function " ^ f_name ^ " bro"))
 	(* check rest of function def *)
 	else 
 		let _ = (check_fdef fdef) in
