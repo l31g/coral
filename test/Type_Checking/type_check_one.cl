@@ -11,6 +11,6 @@ type="server";
 #enddb
 void main() {
 
-  a = "3" + 3;
+  float a = 3 + 3.0;
 
 }

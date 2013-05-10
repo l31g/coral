@@ -87,25 +87,42 @@ let rec check_conn_block cb =
 (* check table declarations *)
 
 
-let rec check_expr exp =
+let rec check_expr exp env =
     match exp with
     | IntLiteral(l) -> IntType
     | StringLiteral(l) -> StringType
-    | Binop(a, op, b) -> (let t1 = (check_expr a) in
-                         (let t2 = (check_expr b) in
-                            (check_type t1 t2)
+    | FPLiteral(l) -> FloatType
+    | Binop(a, op, b) -> (let t1 = (check_expr a env) in
+                         (let t2 = (check_expr b env) in
+                            if(t1=FloatType && t2=IntType) then
+                            	t1
+                            else 
+                            	if(t1=IntType && t2=FloatType) then
+                            		t2
+                            	else
+                            		(check_type t1 t2)
                          ))
+  (*  | Call(f, e) -> if((function_exists f env)) then
+    					(let f1 = (find_function f env)
+    						(check_actual f1 e env)
+    					)
+    *)
+    | Assign(l, asgn, r) -> (check_expr r env)
 
-    | Assign(l, asgn, r) -> (check_expr r)
 
-
-let rec check_var_decl v =
+let rec check_var_decl v env =
     match v with
-    | VarDecl(t, v, e) ->   let t2 = (check_expr e) in
-                                (check_type t t2)
+    | VarDecl(t, v, e) ->   if(not (t=FloatType)) then
+    							(let t2 = (check_expr e env) in
+                                	(check_type t t2))
+    						else
+    							if(IntType = (check_expr e env)) then
+    								t
+    							else 
+    								(check_type t (check_expr e env))
 
 
-let rec check_formal f =
+let rec check_formal f env =
     match f with
     | Formal(t, n) ->
                         (* Need the symbol table for this *)
@@ -114,16 +131,16 @@ let rec check_formal f =
                         else
                             t
 
-let rec check_stmt s =
+let rec check_stmt s env =
     match s with
     | Block(stmts) -> let l = (List.map check_stmt stmts) in NoType
-    | Expr(expr) -> (check_expr expr)
+    | Expr(expr) -> (check_expr expr env)
     | Nostmt -> NoType
 
-let rec check_fdef fdef =
-	(List.map check_formal fdef.formals), 
-	(List.map check_var_decl fdef.locals), 
-	(List.map check_stmt fdef.body)
+let rec check_fdef fdef env =
+	(List.map (fun x -> check_formal x env) fdef.formals), 
+	(List.map (fun x -> check_var_decl x env) fdef.locals), 
+	(List.map (fun x -> check_stmt x env) fdef.body)
 
 let rec sys_check_fdef fdef env =
 	let f_name = fdef.fname in
@@ -132,7 +149,7 @@ let rec sys_check_fdef fdef env =
 		raise (Error ("you already declared function " ^ f_name ^ " bro"))
 	(* check rest of function def *)
 	else 
-		let _ = (check_fdef fdef) in
+		let _ = (check_fdef fdef env) in
 		(* no error thrown, add function to symbol table *)
 		(env.functions <- fdef::env.functions)
 
