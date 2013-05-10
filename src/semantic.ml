@@ -86,12 +86,12 @@ let rec check_conn_block cb =
 
 (* check table declarations *)
 
-
 let rec check_expr exp env =
     match exp with
     | IntLiteral(l) -> IntType
     | StringLiteral(l) -> StringType
     | FPLiteral(l) -> FloatType
+
     | Binop(a, op, b) -> (let t1 = (check_expr a env) in
                          (let t2 = (check_expr b env) in
                             if(t1=FloatType && t2=IntType) then
@@ -102,12 +102,19 @@ let rec check_expr exp env =
                             	else
                             		(check_type t1 t2)
                          ))
-  (*  | Call(f, e) -> if((function_exists f env)) then
-    					(let f1 = (find_function f env)
-    						(check_actual f1 e env)
-    					)
-    *)
+    (*| Call(f, e) -> if (function_exists f env) then
+    					let f1 = (find_function f env) in
+    					let fmls = f1.formals in
+    					let _ = (List.map2 (fun x y -> check_actual x y env) fmls e) in
+    						IntType
+    				else
+    						IntType*)
+
     | Assign(l, asgn, r) -> (check_expr r env)
+
+(*and check_actual formal actual env =
+	match formal with
+	| Formal(t, n) -> (check_type t (check_expr actual env))*)
 
 
 let rec check_var_decl v env =
@@ -121,7 +128,6 @@ let rec check_var_decl v env =
     							else 
     								(check_type t (check_expr e env))
 
-
 let rec check_formal f env =
     match f with
     | Formal(t, n) ->
@@ -133,7 +139,7 @@ let rec check_formal f env =
 
 let rec check_stmt s env =
     match s with
-    | Block(stmts) -> let l = (List.map check_stmt stmts) in NoType
+    | Block(stmts) -> let l = (List.map (fun x -> check_stmt x env) stmts) in NoType
     | Expr(expr) -> (check_expr expr env)
     | Nostmt -> NoType
 
@@ -164,5 +170,5 @@ let rec check_program (p:program) =
 	} in
 
     let _ = (check_conn_block p.conn) in
-    	let _ = (List.map (fun x -> sys_check_fdef x (global_env)) p.funcs) in
+    	let _ = (List.map (fun x -> check_fdef x (global_env)) p.funcs) in
     		true
