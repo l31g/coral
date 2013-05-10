@@ -44,6 +44,7 @@ type expr =
     | Print of expr list
     | Assign of string * asignmt * expr
     | TableCall of string * string * expr list
+    | TableAttr of string * string
     | Parens of expr
     | Noexpr
 

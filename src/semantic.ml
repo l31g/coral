@@ -102,7 +102,20 @@ let rec check_expr exp env =
     | IntLiteral(l) -> IntType
     | StringLiteral(l) -> StringType
     | FPLiteral(l) -> FloatType
-	(* TODO ID need variable symbol table *)
+	| Id(s) -> if(variable_exists s env) then
+					let v1 = (find_variable s env) in
+						(match v1 with
+							| VarDecl(t, v, e) ->   if(not (t=FloatType)) then
+    							(let t2 = (check_expr e env) in
+                                	(check_type t t2))
+    						else
+    							if(IntType = (check_expr e env)) then
+    								t
+    							else 
+    								(check_type t (check_expr e env))
+						)
+				else
+					raise(Error("Assigning variable to incorrect type bro"))
 	| Call(f, e) -> if (function_exists f env) then
     					let f1 = (find_function f env) in
     					let fmls = f1.formals in
