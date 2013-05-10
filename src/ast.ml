@@ -34,6 +34,7 @@ type table_label =
 type expr =
     IntLiteral of int
     | StringLiteral of string
+    | FPLiteral of float
 	| Id of string
 	| Call of string * expr list
     | Binop of expr * op * expr

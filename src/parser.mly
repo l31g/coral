@@ -7,8 +7,10 @@
 %token IF ELSE
 %token STRING
 %token NEWLINE
+%token FLOAT
 %token <int> INTLITERAL
 %token <string> STRINGLITERAL
+%token <float> FPLITERAL
 %token <string> ID
 %token EOF
 
@@ -72,6 +74,7 @@ stmt:
 expr:
 	  INTLITERAL					{ IntLiteral($1) }
 	| STRINGLITERAL					{ StringLiteral($1) }
+	| FPLITERAL						{ FPLiteral($1) }
 	| ID ASSIGN expr 				{ Assign($1, Eql, $3) }
 	| ID PLEQ expr 					{ Assign($1, Ple, $3) }
 	| ID MIEQ expr 					{ Assign($1, Mie, $3) }
