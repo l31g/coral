@@ -70,7 +70,13 @@ let rec check_expr exp =
     | FPLiteral(l) -> FloatType
     | Binop(a, op, b) -> (let t1 = (check_expr a) in
                          (let t2 = (check_expr b) in
-                            (check_type t1 t2)
+                            if(t1=FloatType && t2=IntType) then
+                            	t1
+                            else 
+                            	if(t1=IntType && t2=FloatType) then
+                            		t2
+                            	else
+                            		(check_type t1 t2)
                          ))
 
     | Assign(l, asgn, r) -> (check_expr r)

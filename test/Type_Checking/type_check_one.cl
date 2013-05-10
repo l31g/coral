@@ -11,6 +11,6 @@ type="server";
 #enddb
 void main() {
 
-  string a = "hi";
+  int a = 3 + 3.0;
 
 }
