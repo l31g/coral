@@ -83,6 +83,7 @@ let rec str_of_expr exp =
     match exp with
     | IntLiteral(l) -> string_of_int(l)
     | StringLiteral(l) -> l
+    | FPLiteral(l) -> string_of_float(l)
     | Id(s) -> s
     | Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"  
@@ -91,6 +92,7 @@ let rec str_of_expr exp =
     | Unop(a, uop) -> a ^ "=" ^ a ^ (str_of_uop uop)
     | Notop(e) -> "not " ^ (str_of_expr e)
     | Assign(l, asgn, r) -> l ^ (str_of_asgn asgn) ^ (str_of_expr r)
+    | Parens(p) -> "(" ^ (str_of_expr p) ^ ")"
     | Noexpr -> ""
 
 let rec str_of_var_decl v lvl =

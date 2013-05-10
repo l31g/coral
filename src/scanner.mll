@@ -70,12 +70,14 @@ rule token = parse
 	|	"#enddbconn"			{ ENDDBCONN }
 	|	"primary_key"			{ PRIMARYKEY }
 	| 	"foreign_key"			{ FOREIGNKEY }
-	|	"String"				{ STRING }
+	|	"string"				{ STRING }
+	|	"float"					{ FLOAT }
 
 
 	|	eof						{ EOF }
 	| digit+ as lxm { INTLITERAL(int_of_string lxm) } (* integers *)
 	| "\""(letter*)"\"" as lxm { STRINGLITERAL(lxm) }
+	| ['0'-'9']+'.'['0'-'9']* as lxm { FPLITERAL(float_of_string lxm) }
 	| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '_' '0'-'9']* as lxm { ID(lxm) }
 
 and comment = parse
