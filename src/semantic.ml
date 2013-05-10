@@ -32,7 +32,7 @@ let rec find_function fname env =
 	with Not_found ->
 		match env.parent with
 			Some(parent) -> find_function fname parent
-			| _ -> raise (Failure ("Declare your function bro"))
+			| _ -> raise (Failure ("Function " ^ fname ^ " not declared bro"))
 
 (* check variables
 let rec find_variable vname env =
@@ -98,6 +98,7 @@ let rec check_expr exp env =
     					let _ = (List.map2 (fun x y -> check_actual x y env) fmls e) in
     						IntType
     				else
+    					let err = (find_function f env) in
     						IntType
 	(* TODO TablCall() *)
     | Print(e) -> NoType
@@ -118,9 +119,9 @@ let rec check_expr exp env =
     | Parens(p) -> (check_expr p env)
     | Noexpr -> NoType
 
-(*and check_actual formal actual env =
+and check_actual formal actual env =
 	match formal with
-	| Formal(t, n) -> (check_type t (check_expr actual env))*)
+	| Formal(t, n) -> (check_type t (check_expr actual env))
 
 let rec check_var_decl v env =
     match v with
@@ -169,7 +170,7 @@ let rec sys_check_fdef fdef env =
 	else 
 		let _ = (check_fdef fdef env) in
 		(* no error thrown, add function to symbol table *)
-		(env.functions <- fdef::env.functions)
+		env.functions <- fdef::env.functions
 
 let rec check_program (p:program) =
 
@@ -182,5 +183,5 @@ let rec check_program (p:program) =
 	} in
 
     let _ = (check_conn_block p.conn) in
-    	let _ = (List.map (fun x -> check_fdef x (global_env)) p.funcs) in
+    	let _ = (List.map (fun x -> sys_check_fdef x (global_env)) p.funcs) in
     		true
