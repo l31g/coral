@@ -128,6 +128,7 @@ let rec str_of_stmt s lvl =
                         l ^ (str_of_stmt stmts (lvl+2)) ^
                         "\n" ^ (tab (lvl+2)) ^ (str_of_expr expr3))
     | ConnectCall -> "controller.Base.metadata.create_all(controller.engine)"
+    | CloseCall -> "controller.session.commit()"
     | Nostmt -> ""
 
 let rec str_of_table_label tl =

@@ -7,7 +7,7 @@
 %token IF ELSE
 %token STRING
 %token NEWLINE
-%token FLOAT ADD GET CONNECT LSQUARE RSQUARE
+%token FLOAT ADD GET CONNECT LSQUARE RSQUARE CLOSE
 %token <int> INTLITERAL
 %token <string> STRINGLITERAL
 %token <float> FPLITERAL
@@ -64,6 +64,7 @@ stmt_list:
 stmt:
 	expr SEMI							{ Expr ($1) }
 	| CONNECT SEMI                      { ConnectCall }
+    | CLOSE SEMI                        { CloseCall }
     | LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
 	| RETURN expr SEMI 					{ Return($2) }
 	| IF LPAREN expr RPAREN stmt %prec NOELSE		{ If($3, $5, Nostmt)}
