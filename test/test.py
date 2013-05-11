@@ -20,16 +20,17 @@ def runFiles(subdirs):
         for file in os.listdir(dir):
             if file.endswith('.clx'):
                 with open(file+'.out', 'w') as outfile:
-                    subprocess.call(["python", compileFile], stdout=outfile, stderr=outfile)
+                    subprocess.call(["python", file], stdout=outfile, stderr=outfile)
+                outfile.close()
                     
-def compare():
+def compare(subdirs):
     for dir in subdirs:    
         for file in os.listdir(dir):
             if file.endswith('.out'):
-                numTests++                            
+                numTests = numTests + 1                            
                 fileName = file.rsplit['.'][0]
-                if(True === filecmp.cmp(file, fileName+'.exp'))
-                    numCorrect++
+                if(True == filecmp.cmp(file, fileName+'.exp')):
+                    numCorrect = numCorrect + 1
                                 
 
 
@@ -42,7 +43,7 @@ compileTests(subdirs)
 runFiles(subdirs)
 compare(subdirs)
 
-print numCorrect + ' ' + numTests                    
+print str(numCorrect) + ' ' + str(numTests)                    
             
 
 
