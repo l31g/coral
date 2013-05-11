@@ -66,7 +66,7 @@ def connectDB():
     #remember to add the @
 
     if (dbtype == "sqlite"):
-        uri = "%s:///%s:%s%s:%s%s" % (dbtype, user, password, server, port, DBName)
+        uri = "%s:///:memory:" % (dbtype)
     else:
         uri = "%s://%s:%s@%s:%s/%s" % (dbtype, user, password, server, port, DBName)
     #print uri + "\n"
