@@ -68,7 +68,6 @@ let rec get_table_name table =
 	let t_label = table.tbname in
 		match t_label with
 		| TableLabel(l) -> l
-		| _ -> ""
 
 let rec table_exists tname env =
 	try

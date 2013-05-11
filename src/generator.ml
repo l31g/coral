@@ -11,6 +11,7 @@ let rec str_of_type t =
     | VoidType -> "Void"
     | TableType -> "Table"
     | FloatType -> "Float"
+    | FileType -> "File" (* should never come up in SQL query *)
     | NoType -> "" (* should never actually happen *)
 
 let rec str_of_asgn a =
@@ -91,6 +92,23 @@ let rec str_of_query_filter q =
     | Id(s) -> s
     | Binop(a, op, b) -> (str_of_query_filter a) ^ (str_of_op op) ^ ":" ^(str_of_query_filter b)
     | Assign(l, asgn, r) -> l ^ ":" ^ "=" ^ (str_of_query_filter r)
+    
+    | Call(s, expr) -> "" (* should not ever be called in this context *)
+    | Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
+    | Neg(expr) -> "-" ^ (str_of_query_filter expr)
+    | Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
+    | Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
+    | FPrint(s, expr) -> ""
+    | FRead(s) -> ""
+    | Open(s, p) -> ""
+    | Close(s) -> ""
+    | AddTableCall(s) -> ""
+    | GetTableCall(s, expr) -> ""
+    | TableCall(s, p, expr) -> ""
+    | TableAttr(s, p) -> ""
+    | Parens(expr) -> ""
+    | Array(s, expr) -> ""
+    | Noexpr -> ""
 
 let rec str_of_query_params q =
     match q with
@@ -99,6 +117,24 @@ let rec str_of_query_params q =
     | FPLiteral(l) -> string_of_float(l)
     | Id(s) -> s
     | Binop(a, op, b) -> (str_of_query_params a) ^ "=" ^ (str_of_query_params b)
+
+    | Assign(l, asgn, r) -> l ^ ":" ^ "=" ^ (str_of_query_filter r)
+    | Call(s, expr) -> "" (* should not ever be called in this context *)
+    | Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
+    | Neg(expr) -> "-" ^ (str_of_query_filter expr)
+    | Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
+    | Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
+    | FPrint(s, expr) -> ""
+    | FRead(s) -> ""
+    | Open(s, p) -> ""
+    | Close(s) -> ""
+    | AddTableCall(s) -> ""
+    | GetTableCall(s, expr) -> ""
+    | TableCall(s, p, expr) -> ""
+    | TableAttr(s, p) -> ""
+    | Parens(expr) -> ""
+    | Array(s, expr) -> ""
+    | Noexpr -> ""
 
 let rec str_of_expr exp =
     match exp with
@@ -214,10 +250,8 @@ let str_of_program program =
         (String.concat l (List.map (fun x-> str_of_var_decl x 0) program.globals)) ^ "\n")
     
         ^ (let l = "\n" in
-            (let g = "\n" in
                 (String.concat l 
                     (List.map (fun x-> str_of_fdef x program.globals 0) program.funcs)) 
                     ^ "\n\nif __name__ == '__main__':\n\tif (conn_block):\n\t\tconnectDB()\n\tmain()"
-                )
             )
 
