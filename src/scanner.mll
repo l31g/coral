@@ -79,6 +79,7 @@ rule token = parse
 	| 	"connectDB"				{ CONNECTDB }
 	|	"closeDB"				{ CLOSEDB }
 	|	"open"					{ OPEN }
+	|	"File"					{ FILE }
 
 	|	eof						{ EOF }
 	| digit+ as lxm { INTLITERAL(int_of_string lxm) } (* integers *)

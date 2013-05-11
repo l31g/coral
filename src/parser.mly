@@ -7,7 +7,7 @@
 %token IF ELSE
 %token STRING
 %token NEWLINE
-%token FLOAT ADD GET CONNECTDB LSQUARE RSQUARE CLOSEDB OPEN
+%token FLOAT ADD GET CONNECTDB LSQUARE RSQUARE CLOSEDB OPEN FILE
 %token <int> INTLITERAL
 %token <string> STRINGLITERAL
 %token <float> FPLITERAL
@@ -148,6 +148,7 @@ dtype:
     | STRING { StringType }
     | TABLE { TableType }
     | FLOAT { FloatType }
+    | FILE  { FileType }
 
 /* CORaL segment of grammar */
 
