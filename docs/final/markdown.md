@@ -125,27 +125,15 @@ Now let us create a simple database, with only one table, and add an entry to it
 		primary key(firstName)
 	}
 	#enddb
- 
+	```C
 	int main()
 	{
 		Person samplePerson = Person(firstName = "John", lastName = "Example", age = 25);
 		samplePerson.add();
 		return 0;
 	}
-This program, though short, has introduced many of the features of CORaL. We have created a new database, added a table, created an object using our new table's class, and added the object to the table. We will walk through this line by line below. CORaL provides the ability to connect to, create, and manage databases, along with many functions to assist with that process.
-
-The actual definition of databases in CORaL takes place outside of the other function definitions and between the two preprocessor statements `#cordb` and `#enddb`. Here, SQL-like code is used to describe different tables in the database. Most variants of SQL will be understood by the compiler. Looking at the `Person` table within the database definition, we can see that the table definition is identical to SQL, with the exception of the table creation statement. 
-
-After the creation of the `Person` table, that table can be referenced and accessed by all functions within a CORaL program. Creating a new `Person` object is done within the lines
-
-	Person samplePerson = Person(firstName = "John", lastName = "Example", age = 25);
-In CORaL, new database object are always defined using the `[name of object] [variable name] = [name of object]` syntax. The various object attributes are filled in between the parentheses following the name of the object, and are done in the key-value format. The order of the keys does not matter, and any values not specified will be filled in as `null`.
-
-To formally add the new object to the database table, CORaL simply invokes the function `[new object].add()`.
-
-### Custom Database Functions in CORaL ###
-
-
+	```
+	
 
 ## Language Reference Manual [man] ##
 
