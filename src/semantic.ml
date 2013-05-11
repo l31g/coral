@@ -127,7 +127,11 @@ let rec check_expr exp env =
                             	else
                             		(check_type t1 t2)
                          ))
-    (* TODO Unop need variable symbol table *)
+    | Unop(a, uop) -> let t = (variable_type (find_variable a env) env) in
+    					if (t = IntType || t = FloatType) then
+    						t
+    					else
+    						raise (Error ("improper operator used on variable " ^ a))
 	| Notop(e) -> (check_expr e env)
 	| Neg(e) -> (check_expr e env)
     | Assign(l, asgn, r) -> (let t1 = (variable_type (find_variable l env) env) in
@@ -167,20 +171,37 @@ let rec check_stmt s env =
     match s with
     | Block(stmts) -> let l = (List.map (fun x -> check_stmt x env) stmts) in NoType
     | Expr(expr) -> (check_expr expr env)
-
-    (*TODO Return need to check against function definition *)
-
+    | Return(expr) -> (check_expr expr env)
     | If(e, s, Nostmt) -> NoType
     | If(e, s1, s2) -> NoType
     | While(expr, stmts) -> NoType
     | For(expr1, expr2, expr3, stmts) -> NoType
     | Nostmt -> NoType
 
+let rec get_return fdef stmts env =
+	let r_type = fdef.return_type in
+	if r_type != VoidType then
+		try
+			List.find (fun s ->
+							match s with
+							| Return(expr) -> ((check_expr expr env) = r_type)
+							| _ -> false ) stmts
+		with Not_found ->
+			raise (Error ("function " ^ fdef.fname ^ " does not return type of correct value"))
+	else
+		try
+			List.find (fun s ->
+							match s with
+							| Return(expr) -> raise (Error ("function " ^ fdef.fname ^ " should not have return statement"))
+							| _ -> false) stmts
+		with Not_found -> Nostmt
+
 let rec check_fdef fdef env =
 	let _ = (List.map (fun x -> check_formal x env) fdef.formals) in 
 		let _ = (List.map (fun x -> sys_check_var_decl x env) fdef.locals) in
 			let _ = (List.map (fun x -> check_stmt x env) fdef.body) in
-				true
+				let _ = (get_return fdef fdef.body env) in
+					true
 
 let rec sys_check_fdef fdef env =
 	let f_name = fdef.fname in
