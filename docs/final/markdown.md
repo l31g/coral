@@ -32,7 +32,11 @@ The CORaL program to print “Hello, world” is shown below:
 Now that we’ve written it, it’s time to compile and run it. CORaL programs are typically saved in files with the extension “.cl” and compiled with the command
 
 	coralc hello.cl
-This will produce as output an executable file named "hello.clx." If everything has proceeded as expected so far, after inputting the command
+
+This will produce as output an executable file named 
+
+	hello.clx
+If everything has proceeded as expected so far, after inputting the command
 
 	./hello.clx  
 you will be greeted by the text
@@ -50,44 +54,44 @@ All of this should be (almost painfully) familiar to the veteran C programmer, s
 
 ### Functions, Variables, and Control Flow in CORaL ###
 
-The next program we present will show off many aspects of "bare bones" CORaL that will teach the programmer how to define and implement function of his or her own creation. Specifically, we will create a function that takes as input an array of numbers, and computes and prints out the square of each. For example, if the input was the array `{1,2,3,4,5}` then the output would read as follows  
+The next program we present will show off many aspects of "bare bones" CORaL that will teach the programmer how to define and implement function of his or her own creation. Specifically, we will create a function that takes as input two numbers, the base and exponent, and computes and prints out the result. For example, if the input was `(2,3)` then the output would read as follows  
 
-	The square value of 1 is 1
-	The square value of 2 is 4
-	The square value of 3 is 9
-	The square value of 4 is 16
-	The square value of 5 is 25
+	The result of 2 ^ 3 is 8
+
 An understanding of the source code for this program will enable the user to do almost anything with the offline version of CORaL. Here we introduce functions, variables, arrays, loops, string formatting, and commenting.
+
+
+	
+	void printExp(int b, int e)
+	{
+		int result = b**e;
+		printf("The result of " + base " ^ " + exp + 
+				" is " + result);
+	}
 
 	int main()
 	{
-		int[] numbers = {1, 2, 3, 4, 5};
-		// Call the square function with the array we defined
-		printSquare(numbers);
+		int base = 2;
+		int exp = 3;
+		// Call the exponentiation function
+		printExp(base, exp);
 		return 0;
 	}
- 
-	void printSquares(int[] someNums)
-	{
-		/* Here we use a for loop to iterate over the array */
-		for (int i = 0; i < someNums.length(); i++)
-		{
-			int squared = someNums[i]**2;
-			printf("The square value of %d is %d\n", i, squared);
-		}
-	}
+
+
 The general structure and implementation of this program should still be familiar to C and Java programmers, but there are some subtle differences. As in C, the lines that begin with either `//` or `/*` are comments, and ignored by the compiler. Comments beginning with `//` extend to the end of the current line; comments beginning with `/*` extend until the `*/` and can stretch over multiple lines.
 
-You will again observe that our first function is the `main()` function. This time, however, we have prefaced the declaration with `int`. This means that the return value of the function is going to be an `int`, which is a datatype in CORaL. It is customary (as it is in C) to return 0 at the end of a successfully run `main` function, and return a nonzero value in the event of an error.
+You will again observe that our first function is the `main()` function. This time, however, we have prefaced the declaration with `int`. This means that the return value of the function is going to be an `int`, which is a data type in CORaL. It is customary (as it is in C) to return 0 at the end of a successfully run `main` function, and return a nonzero value in the event of an error.
 
-Unlike our "Hello, world" program, the `main` function here includes a call to a separate, user-defined function called `printSquares`. This is where the differences from C begin to arise. CORaL has shed the bulky notion of header files, and does not require the user to provide prototypes for functions. Instead, the CORaL compiler finds functions not defined in the included libraries, and looks for them elsewhere in the code (assuming the programmer did the due diligence of implementing them). In our case, the definition of `printSquares` follows the statement in `main`  at which it is called, but the compiler can still find it at compile time. As with `printf`, the `printSquares` function is called by simply typing the name and providing arguments with parentheses.
+Unlike our "Hello, world" program, the `main` function here includes a call to a separate, user-defined function called `printExp`. This is where the differences from C begin to arise. CORaL has shed the bulky notion of header files, and does not require the user to provide prototypes for functions. Instead, the CORaL compiler finds functions not defined in the included libraries, and looks for them elsewhere in the code (assuming the programmer did the due diligence of implementing them). In our case, the definition of `printExp` precedes the statement in `main`  at which it is called, so that the compiler can still find it at compile time. As with `printf`, the `printExp` function is called by simply typing the name and providing arguments with parentheses.
 
-This program has also introduced us to our first variables. This program uses `int` values to hold the values of numbers and their squares, and then prints them using the `printf` function. The program also uses arrays, but we'll get to those in a moment. Other datatypes supported by CORaL include 'float', 'string', 'void', and 'Table'.
+This program has also introduced us to our first variables. This program uses `int` values to hold the values of numbers and their squares, and then prints them using the `printf` function. The program also uses arrays, but we'll get to those in a moment. Other datatypes supported by CORaL include `float`, `string`, `void`, and `Table`.
 
-**FIX STUFF ABOUT PRINTING**
+Control flow in CORaL is similar to that of most other high-level languages. CORaL accepts the following control flow
 
-Control flow in CORaL is similar to that of most other high-level languages. Asisde from the `for` statement demonstrated in the above program, CORaL also accepts
-
+	for(expr; condition; expr) {
+	}
+	
 	while (condition) {
 	// do something
 	}
@@ -98,8 +102,6 @@ Control flow in CORaL is similar to that of most other high-level languages. Asi
 	// do something else
 	}
 We expect that these constructs should be familiar enough to our readers, so we will not elaborate further.
-
-**FIX STUFF ABOUT ARRAYS**
 
 ### Connecting to and Creating a Database in CORaL ###
 
@@ -115,23 +117,38 @@ The first thing to do is create a connection to a server
 	DBName = "People"
 	type = "mysql"
 	#enddbconn
+
+For our purposes instead of having someone host a server instance we will user the following connection block that works with in-memory SQLite3.
+
+	#cordbconn
+	server=""
+	user=""
+	password=""
+	port=""
+	DBName=""
+	type="sqlite"
+	#enddbconn
+
 Now let us create a simple database, with only one table, and add an entry to it. CORaL will have the ability to detect if the current database is already created, and create it if it does not already exists.
 
 	#cordb
 	Table Person {
-		firstName : string,
-		lastName : string,
-		age : int,
-		primary key(firstName)
-	}
+		firstName : string;
+		lastName : string;
+		age : int;
+		primary_key(firstName);
+	};
 	#enddb
  
 	int main()
 	{
+		connectDB;
 		Person samplePerson = Person(firstName = "John", lastName = "Example", age = 25);
 		samplePerson.add();
+		closeDB;
 		return 0;
 	}
+	
 This program, though short, has introduced many of the features of CORaL. We have created a new database, added a table, created an object using our new table's class, and added the object to the table. We will walk through this line by line below. CORaL provides the ability to connect to, create, and manage databases, along with many functions to assist with that process.
 
 The actual definition of databases in CORaL takes place outside of the other function definitions and between the two preprocessor statements `#cordb` and `#enddb`. Here, SQL-like code is used to describe different tables in the database. Most variants of SQL will be understood by the compiler. Looking at the `Person` table within the database definition, we can see that the table definition is identical to SQL, with the exception of the table creation statement. 
