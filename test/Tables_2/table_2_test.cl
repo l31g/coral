@@ -16,7 +16,7 @@ Table User {
 
 void main() {
 
-    connect;
+    connectDB;
     ed_user = User(name="ed");
     printf("a", "b", "c", "d");
     ed_user.add();
@@ -25,5 +25,7 @@ void main() {
     for(i = 0; i < 1; i++) {
         a[i];
     }
+
+    closeDB;
 
 }

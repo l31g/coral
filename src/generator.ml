@@ -89,6 +89,7 @@ let rec str_of_expr exp =
     | Id(s) -> s
     | Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | TableAttr(t, a) -> t ^ "." ^ a
+    | Open(e) -> "open(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | AddTableCall(f1) -> "controller.session.add(" ^ f1 ^ ")"
     | GetTableCall(f1, e) -> "global_get(" ^ f1 ^ "," ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"

@@ -76,7 +76,9 @@ rule token = parse
 	|	"float"					{ FLOAT }
 	|	"add"					{ ADD }
 	|	"get"					{ GET }
-	| 	"connect"				{ CONNECT }
+	| 	"connectDB"				{ CONNECTDB }
+	|	"closeDB"				{ CLOSEDB }
+	|	"open"					{ OPEN }
 
 	|	eof						{ EOF }
 	| digit+ as lxm { INTLITERAL(int_of_string lxm) } (* integers *)
