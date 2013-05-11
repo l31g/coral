@@ -6,6 +6,7 @@ type symbol_table = {
 	mutable variables : var_decl list;
 	mutable functions : func_def list;
 	mutable table_list : table list;
+	mutable table_attrs : (dtype * string) list;
 }
 
 type trans_environment = {
@@ -91,6 +92,27 @@ let rec find_variable vname scope =
 let rec variable_type vdec =
 	match vdec with
 	| VarDecl(t, v, e) -> t
+
+(* find attributes in symbol table *)
+let rec attr_exists aname scope =
+	try
+		let _ = List.find (fun a_decl ->
+					match a_decl with
+					| (t, n) -> n = aname) scope.table_attrs in true
+	with Not_found ->
+		match scope.parent with
+		Some(parent) -> attr_exists aname parent
+		| _ -> false
+
+let rec find_attr aname scope =
+	try
+		List.find (fun a_decl ->
+				match a_decl with
+				| (t, n) -> n = aname) scope.table_attrs
+	with Not_found ->
+		match scope.parent with
+		Some(parent) -> find_attr aname parent
+		| _ -> raise (Error ("attribute " ^ aname ^ " not declared bro"))
 
 (* find tables in symbol table *)
 let rec get_table_name table =
@@ -299,12 +321,12 @@ let rec sys_check_fdef fdef env =
 
 	if (function_exists f_name env.scope) then
 		raise (Error ("you already declared function " ^ f_name ^ " bro"))
-	(* check rest of function def *)
 	else
 		let scope' = { parent = Some(env.scope);
 					   variables = [];
 					   functions = [];
-					   table_list = [] } in
+					   table_list = [];
+					   table_attrs = [] } in
 
 		let env' = { env with scope = scope';
 					 ret_type = fdef.return_type } in
@@ -314,28 +336,55 @@ let rec sys_check_fdef fdef env =
 		let _ = env.scope.functions <- fdef::env.scope.functions in
 			true
 
-(* let rec check_attr attr env = 
-	let a_name = (fun x -> match attr with
+let rec attr_name a =
+	match a with
+	| AttrLabel(s) -> s
 
+let rec check_attr attr env = 
+	match attr with
+	| Attr(l, t) -> let name = (attr_name l) in
+					if (attr_exists name env.scope) then
+						raise (Error ("redeclaration of attribute " ^ name))
+					else
+						let _ = env.scope.table_attrs <- (t, name)::env.scope.table_attrs in
+							true
 
+let rec check_key k_dec env =
+	match k_dec with
+	| PrimaryKey(label) -> 	let name = (attr_name label) in
+							if (attr_exists name env.scope) then
+								true
+							else
+								raise (Error ("primary key declared for non-existent attribute " ^ name))
 
 let rec check_table_body tbody env =
 	match tbody with
 	| TableBody(ag, kd, fd) -> 	let _ = (List.map (fun x -> check_attr x env) ag) in
 									let _ = (List.map (fun x -> check_key x env) kd) in
-										let _ = (List.map (fun x -> check_fdef x env) fd) in
-											true
+										true
 
 let rec check_table table env =
 	let t_name = (get_table_name table) in
 
-	if (table_exists t_name env) then
+	if (table_exists t_name env.scope) then
 		raise (Error ("you already declared table " ^ t_name ^ " bro"))
 	else
-		let _ = (check_table_body table.tbbody env) in
-		(* add table to symbol table *)
-			env.table_list <- table::env.table_list *)
+		let scope' = { parent = Some(env.scope);
+					   variables = [];
+					   functions = [];
+					   table_list = [];
+					   table_attrs = [] } in
+		let env' = { env with scope = scope' } in
 
+		let _ = (check_table_body table.tbbody env') in
+		(* no error so add table to symbol table *)
+		let _ = env.scope.table_list <- table::env.scope.table_list in
+			true
+
+let rec check_table_block tblock env =
+	match tblock with
+	| TableBlock(tables) -> let _ = (List.map (fun x -> check_table x env) tables) in
+								true
 
 let rec check_program (p:program) =
 
@@ -343,7 +392,8 @@ let rec check_program (p:program) =
 		parent = None;
 		variables = [];
 		functions = [];
-		table_list = []
+		table_list = [];
+		table_attrs = []
 	} in
 
 	let global_env = {
@@ -353,5 +403,6 @@ let rec check_program (p:program) =
 	} in
 
     let _ = (check_conn_block p.conn) in
-    	let _ = (List.map (fun x -> sys_check_fdef x (global_env)) p.funcs) in
-    		true
+    	let _ = check_table_block p.tables global_env in
+    		let _ = (List.map (fun x -> sys_check_fdef x global_env) p.funcs) in
+    			true
