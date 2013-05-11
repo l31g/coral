@@ -72,7 +72,7 @@ let rec str_of_attr a =
     | Attr(a, t) -> (str_of_attr_label a) ^ " = Column(" ^ (str_of_type t) ^ ")"
 
 let rec str_of_attr_group ag lvl =
-    (let l = "\n" ^ (tab (lvl+1)) in
+    (let l = "\n" ^ (tab (lvl)) in
         (String.concat l (List.map str_of_attr ag)))
 
 let rec str_of_key k =
@@ -153,13 +153,13 @@ let str_of_fdef fdef lvl =
 
 let rec str_of_table_body tbb lvl =
     match tbb with
-    | TableBody(ag, kd, fd) -> (tab (lvl)) ^ (str_of_attr_group ag (lvl+1)) ^ "\n" ^ (tab lvl) ^ "__table_args__= (" ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n" ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x (lvl)) fd))
+    | TableBody(ag, kd, fd) -> (str_of_attr_group ag (lvl)) ^ "\n" ^ (tab lvl) ^ "__table_args__= (" ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n" ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x (lvl)) fd))
 
 let rec str_of_table tb =
     "class " ^ (str_of_table_label tb.tbname) ^ "(Base):\n" ^
             (* cleanup these 1's later *)
     (tab 1) ^
-                "__tablename__ = '" ^ "" ^ (str_of_table_label tb.tbname)^ "'" ^ "\n" ^
+                "__tablename__ = '" ^ "" ^ (str_of_table_label tb.tbname)^ "'" ^ "\n" ^ (tab 1) ^
                 (str_of_table_body tb.tbbody 1 )
 
 let str_of_program program =

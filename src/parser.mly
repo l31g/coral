@@ -111,7 +111,7 @@ expr:
     | ID DOT ADD LPAREN RPAREN { AddTableCall($1) }
     | ID DOT GET LPAREN actuals_opt RPAREN  { GetTableCall($1, $5) }
 	| ID DOT ID LPAREN actuals_opt RPAREN { TableCall($1, $3, $5) }
-	| ID DOT ID SEMI				{ TableAttr($1, $3) }
+	| ID DOT ID				{ TableAttr($1, $3) }
 	| LPAREN expr RPAREN			{ Parens($2) }
 
 expr_opt:
