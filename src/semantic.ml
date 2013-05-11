@@ -21,9 +21,10 @@ let rec string_of_coral_type t =
     | IntType -> "int"
     | StringType -> "string"
     | TableType -> "Table"
-    | NoType -> ""
     | FloatType -> "float"
     | FileType -> "File"
+    | UserType -> "user"
+    | NoType -> ""
 
 let rec string_of_coral_op o =
 	match o with
@@ -248,14 +249,19 @@ let rec sys_check_var_decl vdec env =
 	| VarDecl(t, v, e) -> if (variable_exists v env.scope) then
 							raise (Error ("variable " ^ v ^ " already declared"))
 						  else
-						  	let _ = env.scope.variables <- vdec::env.scope.variables in
+						  	let _ = (check_var_decl vdec env) in
 						  	(* no error so add to symbol table *)
-						  	(check_var_decl vdec env)
+						  	let _ = env.scope.variables <- vdec::env.scope.variables in
+						  		true
 
 let rec check_formal f env =
     match f with
-    | Formal(t, n) ->	IntType
-    (* Need the symbol table for this *)
+    | Formal(t, n) ->	if (variable_exists n env.scope) then
+    						raise (Error ("formal parameter with name " ^ n ^ " already declared"))
+						else
+							(* add formal to symbol table by making a new VarDecl out of it *)
+							let _ = env.scope.variables <- VarDecl(t, n, Noexpr)::env.scope.variables in
+								true
 
 let rec is_assign expr =
 	match expr with
@@ -356,6 +362,7 @@ let rec check_key k_dec env =
 								true
 							else
 								raise (Error ("primary key declared for non-existent attribute " ^ name))
+	| _ -> false
 
 let rec check_table_body tbody env =
 	match tbody with
@@ -385,6 +392,7 @@ let rec check_table_block tblock env =
 	match tblock with
 	| TableBlock(tables) -> let _ = (List.map (fun x -> check_table x env) tables) in
 								true
+	| _ -> false
 
 let rec check_program (p:program) =
 
