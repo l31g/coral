@@ -102,8 +102,9 @@ let rec str_of_expr exp =
     | Array(id, e) -> id ^ "[" ^ (str_of_expr e) ^ "]"
     | Noexpr -> ""
 
-let rec str_of_var_decl v lvl =
-    match v with
+let rec str_of_var_decl vdec lvl =
+    match vdec with
+    | VarDecl(t, v, Noexpr) -> (tab lvl) ^ v ^ "= None"
     | VarDecl(t, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
 
 let rec str_of_formal f =

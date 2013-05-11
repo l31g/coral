@@ -139,6 +139,7 @@ var_decl_list:
 
 var_decl:
 	dtype ID ASSIGN expr SEMI		{ VarDecl($1, $2, $4) }
+	| dtype ID SEMI					{ VarDecl($1, $2, Noexpr) }
 
 dtype:
     VOID   { VoidType }
