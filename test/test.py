@@ -43,7 +43,9 @@ compileTests(subdirs)
 runFiles(subdirs)
 compare(subdirs)
 
-print str(numCorrect) + ' ' + str(numTests)                    
+print 'Correct :' +  str(numCorrect) + ' Total:' + str(numTests)
+print 'Failed :' +  str(numCorrect- numTests)                    
+
             
 
 
