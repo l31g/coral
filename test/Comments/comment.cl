@@ -4,7 +4,7 @@ user="server";
 password="server";
 port="server";
 DBName="server";
-type="server";
+type="sqlite";
 #enddbconn
 
 #cordb
@@ -12,7 +12,7 @@ type="server";
 
 void main() {
 
-	i = 0;
+	int i = 0;
 	/* this is a comment */
 	printf(i);
 

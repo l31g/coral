@@ -62,6 +62,7 @@ let rec str_of_conn_block cb =
         "\n" ^ (str_of_conn_attr a2) ^ "\n" ^ (str_of_conn_attr a3)
         ^ "\n" ^ (str_of_conn_attr a4) ^ "\n" ^ (str_of_conn_attr a5)
         ^ "\n" ^ (str_of_conn_attr a6) ^ "\n"
+    | NoConnBlock -> ""
 
 let rec str_of_attr_label al =
     match al with
@@ -141,19 +142,32 @@ let rec str_of_table_label tl =
     | TableLabel(l) -> "" ^ l
     | TableLabelRel(l,r) -> "" ^ l ^ " : " ^ r
 
-let str_of_fdef fdef lvl =
+let str_of_fdef fdef globals lvl =
     (tab lvl) ^ "def " ^ fdef.fname ^ "(" ^
             (String.concat "," (List.map str_of_formal fdef.formals)) ^ "):\n"
 
     ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
+                    (String.concat l 
+                        (List.map 
+                            (fun x-> "global " ^ (str_of_var_decl x (lvl))) 
+                        globals)))
+                    ^ "\n"
+
+    ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
                             (String.concat l (List.map (fun x-> str_of_var_decl x (lvl)) fdef.locals)))
                     ^ "\n"
+
     ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
-                            (String.concat l (List.map (fun x-> str_of_stmt x (lvl)) fdef.body)))
+                            (let ll = (String.concat l (List.map (fun x-> str_of_stmt x (lvl)) fdef.body)) in
+                                match ll with
+                                | "" -> "return"
+                                | _ -> ll))
 
 let rec str_of_table_body tbb lvl =
     match tbb with
-    | TableBody(ag, kd, fd) -> (str_of_attr_group ag (lvl)) ^ "\n" ^ (tab lvl) ^ "__table_args__= (" ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n" ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x (lvl)) fd))
+    | TableBody(ag, kd, fd) -> (str_of_attr_group ag (lvl)) ^ "\n" ^ (tab lvl) ^ "__table_args__= (" 
+            ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n" 
+            ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x [] (lvl)) fd))
 
 let rec str_of_table tb =
     "class " ^ (str_of_table_label tb.tbname) ^ "(Base):\n" ^
@@ -162,13 +176,31 @@ let rec str_of_table tb =
                 "__tablename__ = '" ^ "" ^ (str_of_table_label tb.tbname)^ "'" ^ "\n" ^ (tab 1) ^
                 (str_of_table_body tb.tbbody 1 )
 
+let rec str_of_table_block tb =
+    match tb with
+    | TableBlock(tables) -> (String.concat "\n" (List.map str_of_table tables))
+    | NoTableBlock -> ""
+
 let str_of_program program =
         "#!/usr/bin/env python\n" ^
         "from __future__ import print_function\n" ^
         "import sys\nsys.path.append(\"../../backend\")\n" ^
         "import controller\nfrom controller import *\n\n" ^
-        (str_of_conn_block program.conn) ^ "\n\n" ^
-        (String.concat "\n" (List.map str_of_table program.tables)) ^ "\n\n" ^
-        (let l = "\n" in
-        (String.concat l (List.map (fun x-> str_of_fdef x 0) program.funcs)) ^ "\n\nif __name__ == '__main__':\n\tconnectDB()\n\tmain()")
+        (let l = (str_of_conn_block program.conn) in
+        match l with
+        | "" -> "conn_block = False\n\n"
+        | _ -> "conn_block = True\n\n")
+        ^ "\n\n" ^
+         (str_of_table_block program.tables) ^ "\n\n" 
+
+         ^ (let l = "\n" in
+        (String.concat l (List.map (fun x-> str_of_var_decl x 0) program.globals)) ^ "\n")
+    
+        ^ (let l = "\n" in
+            (let g = "\n" in
+                (String.concat l 
+                    (List.map (fun x-> str_of_fdef x program.globals 0) program.funcs)) 
+                    ^ "\n\nif __name__ == '__main__':\n\tif (conn_block):\n\t\tconnectDB()\n\tmain()"
+                )
+            )
 

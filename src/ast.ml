@@ -15,6 +15,7 @@ type conn_attribute =
 
 type conn_block =
     ConnBlock of conn_attribute * conn_attribute * conn_attribute * conn_attribute * conn_attribute * conn_attribute
+    | NoConnBlock
 
 type attr_label =
     AttrLabel of string
@@ -82,6 +83,7 @@ type func_def = {
 }
 
 
+
 type table_body =
     TableBody of attribute list * key_decls list * func_def list
 
@@ -90,9 +92,14 @@ type table = {
     tbbody : table_body;
 }
 
+type table_block =
+    TableBlock of table list
+    | NoTableBlock
+
 type program = {
             conn : conn_block;
-            tables : table list;
+            tables : table_block;
+            globals : var_decl list;
             funcs  : func_def list;
 }
 

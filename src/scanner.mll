@@ -58,8 +58,7 @@ rule token = parse
 	|	"printf"				{ PRINT }
 	|	"fprintf"				{ FPRINT }
 	|	"void"					{ VOID }
-	|	"break"					{ BREAK }
-	|	"continue"				{ CONTINUE }
+	| 	"global"				{ GLOBAL }
 
 	|	"Table"					{ TABLE }
 	|	"#cordb"				{ CORDB }

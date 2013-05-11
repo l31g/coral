@@ -4,11 +4,20 @@ user="server";
 password="server";
 port="server";
 DBName="server";
-type="server";
+type="sqlite";
 #enddbconn
+
+
 
 #cordb
 #enddb
+
+int test_func(){
+
+	printf("testing function");
+  return 0;
+
+}
 
 void main() {
 
@@ -16,10 +25,6 @@ void main() {
 	test_func();
 }
 
-int test_func(){
 
-	printf("testing function");
-
-}
 
 

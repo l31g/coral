@@ -4,7 +4,7 @@ user="server";
 password="server";
 port="server";
 DBName="server";
-type="server";
+type="sqlite";
 #enddbconn
 
 #cordb
@@ -12,7 +12,7 @@ type="server";
 
 void main() {
 
-	a = 1;
+	int a = 1;
 
 	if (a == 1) {
 		a = 2;
