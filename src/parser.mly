@@ -6,7 +6,7 @@
 %token EQ WHILE INT FOR RETURN PRINT VOID BREAK CONTINUE
 %token IF ELSE
 %token STRING GLOBAL
-%token NEWLINE FPRINT FREAD
+%token NEWLINE FPRINT FREAD USERTYPE
 %token FLOAT ADD GET CONNECTDB LSQUARE RSQUARE CLOSEDB OPEN CLOSE FILE
 %token <int> INTLITERAL
 %token <string> STRINGLITERAL
@@ -152,6 +152,8 @@ var_decl_list:
 var_decl:
 	| dtype ID ASSIGN expr SEMI		{ VarDecl($1, $2, $4) }
 	| dtype ID SEMI					{ VarDecl($1, $2, Noexpr) }
+    | dtype ID ID ASSIGN expr SEMI  { UDecl($1, $2, $3, $5) }
+    | dtype ID ID SEMI              { UDecl($1, $2, $3, Noexpr) }
 
 
 dtype:
@@ -161,6 +163,7 @@ dtype:
     | TABLE { TableType }
     | FLOAT { FloatType }
     | FILE  { FileType }
+    | USERTYPE { UserType }
 
 /* CORaL segment of grammar */
 

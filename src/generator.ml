@@ -90,9 +90,9 @@ let rec str_of_query_filter q =
     | IntLiteral(l) -> string_of_int(l)
     | FPLiteral(l) -> string_of_float(l)
     | Id(s) -> s
-    | Binop(a, op, b) -> (str_of_query_filter a) ^ (str_of_op op) ^ ":" ^(str_of_query_filter b)
-    | Assign(l, asgn, r) -> l ^ ":" ^ "=" ^ (str_of_query_filter r)
-    
+    | Binop(a, op, b) -> (str_of_query_filter a) ^ (str_of_op op) ^ ":" ^ (str_of_query_filter a)
+    | Assign(l, asgn, r) -> l ^ "=" ^ ":" ^ l
+
     | Call(s, expr) -> "" (* should not ever be called in this context *)
     | Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
     | Neg(expr) -> "-" ^ (str_of_query_filter expr)
@@ -118,10 +118,10 @@ let rec str_of_query_params q =
     | Id(s) -> s
     | Binop(a, op, b) -> (str_of_query_params a) ^ "=" ^ (str_of_query_params b)
 
-    | Assign(l, asgn, r) -> l ^ ":" ^ "=" ^ (str_of_query_filter r)
+    | Assign(l, asgn, r) -> l ^ "=" ^ (str_of_query_params r)
     | Call(s, expr) -> "" (* should not ever be called in this context *)
     | Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
-    | Neg(expr) -> "-" ^ (str_of_query_filter expr)
+    | Neg(expr) -> "-" ^ (str_of_query_params expr)
     | Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
     | Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
     | FPrint(s, expr) -> ""
@@ -165,6 +165,8 @@ let rec str_of_var_decl vdec lvl =
     match vdec with
     | VarDecl(t, v, Noexpr) -> (tab lvl) ^ v ^ "= None"
     | VarDecl(t, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
+    | UDecl(ut, tn, v, Noexpr) -> (tab lvl) ^ v ^ "= None"
+    | UDecl(ut, tn, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
 
 let rec str_of_formal f =
     match f with
@@ -200,9 +202,9 @@ let str_of_fdef fdef globals lvl =
             (String.concat "," (List.map str_of_formal fdef.formals)) ^ "):\n"
 
     ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
-                    (String.concat l 
-                        (List.map 
-                            (fun x-> "global " ^ (str_of_var_decl x (lvl))) 
+                    (String.concat l
+                        (List.map
+                            (fun x-> "global " ^ (str_of_var_decl x (lvl)))
                         globals)))
                     ^ "\n"
 
@@ -218,8 +220,8 @@ let str_of_fdef fdef globals lvl =
 
 let rec str_of_table_body tbb lvl =
     match tbb with
-    | TableBody(ag, kd, fd) -> (str_of_attr_group ag (lvl)) ^ "\n" ^ (tab lvl) ^ "__table_args__= (" 
-            ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n" 
+    | TableBody(ag, kd, fd) -> (str_of_attr_group ag (lvl)) ^ "\n" ^ (tab lvl) ^ "__table_args__= ("
+            ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n"
             ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x [] (lvl)) fd))
 
 let rec str_of_table tb =
@@ -244,14 +246,14 @@ let str_of_program program =
         | "" -> "conn_block = False\n\n"
         | _ -> l ^ "conn_block = True\n\n" )
         ^ "\n\n" ^
-         (str_of_table_block program.tables) ^ "\n\n" 
+         (str_of_table_block program.tables) ^ "\n\n"
 
          ^ (let l = "\n" in
         (String.concat l (List.map (fun x-> str_of_var_decl x 0) program.globals)) ^ "\n")
-    
+
         ^ (let l = "\n" in
-                (String.concat l 
-                    (List.map (fun x-> str_of_fdef x program.globals 0) program.funcs)) 
+                (String.concat l
+                    (List.map (fun x-> str_of_fdef x program.globals 0) program.funcs))
                     ^ "\n\nif __name__ == '__main__':\n\tif (conn_block):\n\t\tconnectDB()\n\tmain()"
             )
 
