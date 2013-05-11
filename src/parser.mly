@@ -7,7 +7,7 @@
 %token IF ELSE
 %token STRING
 %token NEWLINE
-%token FLOAT
+%token FLOAT ADD GET CONNECT LSQUARE RSQUARE
 %token <int> INTLITERAL
 %token <string> STRINGLITERAL
 %token <float> FPLITERAL
@@ -26,7 +26,7 @@
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MOD EXP
-%left ASSIGN PLEQ MIEQ MUEQ DVEQ 
+%left ASSIGN PLEQ MIEQ MUEQ DVEQ
 %left DECR INCR
 %left AND OR
 
@@ -63,7 +63,8 @@ stmt_list:
 
 stmt:
 	expr SEMI							{ Expr ($1) }
-	| LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
+	| CONNECT SEMI                      { ConnectCall }
+    | LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
 	| RETURN expr SEMI 					{ Return($2) }
 	| IF LPAREN expr RPAREN stmt %prec NOELSE		{ If($3, $5, Nostmt)}
 	| IF LPAREN expr RPAREN stmt ELSE stmt 			{ If($3, $5, $7) }
@@ -101,6 +102,9 @@ expr:
 	| MINUS expr 						{ Neg($2)}
 	| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }
 	| ID LPAREN actuals_opt RPAREN	{ Call($1, $3) }
+    | ID LSQUARE expr RSQUARE     { Array($1, $3) }
+    | ID DOT ADD LPAREN RPAREN { AddTableCall($1) }
+    | ID DOT GET LPAREN actuals_opt RPAREN  { GetTableCall($1, $5) }
 	| ID DOT ID LPAREN actuals_opt RPAREN { TableCall($1, $3, $5) }
 	| ID DOT ID SEMI				{ TableAttr($1, $3) }
 	| LPAREN expr RPAREN			{ Parens($2) }

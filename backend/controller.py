@@ -1,6 +1,10 @@
-import cor_global
-from cor_global import session_maker, session, engine
+import sqlalchemy
+import types, new
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+from sqlalchemy import Column, Integer, ForeignKey, String
+from sqlalchemy.schema import PrimaryKeyConstraint
 
 server = None
 port = None
@@ -9,6 +13,23 @@ password = None
 dbtype = None
 DBName = None
 
+Base = declarative_base()
+session_maker = sessionmaker()
+engine = None
+session = None
+
+
+def funcToMethod(func, clas, method_name=None):
+   setattr(clas, method_name or func.__name__, func)
+
+def global_get(table_name, **kwargs):
+
+    results = list()
+    global session
+    for instance in session.query(table_name).filter_by(**kwargs):
+        results.append(instance)
+
+    return results
 
 def sizeof(table_name):
     size = session.query(table_name).count()
@@ -39,10 +60,13 @@ def setDBName(db):
     DBName = db
 
 def connectDB():
+    global engine, session, session_maker
     #remember to add the @
     uri = "%s:///%s:%s%s:%s%s" % (dbtype, user, password, server, port, DBName)
     #print uri + "\n"
-    engine = create_engine(uri, echo=True)
+    engine = create_engine(uri, echo=False)
+
+    engine.execute("select 1").scalar()
 
     session_maker.configure(bind=engine)
     session = session_maker()

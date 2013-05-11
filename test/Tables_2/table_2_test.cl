@@ -9,15 +9,21 @@ type="sqlite";
 
 #cordb
 Table User {
-    name : String;
+    name : string;
     primary_key(name);
  };
 #enddb
 
 void main() {
 
-    connectDB();
+    connect;
     ed_user = User(name="ed");
-    printf(ed_user);
     printf("a", "b", "c", "d");
+    ed_user.add();
+    a = User.get();
+
+    for(i = 0; i < 1; i++) {
+        a[i];
+    }
+
 }

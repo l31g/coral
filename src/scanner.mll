@@ -22,6 +22,8 @@ rule token = parse
 	|	';'						{ SEMI }
 	|	':'						{ COLON }
 	|	'='						{ ASSIGN }
+	|	'['						{ LSQUARE }
+	|	']'						{ RSQUARE }
 	|	'{'						{ LBRACKET }
 	|	'}'						{ RBRACKET }
 	|	'^'						{ CARAT }
@@ -44,7 +46,7 @@ rule token = parse
 	|	"+="					{ PLEQ }
 	|	"-="					{ MIEQ }
 	|	"*="					{ MUEQ }
-	|	"/="					{ DVEQ } 
+	|	"/="					{ DVEQ }
 
 	|	"else"					{ ELSE }
 	|	"while"					{ WHILE }
@@ -72,7 +74,9 @@ rule token = parse
 	| 	"foreign_key"			{ FOREIGNKEY }
 	|	"string"				{ STRING }
 	|	"float"					{ FLOAT }
-
+	|	"add"					{ ADD }
+	|	"get"					{ GET }
+	| 	"connect"				{ CONNECT }
 
 	|	eof						{ EOF }
 	| digit+ as lxm { INTLITERAL(int_of_string lxm) } (* integers *)
@@ -84,6 +88,6 @@ and comment = parse
 		"*/" { token lexbuf }
 		| _	 { comment lexbuf }
 
-and singleComment = parse 
+and singleComment = parse
 		"\n" { token lexbuf }
 		| _ { singleComment lexbuf }

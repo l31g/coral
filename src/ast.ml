@@ -1,7 +1,7 @@
 type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Geq
         | And | Or | Exp
 
-type uop = Incr | Decr 
+type uop = Incr | Decr
 
 type asignmt = Eql | Ple | Mie | Mue | Dve
 
@@ -43,9 +43,12 @@ type expr =
     | Notop of expr
     | Print of expr list
     | Assign of string * asignmt * expr
+    | AddTableCall of string
+    | GetTableCall of string * expr list
     | TableCall of string * string * expr list
     | TableAttr of string * string
     | Parens of expr
+    | Array of string * expr
     | Noexpr
 
 type var_decl =
@@ -61,6 +64,7 @@ type stmt =
     | If of expr * stmt * stmt
     | For of expr * expr * expr * stmt
     | While of expr * stmt
+    | ConnectCall
     | Nostmt
 
 

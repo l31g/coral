@@ -88,8 +88,10 @@ let rec str_of_expr exp =
     | FPLiteral(l) -> string_of_float(l)
     | Id(s) -> s
     | Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
-    | TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"  
-    | TableAttr(t, a) -> t ^ "." ^ a 
+    | TableAttr(t, a) -> t ^ "." ^ a
+    | AddTableCall(f1) -> "controller.session.add(" ^ f1 ^ ")"
+    | GetTableCall(f1, e) -> "global_get(" ^ f1 ^ "," ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
+    | TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | Print(e) -> "print " ^ (String.concat "," (List.map str_of_expr e))
     | Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
     | Unop(a, uop) -> a ^ "=" ^ a ^ (str_of_uop uop)
@@ -97,6 +99,7 @@ let rec str_of_expr exp =
     | Neg(e) -> "-" ^ (str_of_expr e)
     | Assign(l, asgn, r) -> l ^ (str_of_asgn asgn) ^ (str_of_expr r)
     | Parens(p) -> "(" ^ (str_of_expr p) ^ ")"
+    | Array(id, e) -> id ^ "[" ^ (str_of_expr e) ^ "]"
     | Noexpr -> ""
 
 let rec str_of_var_decl v lvl =
@@ -114,7 +117,7 @@ let rec str_of_stmt s lvl =
     | Expr(expr) -> str_of_expr expr
     | Return(expr) -> "return " ^ (str_of_expr expr)
     | If(e, s, Nostmt) -> "if " ^ str_of_expr e ^ ":\n" ^ (tab (lvl+2)) ^ str_of_stmt s (lvl+2)
-    | If(e, s1, s2) -> "if (" ^ str_of_expr e ^ "):\n" ^ (tab (lvl+2)) ^ str_of_stmt s1 (lvl+2) 
+    | If(e, s1, s2) -> "if (" ^ str_of_expr e ^ "):\n" ^ (tab (lvl+2)) ^ str_of_stmt s1 (lvl+2)
                     ^ "\n" ^ (tab (lvl+1)) ^ "else:\n" ^ (tab (lvl+2)) ^ str_of_stmt s2 (lvl+2)
 
     | While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
@@ -124,6 +127,7 @@ let rec str_of_stmt s lvl =
                         (str_of_expr expr1) ^ "\n" ^ (tab (lvl+1)) ^ "while " ^ (str_of_expr expr2) ^ ":" ^
                         l ^ (str_of_stmt stmts (lvl+2)) ^
                         "\n" ^ (tab (lvl+2)) ^ (str_of_expr expr3))
+    | ConnectCall -> "controller.Base.metadata.create_all(controller.engine)"
     | Nostmt -> ""
 
 let rec str_of_table_label tl =
@@ -150,16 +154,14 @@ let rec str_of_table tb =
             (* cleanup these 1's later *)
     (tab 1) ^
                 "__tablename__ = '" ^ "" ^ (str_of_table_label tb.tbname)^ "'" ^ "\n" ^
-                (str_of_table_body tb.tbbody 1 ) ^
-                (*Add this method for every object for easing adding into DB*)
-                (tab 1) ^ "def add(self):\n" ^ (tab 2) ^ "session.add(self)"
+                (str_of_table_body tb.tbbody 1 )
 
 let str_of_program program =
         "#!/usr/bin/env python\n" ^
         "import sys\nsys.path.append(\"../../backend\")\n" ^
-        "import controller, cor_global\nfrom controller import *\nfrom cor_global import *\n\n" ^
+        "import controller\nfrom controller import *\n\n" ^
         (str_of_conn_block program.conn) ^ "\n\n" ^
         (String.concat "\n" (List.map str_of_table program.tables)) ^ "\n\n" ^
         (let l = "\n" in
-        (String.concat l (List.map (fun x-> str_of_fdef x 0) program.funcs)) ^ "\n\nif __name__ == '__main__':\n\tmain()")
+        (String.concat l (List.map (fun x-> str_of_fdef x 0) program.funcs)) ^ "\n\nif __name__ == '__main__':\n\tconnectDB()\n\tmain()")
 
