@@ -3,6 +3,7 @@
 }
 let letter = ['a' - 'z' 'A' - 'Z' ' ' '0' - '9']
 let digit = ['0' - '9']
+let symbol = "\\n" | "\\t" | '.' | '*' | "\\" | "\/" | '?' | '`' | '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' | '(' | ')' | '-' | '+' | '=' | '{' | '}' | '[' | ']' | '|' | ';' | '>' | '<' | ','
 let whitespace = [' ' '\t' '\n' '\r']
 
 rule token = parse
@@ -86,7 +87,7 @@ rule token = parse
 
 	|	eof						{ EOF }
 	| digit+ as lxm { INTLITERAL(int_of_string lxm) } (* integers *)
-	| "\""(letter*)"\"" as lxm { STRINGLITERAL(lxm) }
+	| "\""(letter | digit | symbol)* "\"" as lxm { STRINGLITERAL(lxm) }
 	| ['0'-'9']+'.'['0'-'9']* as lxm { FPLITERAL(float_of_string lxm) }
 	| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '_' '0'-'9']* as lxm { ID(lxm) }
 
