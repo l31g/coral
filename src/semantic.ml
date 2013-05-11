@@ -9,6 +9,10 @@ type symbol_table = {
 	in_loop : bool;
 }
 
+type trans_environment = {
+	scope : symbol_table;
+}
+
 (* check types *)
 exception Error of string
 
@@ -60,9 +64,15 @@ let rec variable_type vdec env =
 	| VarDecl(t, v, e) -> t
 
 (* find tables in symbol table *)
+let rec get_table_name table =
+	let t_label = table.tbname in
+		match t_label with
+		| TableLabel(l) -> l
+		| _ -> ""
+
 let rec table_exists tname env =
 	try
-		let _ = List.find (fun table -> table.tbname = tname) env.table_list in true
+		let _ = List.find (fun table -> (get_table_name table) = tname) env.table_list in true
 	with Not_found ->
 		match env.parent with
 			Some(parent) -> table_exists tname parent
@@ -70,7 +80,7 @@ let rec table_exists tname env =
 
 let rec find_table tname env =
 	try
-		List.find (fun table -> table.tbname = tname) env.table_list
+		List.find (fun table -> (get_table_name table) = tname) env.table_list
 	with Not_found ->
 		match env.parent with
 			Some(parent) -> find_table tname parent
@@ -99,8 +109,6 @@ let rec check_conn_block cb =
         (check_conn_attr a1), (check_conn_attr a2), (check_conn_attr a3),
         (check_conn_attr a4), (check_conn_attr a5), (check_conn_attr a6)
 
-(* check table declarations *)
-
 let rec check_expr exp env =
     match exp with
     | IntLiteral(l) -> IntType
@@ -110,12 +118,34 @@ let rec check_expr exp env =
 	| Call(f, e) -> if (function_exists f env) then
     					let f1 = (find_function f env) in
     					let fmls = f1.formals in
-    					let _ = (List.map2 (fun x y -> check_actual x y env) fmls e) in
-    						IntType
+    					if ((List.length fmls) != (List.length e)) then
+    						raise (Error ("improper number of arguments to function " ^ f1.fname))
+    					else
+    						let _ = (List.map2 (fun x y -> check_actual x y env) fmls e) in
+    							IntType
     				else
-    					let err = (find_function f env) in
+    					let _ = (find_function f env) in
     						IntType
-	(* TODO TablCall() *)
+	(* TODO TableAttr(t, a) *)
+	| Open(fp, rw) -> 	if (not (rw = "r" || rw = "w" || rw = "rw")) then
+								raise (Error ("second argument to open must be \"r\", \"w\", or \"rw\""))
+						else
+							FileType
+	| Close(e) ->	if ((variable_type (find_variable e env) env) == FileType) then
+						NoType
+					else
+						raise (Error ("argument of fclose() must have type File"))
+	| FPrint(fp, e) -> 	if ((variable_type (find_variable fp env) env) == FileType) then
+							NoType
+						else
+							raise (Error ("first argument of fprintf() must have type File"))
+	| FRead(fp) ->	if ((variable_type (find_variable fp env) env) == FileType) then
+						StringType
+					else
+						raise (Error ("argument of fread() must have type File"))
+	(*| AddTableCall(f1) ->	if ((variable_type (find_variable f1 env)))*)
+	(* TODO GetTableCall(f1, e) *)
+	(* TODO TablCall(f1, f2, e) *)
     | Print(e) -> NoType
     | Binop(a, op, b) -> (let t1 = (check_expr a env) in
                          (let t2 = (check_expr b env) in
@@ -138,6 +168,7 @@ let rec check_expr exp env =
     						 let t2 = (check_expr r env) in
     						 	(check_type t1 t2))
     | Parens(p) -> (check_expr p env)
+    (* TODO Array(id, e) *)
     | Noexpr -> NoType
 
 and check_actual formal actual env =
@@ -174,7 +205,7 @@ let rec is_assign expr =
 
 let rec check_stmt s env =
     match s with
-    | Block(stmts) -> 	let l = (List.map (fun x -> check_stmt x env) stmts) in NoType
+    | Block(stmts) -> 	let _ = (List.map (fun x -> check_stmt x env) stmts) in NoType
     | Expr(expr) -> 	(check_expr expr env)
     | Return(expr) -> 	(check_expr expr env)
     | If(e, s, Nostmt) -> 	if (not (is_assign e)) then
@@ -193,6 +224,8 @@ let rec check_stmt s env =
     											NoType
     										else
     											NoType
+    | ConnectDB -> NoType
+    | CloseDB -> NoType
     | Nostmt -> NoType
 
 let rec get_return fdef stmts env =
@@ -230,6 +263,29 @@ let rec sys_check_fdef fdef env =
 		let _ = (check_fdef fdef env) in
 		(* no error thrown, add function to symbol table *)
 			env.functions <- fdef::env.functions
+
+(* let rec check_attr attr env = 
+	let a_name = (fun x -> match attr with
+
+
+
+let rec check_table_body tbody env =
+	match tbody with
+	| TableBody(ag, kd, fd) -> 	let _ = (List.map (fun x -> check_attr x env) ag) in
+									let _ = (List.map (fun x -> check_key x env) kd) in
+										let _ = (List.map (fun x -> check_fdef x env) fd) in
+											true
+
+let rec check_table table env =
+	let t_name = (get_table_name table) in
+
+	if (table_exists t_name env) then
+		raise (Error ("you already declared table " ^ t_name ^ " bro"))
+	else
+		let _ = (check_table_body table.tbbody env) in
+		(* add table to symbol table *)
+			env.table_list <- table::env.table_list *)
+
 
 let rec check_program (p:program) =
 
