@@ -16,14 +16,24 @@ Table User {
 
 void main() {
 
-    connect;
+    File f;
+    connectDB;
+    f = fopen("output", "r");
     ed_user = User(name="ed");
     printf("a", "b", "c", "d");
     ed_user.add();
     a = User.get();
-
+    //fprintf(f, "hello");
+    b = freadline(f);
+    while (b != "" ) {
+        printf(b);
+        b = freadline(f);
+    }
+    fclose(f);
     for(i = 0; i < 1; i++) {
         a[i];
     }
+
+    closeDB;
 
 }

@@ -19,6 +19,7 @@ engine = None
 session = None
 
 
+
 def funcToMethod(func, clas, method_name=None):
    setattr(clas, method_name or func.__name__, func)
 

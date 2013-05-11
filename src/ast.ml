@@ -5,7 +5,7 @@ type uop = Incr | Decr
 
 type asignmt = Eql | Ple | Mie | Mue | Dve
 
-type dtype = VoidType | IntType | StringType | TableType | NoType | FloatType
+type dtype = VoidType | IntType | StringType | TableType | NoType | FloatType | FileType
 
 
 type conn_label = ServerConn | PortConn | UserConn | PassConn | TypeConn | DBConn
@@ -42,7 +42,11 @@ type expr =
     | Neg of expr
     | Notop of expr
     | Print of expr list
+    | FPrint of expr * expr list
+    | FRead of expr
     | Assign of string * asignmt * expr
+    | Open of expr list
+    | Close of expr
     | AddTableCall of string
     | GetTableCall of string * expr list
     | TableCall of string * string * expr list
@@ -64,8 +68,8 @@ type stmt =
     | If of expr * stmt * stmt
     | For of expr * expr * expr * stmt
     | While of expr * stmt
-    | CloseCall
-    | ConnectCall
+    | CloseDB
+    | ConnectDB
     | Nostmt
 
 

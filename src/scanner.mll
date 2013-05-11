@@ -55,6 +55,7 @@ rule token = parse
 	|	"for"					{ FOR }
 	|	"return"				{ RETURN }
 	|	"printf"				{ PRINT }
+	|	"fprintf"				{ FPRINT }
 	|	"void"					{ VOID }
 	|	"break"					{ BREAK }
 	|	"continue"				{ CONTINUE }
@@ -76,7 +77,12 @@ rule token = parse
 	|	"float"					{ FLOAT }
 	|	"add"					{ ADD }
 	|	"get"					{ GET }
-	| 	"connect"				{ CONNECT }
+	| 	"connectDB"				{ CONNECTDB }
+	|	"closeDB"				{ CLOSEDB }
+	|	"fopen"					{ OPEN }
+	|	"fclose"				{ CLOSE }
+	|	"freadline"				{ FREAD }
+	|	"File"					{ FILE }
 
 	|	eof						{ EOF }
 	| digit+ as lxm { INTLITERAL(int_of_string lxm) } (* integers *)
