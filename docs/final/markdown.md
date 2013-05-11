@@ -1,24 +1,32 @@
-Title: CORaL Project Report
-Author: Shane Chin, sac2171  
+Title: 	CORaL Project Report  
+Author:	Shane Chin, sac2171  
+	Molly Karcher, mdk2133  
+	Luis E. P. lep2141  
+	Brian Wagner, bhw2113  
+	Miguel Yáñez, may2114  
+Affiliation:	Columbia University  
+Web:	https://github.com/l31g/coral
+Date: 	May 10, 2013  
 
 #CORaL Project Report
-##Introduction
-bla ble bli
-##Language Tutorial
+##Introduction [intro]
+bla ble bli  
+		int main	
+##Language Tutorial [tut]
 ble bli blo
-##Language Reference Manual
+##Language Reference Manual [man]
 bli blo blu
-##Project Plan
+##Project Plan [plan]
 blo blu bla
-##Language Evolution
+##Language Evolution [evol]
 blu bla ble
-##Translator Architecture
+##Translator Architecture [arch]
 bla ble bli
-##Development and Run-Time Environment
+##Development and Run-Time Environment [dev]
 ble bli blo
-##Test Plan
+##Test Plan [test]
 bli blo blu
-##Conclusions
+##Conclusions[conc]
 blo blu bla
-##Appendix
+##Appendix [appendix]
 blu bla ble
