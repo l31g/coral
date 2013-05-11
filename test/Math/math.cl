@@ -1,34 +1,23 @@
-#cordbconn
-server="server";
-user="server";
-password="server";
-port="server";
-DBName="server";
-type="sqlite";
-#enddbconn
 
-#cordb
-#enddb
 void main(){
 
-	int a = 5+3;
-	//printf(a);
+	float a = 1.0;
+	int b = 6;
 
-	a = 5*8;
-	//printf(a);
-
-	a = 8/4;
-	//printf(a);
-
-	a = 6-2;
-	//printf(a);
-
-	a = 6*(2+3);
-
-	//a = 6.7;
+	a = a+5;
 	printf(a);
-	a = -1*8;
+	printf("\n");
+
+	a = a * (5+3);
 	printf(a);
-	
-	
+	printf("\n");
+
+	a = a-b;
+	printf(a);
+	printf("\n");
+
+	a = a/b;
+	printf(a)
+	printf("\n");
+
 }

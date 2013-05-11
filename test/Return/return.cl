@@ -1,22 +1,23 @@
-#cordbconn
-server="server";
-user="server";
-password="server";
-port="server";
-DBName="server";
-type="sqlite";
-#enddbconn
 
-#cordb
-#enddb
+int derp(){
+	return 10;
+}
 
-void main() {
+int main() {
 
-	if(1 == 1){
-		printf("Should see this");
-		return 5;
-		printf("Should not see this");
+	int a = 5;
+	
+	int b = derp();
+
+	printf(b);
+	printf("\n");
+
+	if(a > 10){
+		return a;
+	}	
+	else{
+		return a;
 	}
-	printf("Should not see this");
-    
+
+	return 5;
 }
