@@ -189,7 +189,7 @@ attribute_label:
     ID      { AttrLabel($1) }
 
 attribute:
-    attribute_label COLON dtype SEMI { Attr($1, $3) }
+    dtype attribute_label SEMI		{ Attr($2,$1) }
 
 attribute_group:
      attribute               { [$1] }
