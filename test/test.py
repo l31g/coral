@@ -6,6 +6,8 @@ numTests = 0
 numCorrect = 0
 undefinedExpected = 0
 
+failedTests = []
+
 def get_immediate_subdirectories(dir):
     return [name for name in os.listdir(dir)
             if os.path.isdir(os.path.join(dir, name))]
@@ -43,8 +45,10 @@ def compare(subdirs):
                 if(True == filecmp.cmp(dir + '/' + file, dir + '/' + fileName[0]+'.exp')):
                     global numCorrect
                     numCorrect = numCorrect + 1
+                else:
+                    global failedTests
+                    failedTests.append(dir + '/' + fileName[0])
                                 
-
 
 current_directory = os.getcwd()
 subdirs = get_immediate_subdirectories(current_directory)
@@ -52,11 +56,12 @@ subdirs = get_immediate_subdirectories(current_directory)
 fileList = []
 pathToCoral = '../src/build/coralc'
 compileTests(subdirs)
-runFiles(subdirs)
 compare(subdirs)
 
 print 'Correct :' +  str(numCorrect) + ' Total:' + str(numTests)
-print 'Failed :' +  str(numTests - numCorrect)                    
+print 'Failed :' +  str(numTests - numCorrect)
+print failedTests          
+          
 
             
 

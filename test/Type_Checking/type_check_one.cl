@@ -12,5 +12,6 @@ type="server";
 void main() {
 
   float a = 3 + 3.0;
+  printf("%f", a);
 
 }

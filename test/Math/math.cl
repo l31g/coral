@@ -26,7 +26,9 @@ void main(){
 	a = 6*(2+3);
 
 	a = 6.7;
-
+	printf(a);
 	a = -1*8;
+	printf(a);
+	
 	
 }

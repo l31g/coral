@@ -20,6 +20,7 @@ void main() {
 	} 
 	else {
 		a = 5;
+		printf("Simple else works");
 		return a;
-	}
+	}	
 }
