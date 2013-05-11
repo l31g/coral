@@ -99,6 +99,7 @@ type table_block =
 type program = {
             conn : conn_block;
             tables : table_block;
+            globals : var_decl list;
             funcs  : func_def list;
 }
 

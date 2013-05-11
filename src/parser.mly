@@ -5,7 +5,7 @@
 %token EXP INCR DECR PLEQ MIEQ MUEQ DVEQ
 %token EQ WHILE INT FOR RETURN PRINT VOID BREAK CONTINUE
 %token IF ELSE
-%token STRING
+%token STRING GLOBAL
 %token NEWLINE FPRINT FREAD
 %token FLOAT ADD GET CONNECTDB LSQUARE RSQUARE CLOSEDB OPEN CLOSE FILE
 %token <int> INTLITERAL
@@ -37,10 +37,11 @@
 %%
 
 program:
-	conn_block table_block fdef_list 	{ {
+	conn_block table_block global_decl_list fdef_list 	{ {
 							conn = $1;
                             tables = $2;
-							funcs = List.rev $3
+                            globals = List.rev $3;
+							funcs = List.rev $4
 		} }
 
 fdef_list:
@@ -138,13 +139,22 @@ actuals_list:
 	expr 			{ [$1] }
 	| actuals_list COMMA expr { $3 :: $1 }
 
+global_decl_list:
+								 { [] }
+	| global_decl_list global_decl { $2 :: $1 }
+
+global_decl:
+	| GLOBAL dtype ID ASSIGN expr SEMI		{ VarDecl($2, $3, $5) }
+	| GLOBAL dtype ID SEMI					{ VarDecl($2, $3, Noexpr) }
+
 var_decl_list:
 							 { [] }
 	| var_decl_list var_decl { $2 :: $1 }
 
 var_decl:
-	dtype ID ASSIGN expr SEMI		{ VarDecl($1, $2, $4) }
+	| dtype ID ASSIGN expr SEMI		{ VarDecl($1, $2, $4) }
 	| dtype ID SEMI					{ VarDecl($1, $2, Noexpr) }
+
 
 dtype:
     VOID   { VoidType }

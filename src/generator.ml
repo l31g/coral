@@ -142,13 +142,21 @@ let rec str_of_table_label tl =
     | TableLabel(l) -> "" ^ l
     | TableLabelRel(l,r) -> "" ^ l ^ " : " ^ r
 
-let str_of_fdef fdef lvl =
+let str_of_fdef fdef globals lvl =
     (tab lvl) ^ "def " ^ fdef.fname ^ "(" ^
             (String.concat "," (List.map str_of_formal fdef.formals)) ^ "):\n"
 
     ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
+                    (String.concat l 
+                        (List.map 
+                            (fun x-> "global " ^ (str_of_var_decl x (lvl))) 
+                        globals)))
+                    ^ "\n"
+
+    ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
                             (String.concat l (List.map (fun x-> str_of_var_decl x (lvl)) fdef.locals)))
                     ^ "\n"
+
     ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
                             (let ll = (String.concat l (List.map (fun x-> str_of_stmt x (lvl)) fdef.body)) in
                                 match ll with
@@ -157,7 +165,9 @@ let str_of_fdef fdef lvl =
 
 let rec str_of_table_body tbb lvl =
     match tbb with
-    | TableBody(ag, kd, fd) -> (str_of_attr_group ag (lvl)) ^ "\n" ^ (tab lvl) ^ "__table_args__= (" ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n" ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x (lvl)) fd))
+    | TableBody(ag, kd, fd) -> (str_of_attr_group ag (lvl)) ^ "\n" ^ (tab lvl) ^ "__table_args__= (" 
+            ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n" 
+            ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x [] (lvl)) fd))
 
 let rec str_of_table tb =
     "class " ^ (str_of_table_label tb.tbname) ^ "(Base):\n" ^
@@ -181,7 +191,16 @@ let str_of_program program =
         | "" -> "conn_block = False\n\n"
         | _ -> "conn_block = True\n\n")
         ^ "\n\n" ^
-         (str_of_table_block program.tables) ^ "\n\n" ^
-        (let l = "\n" in
-        (String.concat l (List.map (fun x-> str_of_fdef x 0) program.funcs)) ^ "\n\nif __name__ == '__main__':\n\tif (conn_block):\n\t\tconnectDB()\n\tmain()")
+         (str_of_table_block program.tables) ^ "\n\n" 
+
+         ^ (let l = "\n" in
+        (String.concat l (List.map (fun x-> str_of_var_decl x 0) program.globals)) ^ "\n")
+    
+        ^ (let l = "\n" in
+            (let g = "\n" in
+                (String.concat l 
+                    (List.map (fun x-> str_of_fdef x program.globals 0) program.funcs)) 
+                    ^ "\n\nif __name__ == '__main__':\n\tif (conn_block):\n\t\tconnectDB()\n\tmain()"
+                )
+            )
 
