@@ -6,6 +6,8 @@ numTests = 0
 numCorrect = 0
 undefinedExpected = 0
 totalTests = 15
+failedTests = []
+failedToCompile = []
 
 #Remove old files
 
@@ -15,9 +17,9 @@ def remove_cruft():
     subprocess.call('rm */*.err');
     subprocess.call('rm */*.out');
   except:
-    print 'Did not remove any files'
+    pass
+    #print 'Did not remove any files'
 
-failedTests = []
 
 def num_tests(subdirs):
   count = 0
@@ -38,12 +40,14 @@ def compileTests(subdirs):
             if file.endswith('.cl'):
                 #print files
                 compileFile = dir +'/' + file                
-                print pathToCoral + ' '+  compileFile
+                #print pathToCoral + ' '+  compileFile
                 with open(dir+'/'+file+'.err', 'w') as outfile:
                   subprocess.call([pathToCoral, compileFile], stdout=outfile, stderr=outfile)
                 outfile.close()
                 if not os.path.exists(compileFile+'x'):
-                    print 'Output cl failed for compileFile' +  dir+'/'+file
+                  #print 'Coral could not compile:' +  dir+'/'+file
+                  failedToCompile.append(dir+'/'+file)
+
                 
 def runFiles(subdirs):
     for dir in subdirs:    
@@ -87,11 +91,24 @@ compileTests(subdirs)
 runFiles(subdirs)
 compare(subdirs)
 
-print 'RealNumTests = ' + str(num_tests(subdirs))
+numTests = num_tests(subdirs)
 
-print 'Correct :' +  str(numCorrect) + ' Total:' + str(numTests)
-print 'Failed :' +  str(numTests - numCorrect)
+
+
+print 'Correct : ' +  str(numCorrect) + ' Total: ' + str(numTests)
+print 'Failed : ' +  str(numTests - numCorrect)
+
+
+print ''
+print 'The following files did not compile.\n'
+print failedToCompile
+
+print ''
+print 'The following files did not return the expected result: \n'
 print failedTests          
+
+print ''
+print str((numCorrect/float(numTests))*100)  + '% PASSED'
 remove_cruft()
           
 
