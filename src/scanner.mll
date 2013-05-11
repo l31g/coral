@@ -55,6 +55,7 @@ rule token = parse
 	|	"for"					{ FOR }
 	|	"return"				{ RETURN }
 	|	"printf"				{ PRINT }
+	|	"fprintf"				{ FPRINT }
 	|	"void"					{ VOID }
 	|	"break"					{ BREAK }
 	|	"continue"				{ CONTINUE }
@@ -78,7 +79,9 @@ rule token = parse
 	|	"get"					{ GET }
 	| 	"connectDB"				{ CONNECTDB }
 	|	"closeDB"				{ CLOSEDB }
-	|	"open"					{ OPEN }
+	|	"fopen"					{ OPEN }
+	|	"fclose"				{ CLOSE }
+	|	"freadline"				{ FREAD }
 	|	"File"					{ FILE }
 
 	|	eof						{ EOF }

@@ -16,15 +16,20 @@ Table User {
 
 void main() {
 
-    File f = open("output.txt", "rw");
+    File f;
     connectDB;
-    //int f = 1;
-
+    f = fopen("output", "r");
     ed_user = User(name="ed");
     printf("a", "b", "c", "d");
     ed_user.add();
     a = User.get();
-    //f.write("hello");
+    //fprintf(f, "hello");
+    b = freadline(f);
+    while (b != "" ) {
+        printf(b);
+        b = freadline(f);
+    }
+    fclose(f);
     for(i = 0; i < 1; i++) {
         a[i];
     }

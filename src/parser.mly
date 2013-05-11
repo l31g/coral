@@ -6,8 +6,8 @@
 %token EQ WHILE INT FOR RETURN PRINT VOID BREAK CONTINUE
 %token IF ELSE
 %token STRING
-%token NEWLINE
-%token FLOAT ADD GET CONNECTDB LSQUARE RSQUARE CLOSEDB OPEN FILE
+%token NEWLINE FPRINT FREAD
+%token FLOAT ADD GET CONNECTDB LSQUARE RSQUARE CLOSEDB OPEN CLOSE FILE
 %token <int> INTLITERAL
 %token <string> STRINGLITERAL
 %token <float> FPLITERAL
@@ -63,8 +63,8 @@ stmt_list:
 
 stmt:
 	expr SEMI							{ Expr ($1) }
-	| CONNECTDB SEMI                      { ConnectCall }
-    | CLOSEDB SEMI                        { CloseCall }
+	| CONNECTDB SEMI                      { ConnectDB }
+    | CLOSEDB SEMI                        { CloseDB }
     | LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
 	| RETURN expr SEMI 					{ Return($2) }
 	| IF LPAREN expr RPAREN stmt %prec NOELSE		{ If($3, $5, Nostmt)}
@@ -102,6 +102,9 @@ expr:
 	| ID DECR 						{ Unop($1, Decr) }
 	| MINUS expr 						{ Neg($2)}
 	| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }
+    | FPRINT LPAREN expr COMMA actuals_opt RPAREN      { FPrint($3, $5) }
+    | FREAD LPAREN  expr RPAREN             { FRead($3) }
+    | CLOSE LPAREN expr RPAREN              { Close($3) }
     | OPEN LPAREN actuals_opt RPAREN        { Open($3) }
 	| ID LPAREN actuals_opt RPAREN	{ Call($1, $3) }
     | ID LSQUARE expr RSQUARE     { Array($1, $3) }

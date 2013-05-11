@@ -90,6 +90,9 @@ let rec str_of_expr exp =
     | Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | TableAttr(t, a) -> t ^ "." ^ a
     | Open(e) -> "open(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
+    | Close(e) -> (str_of_expr e) ^ ".close()"
+    | FPrint(fp, e) -> (str_of_expr fp) ^ ".write(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
+    | FRead(fp) -> (str_of_expr fp) ^ ".readline()"
     | AddTableCall(f1) -> "controller.session.add(" ^ f1 ^ ")"
     | GetTableCall(f1, e) -> "global_get(" ^ f1 ^ "," ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
@@ -129,8 +132,8 @@ let rec str_of_stmt s lvl =
                         (str_of_expr expr1) ^ "\n" ^ (tab (lvl+1)) ^ "while " ^ (str_of_expr expr2) ^ ":" ^
                         l ^ (str_of_stmt stmts (lvl+2)) ^
                         "\n" ^ (tab (lvl+2)) ^ (str_of_expr expr3))
-    | ConnectCall -> "controller.Base.metadata.create_all(controller.engine)"
-    | CloseCall -> "controller.session.commit()"
+    | ConnectDB -> "controller.Base.metadata.create_all(controller.engine)"
+    | CloseDB -> "controller.session.commit()"
     | Nostmt -> ""
 
 let rec str_of_table_label tl =
