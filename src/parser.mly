@@ -20,13 +20,14 @@
 
 %nonassoc NOELSE
 %nonassoc ELSE
+%right ASSIGN
 %right EQUAL NOT
 %left DOT
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MOD EXP
-%left ASSIGN PLEQ MIEQ MUEQ DVEQ
+%left PLEQ MIEQ MUEQ DVEQ
 %left DECR INCR
 %left AND OR
 

@@ -167,15 +167,32 @@ let rec check_formal f env =
                         else
                             t
 
+let rec is_assign expr =
+	match expr with
+	| Assign(l, asgn, r) -> raise (Error ("cannot have assignment in loop condition"))
+	| _ -> false
+
 let rec check_stmt s env =
     match s with
-    | Block(stmts) -> let l = (List.map (fun x -> check_stmt x env) stmts) in NoType
-    | Expr(expr) -> (check_expr expr env)
-    | Return(expr) -> (check_expr expr env)
-    | If(e, s, Nostmt) -> NoType
-    | If(e, s1, s2) -> NoType
-    | While(expr, stmts) -> NoType
-    | For(expr1, expr2, expr3, stmts) -> NoType
+    | Block(stmts) -> 	let l = (List.map (fun x -> check_stmt x env) stmts) in NoType
+    | Expr(expr) -> 	(check_expr expr env)
+    | Return(expr) -> 	(check_expr expr env)
+    | If(e, s, Nostmt) -> 	if (not (is_assign e)) then
+    							NoType
+    						else
+    							NoType
+    | If(e, s1, s2) -> 	if (not (is_assign e)) then
+    						NoType
+    					else
+    						NoType
+    | While(expr, stmts) ->	if (not (is_assign expr)) then
+    							NoType
+    						else
+    							NoType
+    | For(expr1, expr2, expr3, stmts) -> 	if (not (is_assign expr2)) then
+    											NoType
+    										else
+    											NoType
     | Nostmt -> NoType
 
 let rec get_return fdef stmts env =
