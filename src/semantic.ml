@@ -142,14 +142,8 @@ and check_actual formal actual env =
 
 let rec check_var_decl vdec env =
     match vdec with
-    | VarDecl(t, v, e) ->   if(not (t=FloatType)) then
-    							(let t2 = (check_expr e env) in
-                                	(check_type t t2))
-    						else
-    							if(IntType = (check_expr e env)) then
-    								t
-    							else 
-    								(check_type t (check_expr e env))
+    | VarDecl(t, v, Noexpr) -> t
+    | VarDecl(t, v, e) -> (check_type t (check_expr e env))
 
 let rec sys_check_var_decl vdec env =
 	match vdec with
@@ -162,7 +156,7 @@ let rec sys_check_var_decl vdec env =
 
 let rec check_formal f env =
     match f with
-    | Formal(t, n) ->
+    | Formal(t, n) ->	
                         (* Need the symbol table for this *)
                         if (not (t = IntType)) then
                             raise(Error("Formal Error"))
