@@ -10,6 +10,7 @@ type="sqlite";
 #cordb
 Table User {
     name : string;
+    age : int;
     primary_key(name);
  };
 #enddb
@@ -23,7 +24,9 @@ void main() {
     printf("a", "b", "c", "d");
     ed_user.add();
     a = User.get();
-    //fprintf(f, "hello");
+    fprintf(f, "hello");
+    c = a[0];
+    fprintf(f, c.name);
     b = freadline(f);
     while (b != "" ) {
         printf(b);
