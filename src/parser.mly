@@ -37,10 +37,10 @@
 %%
 
 program:
-	CORDBCONN conn_block ENDDBCONN CORDB tables_list ENDDB fdef_list 	{ {
-							conn = $2;
-                            tables = List.rev $5;
-							funcs = List.rev $7
+	conn_block table_block fdef_list 	{ {
+							conn = $1;
+                            tables = $2;
+							funcs = List.rev $3
 		} }
 
 fdef_list:
@@ -103,10 +103,10 @@ expr:
 	| ID DECR 						{ Unop($1, Decr) }
 	| MINUS expr 						{ Neg($2)}
 	| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }
-    | FPRINT LPAREN expr COMMA actuals_opt RPAREN      { FPrint($3, $5) }
-    | FREAD LPAREN  expr RPAREN             { FRead($3) }
-    | CLOSE LPAREN expr RPAREN              { Close($3) }
-    | OPEN LPAREN actuals_opt RPAREN        { Open($3) }
+    | FPRINT LPAREN ID COMMA actuals_opt RPAREN      { FPrint($3, $5) }
+    | FREAD LPAREN  ID RPAREN             { FRead($3) }
+    | CLOSE LPAREN ID RPAREN              { Close($3) }
+    | OPEN LPAREN STRINGLITERAL COMMA STRINGLITERAL RPAREN        { Open($3, $5) }
 	| ID LPAREN actuals_opt RPAREN	{ Call($1, $3) }
     | ID LSQUARE expr RSQUARE     { Array($1, $3) }
     | ID DOT ADD LPAREN RPAREN { AddTableCall($1) }
@@ -168,9 +168,12 @@ conn_attribute:
     conn_label ASSIGN STRINGLITERAL SEMI { ConnAttr($1, $3) }
 
 conn_block:
+                                { NoConnBlock }
+    | CORDBCONN
     conn_attribute conn_attribute
     conn_attribute conn_attribute
-    conn_attribute conn_attribute { ConnBlock($1, $2, $3, $4, $5, $6) }
+    conn_attribute conn_attribute
+    ENDDBCONN                       { ConnBlock($2, $3, $4, $5, $6, $7) }
 
 attribute_label:
     ID      { AttrLabel($1) }
@@ -206,5 +209,9 @@ table:
 tables_list:
 							  { [] }
 	| tables_list table { $2 :: $1 }
+
+table_block:
+                                { NoTableBlock }
+    | CORDB tables_list ENDDB { TableBlock($2) }
 
 

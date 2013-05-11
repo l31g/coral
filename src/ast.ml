@@ -15,6 +15,7 @@ type conn_attribute =
 
 type conn_block =
     ConnBlock of conn_attribute * conn_attribute * conn_attribute * conn_attribute * conn_attribute * conn_attribute
+    | NoConnBlock
 
 type attr_label =
     AttrLabel of string
@@ -42,11 +43,11 @@ type expr =
     | Neg of expr
     | Notop of expr
     | Print of expr list
-    | FPrint of expr * expr list
-    | FRead of expr
+    | FPrint of string * expr list
+    | FRead of string
     | Assign of string * asignmt * expr
-    | Open of expr list
-    | Close of expr
+    | Open of string * string
+    | Close of string
     | AddTableCall of string
     | GetTableCall of string * expr list
     | TableCall of string * string * expr list
@@ -82,6 +83,7 @@ type func_def = {
 }
 
 
+
 type table_body =
     TableBody of attribute list * key_decls list * func_def list
 
@@ -90,9 +92,13 @@ type table = {
     tbbody : table_body;
 }
 
+type table_block =
+    TableBlock of table list
+    | NoTableBlock
+
 type program = {
             conn : conn_block;
-            tables : table list;
+            tables : table_block;
             funcs  : func_def list;
 }
 

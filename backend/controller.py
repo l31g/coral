@@ -6,6 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, ForeignKey, String
 from sqlalchemy.schema import PrimaryKeyConstraint
 
+
 server = None
 port = None
 user = None
@@ -63,7 +64,11 @@ def setDBName(db):
 def connectDB():
     global engine, session, session_maker
     #remember to add the @
-    uri = "%s:///%s:%s%s:%s%s" % (dbtype, user, password, server, port, DBName)
+
+    if (dbtype == "sqlite"):
+        uri = "%s:///:memory:" % (dbtype)
+    else:
+        uri = "%s://%s:%s@%s:%s/%s" % (dbtype, user, password, server, port, DBName)
     #print uri + "\n"
     engine = create_engine(uri, echo=False)
 
