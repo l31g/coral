@@ -64,7 +64,11 @@ def setDBName(db):
 def connectDB():
     global engine, session, session_maker
     #remember to add the @
-    uri = "%s:///%s:%s%s:%s%s" % (dbtype, user, password, server, port, DBName)
+
+    if (dbtype == "sqlite"):
+        uri = "%s:///%s:%s%s:%s%s" % (dbtype, user, password, server, port, DBName)
+    else:
+        uri = "%s://%s:%s@%s:%s/%s" % (dbtype, user, password, server, port, DBName)
     #print uri + "\n"
     engine = create_engine(uri, echo=False)
 
