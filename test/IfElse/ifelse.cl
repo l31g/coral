@@ -12,7 +12,7 @@ type="sqlite";
 
 void main() {
 
-  int	a = 1;
+	int a = 1;
 
 	if (a > 5) {
 		a = 4;
@@ -20,7 +20,7 @@ void main() {
 	} 
 	else {
 		a = 5;
-		printf("Simple else works");
+		printf("Simple else works\n");
 		return a;
 	}	
 }
