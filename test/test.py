@@ -8,13 +8,25 @@ undefinedExpected = 0
 totalTests = 15
 
 #Remove old files
-try:
-  subprocess.call('rm */*.clx');
-  subprocess.call('rm */*.out');
-except:
-  print 'Did not remove any files'
+
+def remove_cruft():
+  try:
+    subprocess.call('rm */*.clx');
+    subprocess.call('rm */*.err');
+    subprocess.call('rm */*.out');
+  except:
+    print 'Did not remove any files'
 
 failedTests = []
+
+def num_tests(subdirs):
+  count = 0
+  for dir in subdirs:
+    for file in os.listdir(dir):
+      if file.endswith('.cl'):
+        count = count + 1
+  return count
+
 
 def get_immediate_subdirectories(dir):
     return [name for name in os.listdir(dir)
@@ -65,6 +77,7 @@ def compare(subdirs):
                     failedTests.append(dir + '/' + fileName[0])
                                 
 
+remove_cruft()
 current_directory = os.getcwd()
 subdirs = get_immediate_subdirectories(current_directory)
 
@@ -74,18 +87,11 @@ compileTests(subdirs)
 runFiles(subdirs)
 compare(subdirs)
 
+print 'RealNumTests = ' + str(num_tests(subdirs))
+
 print 'Correct :' +  str(numCorrect) + ' Total:' + str(numTests)
 print 'Failed :' +  str(numTests - numCorrect)
 print failedTests          
+remove_cruft()
           
-
-            
-
-
-
-
-
-
-
-
 

@@ -12,7 +12,7 @@ type="sqlite";
 
 void main() {
 
-	i = 0;
+	int i = 0;
 	/* this is a comment */
 	printf(i);
 
