@@ -125,7 +125,13 @@ Now let us create a simple database, with only one table, and add an entry to it
 		primary key(firstName)
 	}
 	#enddb
-	d
+
+
+```ruby
+require 'redcarpet'
+markdown = Redcarpet.new("Hello World!")
+puts markdown.to_html
+```
 	
 
 ## Language Reference Manual [man] ##
