@@ -125,13 +125,14 @@ Now let us create a simple database, with only one table, and add an entry to it
 		primary key(firstName)
 	}
 	#enddb
-
-
-```ruby
-require 'redcarpet'
-markdown = Redcarpet.new("Hello World!")
-puts markdown.to_html
-```
+	```C
+	int main()
+	{
+		Person samplePerson = Person(firstName = "John", lastName = "Example", age = 25);
+		samplePerson.add();
+		return 0;
+	}
+	```
 	
 
 ## Language Reference Manual [man] ##
