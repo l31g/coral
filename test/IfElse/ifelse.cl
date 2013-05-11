@@ -4,7 +4,7 @@ user="server";
 password="server";
 port="server";
 DBName="server";
-type="server";
+type="sqlite";
 #enddbconn
 
 #cordb

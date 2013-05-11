@@ -5,6 +5,14 @@ sys.path.append("../backend")
 numTests = 0
 numCorrect = 0
 undefinedExpected = 0
+totalTests = 15
+
+#Remove old files
+try:
+  subprocess.call('rm */*.clx');
+  subprocess.call('rm */*.out');
+except:
+  print 'Did not remove any files'
 
 failedTests = []
 
@@ -18,7 +26,12 @@ def compileTests(subdirs):
             if file.endswith('.cl'):
                 #print files
                 compileFile = dir +'/' + file                
-                #subprocess.call([pathToCoral, compileFile])
+                print pathToCoral + ' '+  compileFile
+                with open(dir+'/'+file+'.err', 'w') as outfile:
+                  subprocess.call([pathToCoral, compileFile], stdout=outfile, stderr=outfile)
+                outfile.close()
+                if not os.path.exists(compileFile+'x'):
+                    print 'Output cl failed for compileFile' +  dir+'/'+file
                 
 def runFiles(subdirs):
     for dir in subdirs:    
@@ -28,6 +41,8 @@ def runFiles(subdirs):
                 with open(dir+'/'+fileName[0]+'.out', 'w') as outfile:
                     subprocess.call(["python", dir+'/'+file], stdout=outfile, stderr=outfile)
                 outfile.close()
+                if not os.path.exists( dir+'/'+fileName[0]+'.out'):
+                    print 'Output creation failed for ' +  dir+'/'+fileName[0]
                     
 def compare(subdirs):
     for dir in subdirs:    
@@ -56,6 +71,7 @@ subdirs = get_immediate_subdirectories(current_directory)
 fileList = []
 pathToCoral = '../src/build/coralc'
 compileTests(subdirs)
+runFiles(subdirs)
 compare(subdirs)
 
 print 'Correct :' +  str(numCorrect) + ' Total:' + str(numTests)

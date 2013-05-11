@@ -4,7 +4,7 @@ user="server";
 password="server";
 port="server";
 DBName="server";
-type="server";
+type="sqlite";
 #enddbconn
 
 #cordb
@@ -13,10 +13,10 @@ type="server";
 void main() {
 
 	if(1 == 1){
-		printf('Should see this');
+		printf("Should see this");
 		return 5;
-		printf('Should not see this');
+		printf("Should not see this");
 	}
-	printf('Should not see this');
+	printf("Should not see this");
     
 }
