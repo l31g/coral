@@ -1,13 +1,46 @@
-type op = Add | Sub | Mult | Div | Mod | Equal | Neq | Less | Leq | Greater | Geq
-        | And | Or | Exp
+type op = (* Binary operators *)
+    Add
+    | Sub
+    | Mult 
+    | Div 
+    | Mod 
+    | Equal 
+    | Neq 
+    | Less 
+    | Leq 
+    | Greater 
+    | Geq
+    | And 
+    | Or 
+    | Exp
 
-type uop = Incr | Decr
+type uop = (* ++ and -- operators *)
+    Incr
+    | Decr
 
-type asignmt = Eql | Ple | Mie | Mue | Dve
+type asignmt = (* =, +=, -=, *=, /= *)
+    Eql
+    | Ple
+    | Mie
+    | Mue
+    | Dve
 
-type dtype = VoidType | IntType | StringType | TableType | NoType | FloatType | FileType
+type dtype =
+    VoidType
+    | IntType
+    | StringType
+    | TableType
+    | NoType
+    | FloatType
+    | FileType
 
-type conn_label = ServerConn | PortConn | UserConn | PassConn | TypeConn | DBConn
+type conn_label = 
+    ServerConn
+    | PortConn
+    | UserConn
+    | PassConn
+    | TypeConn
+    | DBConn
 
 type conn_attribute =
     ConnAttr of conn_label * string
@@ -70,7 +103,6 @@ type stmt =
     | ConnectDB
     | Nostmt
 
-
 type func_def = {
         return_type : dtype;
 		fname	: string;
@@ -78,8 +110,6 @@ type func_def = {
 		locals	: var_decl list;
 		body	: stmt list;
 }
-
-
 
 type table_body =
     TableBody of attribute list * key_decls list * func_def list

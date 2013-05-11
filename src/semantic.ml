@@ -6,11 +6,12 @@ type symbol_table = {
 	mutable variables : var_decl list;
 	mutable functions : func_def list;
 	mutable table_list : table list;
-	in_loop : bool;
 }
 
 type trans_environment = {
 	scope : symbol_table;
+	ret_type : dtype;
+	in_loop : bool;
 }
 
 (* check types *)
@@ -18,48 +19,48 @@ exception Error of string
 
 let check_type t1 t2 =
     if (not(t1 = t2)) then
-        raise(Error("Type Mismatch Exception"))
+        raise(Error("type mismatch between"))
     else t1
 
 (* find functions in symbol table *)
-let rec function_exists fname env =
+let rec function_exists fname scope =
 	try
-		let _ = List.find (fun func_def -> func_def.fname = fname) env.functions in true
+		let _ = List.find (fun func_def -> func_def.fname = fname) scope.functions in true
 	with Not_found ->
-		match env.parent with
+		match scope.parent with
 			Some(parent) -> function_exists fname parent
 			| _ -> false
 
-let rec find_function fname env =
+let rec find_function fname scope =
 	try
-		List.find (fun func_def -> func_def.fname = fname) env.functions
+		List.find (fun func_def -> func_def.fname = fname) scope.functions
 	with Not_found ->
-		match env.parent with
+		match scope.parent with
 			Some(parent) -> find_function fname parent
 			| _ -> raise (Failure ("Function " ^ fname ^ " not declared bro"))
 
 (* find variables in symbol table *)
-let rec variable_exists vname env =
+let rec variable_exists vname scope =
 	try
 		let _ = List.find (fun v_decl ->
 					match v_decl with
-					| VarDecl(t, v, e) -> v = vname) env.variables in true
+					| VarDecl(t, v, e) -> v = vname) scope.variables in true
 	with Not_found ->
-		match env.parent with
+		match scope.parent with
 			Some(parent) -> variable_exists vname parent
 			| _ -> false
 
-let rec find_variable vname env =
+let rec find_variable vname scope =
 	try
 		List.find (fun v_decl ->
 				match v_decl with
-				| VarDecl(t, v, e) -> v = vname) env.variables
+				| VarDecl(t, v, e) -> v = vname) scope.variables
 	with Not_found ->
-		match env.parent with
+		match scope.parent with
 			Some(parent) -> find_variable vname parent
 			| _ -> raise (Failure ("Variable " ^ vname ^ " not declared bro"))
 
-let rec variable_type vdec env =
+let rec variable_type vdec =
 	match vdec with
 	| VarDecl(t, v, e) -> t
 
@@ -69,19 +70,19 @@ let rec get_table_name table =
 		match t_label with
 		| TableLabel(l) -> l
 
-let rec table_exists tname env =
+let rec table_exists tname scope =
 	try
-		let _ = List.find (fun table -> (get_table_name table) = tname) env.table_list in true
+		let _ = List.find (fun table -> (get_table_name table) = tname) scope.table_list in true
 	with Not_found ->
-		match env.parent with
+		match scope.parent with
 			Some(parent) -> table_exists tname parent
 			| _ -> false
 
-let rec find_table tname env =
+let rec find_table tname scope =
 	try
-		List.find (fun table -> (get_table_name table) = tname) env.table_list
+		List.find (fun table -> (get_table_name table) = tname) scope.table_list
 	with Not_found ->
-		match env.parent with
+		match scope.parent with
 			Some(parent) -> find_table tname parent
 			| _ -> raise (Failure ("Declare your table bro"))
 
@@ -119,9 +120,9 @@ let rec check_expr exp env =
     | IntLiteral(l) -> IntType
     | StringLiteral(l) -> StringType
     | FPLiteral(l) -> FloatType
-	| Id(v) -> (variable_type (find_variable v env) env)
-	| Call(f, e) -> if (function_exists f env) then
-    					let f1 = (find_function f env) in
+	| Id(v) -> (variable_type (find_variable v env.scope))
+	| Call(f, e) -> if (function_exists f env.scope) then
+    					let f1 = (find_function f env.scope) in
     					let fmls = f1.formals in
     					if ((List.length fmls) != (List.length e)) then
     						raise (Error ("improper number of arguments to function " ^ f1.fname))
@@ -129,22 +130,22 @@ let rec check_expr exp env =
     						let _ = (List.map2 (fun x y -> check_actual x y env) fmls e) in
     							IntType
     				else
-    					let _ = (find_function f env) in
+    					let _ = (find_function f env.scope) in
     						IntType
 	(* TODO TableAttr(t, a) *)
 	| Open(fp, rw) -> 	if (not (rw = "r" || rw = "w" || rw = "rw")) then
 								raise (Error ("second argument to open must be \"r\", \"w\", or \"rw\""))
 						else
 							FileType
-	| Close(e) ->	if ((variable_type (find_variable e env) env) == FileType) then
+	| Close(e) ->	if ((variable_type (find_variable e env.scope)) == FileType) then
 						NoType
 					else
 						raise (Error ("argument of fclose() must have type File"))
-	| FPrint(fp, e) -> 	if ((variable_type (find_variable fp env) env) == FileType) then
+	| FPrint(fp, e) -> 	if ((variable_type (find_variable fp env.scope)) == FileType) then
 							NoType
 						else
 							raise (Error ("first argument of fprintf() must have type File"))
-	| FRead(fp) ->	if ((variable_type (find_variable fp env) env) == FileType) then
+	| FRead(fp) ->	if ((variable_type (find_variable fp env.scope)) == FileType) then
 						StringType
 					else
 						raise (Error ("argument of fread() must have type File"))
@@ -162,14 +163,14 @@ let rec check_expr exp env =
                             	else
                             		(check_type t1 t2)
                          ))
-    | Unop(a, uop) -> let t = (variable_type (find_variable a env) env) in
+    | Unop(a, uop) -> let t = (variable_type (find_variable a env.scope)) in
     					if (t = IntType || t = FloatType) then
     						t
     					else
     						raise (Error ("improper operator used on variable " ^ a))
 	| Notop(e) -> (check_expr e env)
 	| Neg(e) -> (check_expr e env)
-    | Assign(l, asgn, r) -> (let t1 = (variable_type (find_variable l env) env) in
+    | Assign(l, asgn, r) -> (let t1 = (variable_type (find_variable l env.scope)) in
     						 let t2 = (check_expr r env) in
     						 	(check_type t1 t2))
     | Parens(p) -> (check_expr p env)
@@ -187,21 +188,17 @@ let rec check_var_decl vdec env =
 
 let rec sys_check_var_decl vdec env =
 	match vdec with
-	| VarDecl(t, v, e) -> if (variable_exists v env) then
+	| VarDecl(t, v, e) -> if (variable_exists v env.scope) then
 							raise (Error ("variable " ^ v ^ " already declared"))
 						  else
-						  	let _ = (env.variables <- vdec::env.variables) in
+						  	let _ = env.scope.variables <- vdec::env.scope.variables in
 						  	(* no error so add to symbol table *)
-						  		(check_var_decl vdec env)
+						  	(check_var_decl vdec env)
 
 let rec check_formal f env =
     match f with
-    | Formal(t, n) ->
-                        (* Need the symbol table for this *)
-                        if (not (t = IntType)) then
-                            raise(Error("Formal Error"))
-                        else
-                            t
+    | Formal(t, n) ->	IntType
+    (* Need the symbol table for this *)
 
 let rec is_assign expr =
 	match expr with
@@ -233,7 +230,7 @@ let rec check_stmt s env =
     | CloseDB -> NoType
     | Nostmt -> NoType
 
-let rec get_return fdef stmts env =
+(* let rec get_return fdef stmts env =
 	let r_type = fdef.return_type in
 	if r_type != VoidType then
 		try
@@ -249,25 +246,34 @@ let rec get_return fdef stmts env =
 							match s with
 							| Return(expr) -> raise (Error ("function " ^ fdef.fname ^ " should not have return statement"))
 							| _ -> false) stmts
-		with Not_found -> Nostmt
+		with Not_found -> Nostmt *)
 
 let rec check_fdef fdef env =
 	let _ = (List.map (fun x -> check_formal x env) fdef.formals) in
 		let _ = (List.map (fun x -> sys_check_var_decl x env) fdef.locals) in
 			let _ = (List.map (fun x -> check_stmt x env) fdef.body) in
-				let _ = (get_return fdef fdef.body env) in
+				(* let _ = (get_return fdef fdef.body env) in *)
 					true
 
 let rec sys_check_fdef fdef env =
 	let f_name = fdef.fname in
 
-	if (function_exists f_name env) then
+	if (function_exists f_name env.scope) then
 		raise (Error ("you already declared function " ^ f_name ^ " bro"))
 	(* check rest of function def *)
 	else
-		let _ = (check_fdef fdef env) in
+		let scope' = { parent = Some(env.scope);
+					   variables = [];
+					   functions = [];
+					   table_list = [] } in
+
+		let env' = { env with scope = scope';
+					 ret_type = fdef.return_type } in
+		
+		let _ = (check_fdef fdef env') in
 		(* no error thrown, add function to symbol table *)
-			env.functions <- fdef::env.functions
+		let _ = env.scope.functions <- fdef::env.scope.functions in
+			true
 
 (* let rec check_attr attr env = 
 	let a_name = (fun x -> match attr with
@@ -294,12 +300,17 @@ let rec check_table table env =
 
 let rec check_program (p:program) =
 
-	let global_env = {
+	let global_scope = {
 		parent = None;
 		variables = [];
 		functions = [];
-		table_list = [];
-		in_loop = false;
+		table_list = []
+	} in
+
+	let global_env = {
+		scope = global_scope;
+		ret_type = NoType;
+		in_loop = false
 	} in
 
     let _ = (check_conn_block p.conn) in
