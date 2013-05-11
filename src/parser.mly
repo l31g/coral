@@ -103,10 +103,10 @@ expr:
 	| ID DECR 						{ Unop($1, Decr) }
 	| MINUS expr 						{ Neg($2)}
 	| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }
-    | FPRINT LPAREN expr COMMA actuals_opt RPAREN      { FPrint($3, $5) }
-    | FREAD LPAREN  expr RPAREN             { FRead($3) }
-    | CLOSE LPAREN expr RPAREN              { Close($3) }
-    | OPEN LPAREN actuals_opt RPAREN        { Open($3) }
+    | FPRINT LPAREN ID COMMA actuals_opt RPAREN      { FPrint($3, $5) }
+    | FREAD LPAREN  ID RPAREN             { FRead($3) }
+    | CLOSE LPAREN ID RPAREN              { Close($3) }
+    | OPEN LPAREN STRINGLITERAL COMMA STRINGLITERAL RPAREN        { Open($3, $5) }
 	| ID LPAREN actuals_opt RPAREN	{ Call($1, $3) }
     | ID LSQUARE expr RSQUARE     { Array($1, $3) }
     | ID DOT ADD LPAREN RPAREN { AddTableCall($1) }

@@ -42,11 +42,11 @@ type expr =
     | Neg of expr
     | Notop of expr
     | Print of expr list
-    | FPrint of expr * expr list
-    | FRead of expr
+    | FPrint of string * expr list
+    | FRead of string
     | Assign of string * asignmt * expr
-    | Open of expr list
-    | Close of expr
+    | Open of string * string
+    | Close of string
     | AddTableCall of string
     | GetTableCall of string * expr list
     | TableCall of string * string * expr list
