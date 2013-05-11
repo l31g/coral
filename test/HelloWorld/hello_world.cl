@@ -10,5 +10,5 @@ type="sqlite";
 #cordb
 #enddb
 void main() {
-    printf("Hello World");
+    printf("Hello World\n");
 }

@@ -14,8 +14,8 @@ type="sqlite";
 
 int test_func(){
 
-	printf("testing function");
-  return 0;
+	printf("testing function\n");
+	return 0;
 
 }
 
