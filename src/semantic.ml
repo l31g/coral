@@ -14,12 +14,23 @@ type trans_environment = {
 	in_loop : bool;
 }
 
+let rec string_of_coral_type t =
+	match t with
+    VoidType -> "void"
+    | IntType -> "int"
+    | StringType -> "string"
+    | TableType -> "Table"
+    | NoType -> ""
+    | FloatType -> "float"
+    | FileType -> "File"
+
 (* check types *)
 exception Error of string
 
 let check_type t1 t2 =
     if (not(t1 = t2)) then
-        raise(Error("type mismatch between"))
+        raise(Error("type mismatch between " ^ (string_of_coral_type t1) ^
+         " and " ^ (string_of_coral_type t2)))
     else t1
 
 (* find functions in symbol table *)
@@ -172,7 +183,10 @@ let rec check_expr exp env =
 	| Neg(e) -> (check_expr e env)
     | Assign(l, asgn, r) -> (let t1 = (variable_type (find_variable l env.scope)) in
     						 let t2 = (check_expr r env) in
-    						 	(check_type t1 t2))
+    						 	if (t1 == FloatType && t2 == IntType) then
+    						 		t1
+    						 	else
+    						 		(check_type t1 t2))
     | Parens(p) -> (check_expr p env)
     (* TODO Array(id, e) *)
     | Noexpr -> NoType
@@ -184,7 +198,11 @@ and check_actual formal actual env =
 let rec check_var_decl vdec env =
     match vdec with
     | VarDecl(t, v, Noexpr) -> t
-    | VarDecl(t, v, e) -> (check_type t (check_expr e env))
+    | VarDecl(t, v, e) -> 	let t2 = (check_expr e env) in
+    						if (t == FloatType && t2 == IntType) then
+    							t
+    						else 
+    							(check_type t (check_expr e env))
 
 let rec sys_check_var_decl vdec env =
 	match vdec with
@@ -209,7 +227,10 @@ let rec check_stmt s env =
     match s with
     | Block(stmts) -> 	let _ = (List.map (fun x -> check_stmt x env) stmts) in NoType
     | Expr(expr) -> 	(check_expr expr env)
-    | Return(expr) -> 	(check_expr expr env)
+    | Return(expr) -> 	if (check_expr expr env) == env.ret_type then
+    						env.ret_type
+    					else
+    						raise (Error ("invalid return type"))
     | If(e, s, Nostmt) -> 	if (not (is_assign e)) then
     							NoType
     						else
@@ -230,7 +251,7 @@ let rec check_stmt s env =
     | CloseDB -> NoType
     | Nostmt -> NoType
 
-(* let rec get_return fdef stmts env =
+let rec get_return fdef stmts env =
 	let r_type = fdef.return_type in
 	if r_type != VoidType then
 		try
@@ -246,7 +267,7 @@ let rec check_stmt s env =
 							match s with
 							| Return(expr) -> raise (Error ("function " ^ fdef.fname ^ " should not have return statement"))
 							| _ -> false) stmts
-		with Not_found -> Nostmt *)
+		with Not_found -> Nostmt
 
 let rec check_fdef fdef env =
 	let _ = (List.map (fun x -> check_formal x env) fdef.formals) in
