@@ -16,15 +16,18 @@ void main() {
 
 	if (a == 1) {
 		a = 2;
-		return a;
+		printf(a);
+		printf("\n");
 	}
 	if (a < 10 ) {
-		a = 12;
-		return a;
+		a =1; 
+		printf(a);
+		printf("\n");
 	}
 	if (a > 5 ) {
 		a = 4;
-		return a;
+		printf(a);
+		printf("\n");
 	}
 	printf("derpin");
 }

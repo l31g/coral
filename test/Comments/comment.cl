@@ -1,18 +1,21 @@
 #cordbconn
-server="server";
-user="server";
-password="server";
-port="server";
-DBName="server";
+server="";
+user="";
+password="memory";
+port="";
+DBName="";
 type="sqlite";
 #enddbconn
 
 #cordb
 #enddb
 
-void main() {
+void main() {	
 
 	int i = 0;
+	
+	printf(i);
+	
 	/* this is a comment */
 	printf(i);
 
@@ -20,4 +23,8 @@ void main() {
 	comment and probably won't work */
 
 	// single line comment
+
+
+	printf(i);
+	printf("\n");
 }
