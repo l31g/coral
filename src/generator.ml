@@ -1,4 +1,4 @@
-2open Ast
+open Ast
 open Printf
 
 let tab lvl =
@@ -81,6 +81,24 @@ let rec str_of_key k =
     | PrimaryKey(al) -> "PrimaryKeyConstraint('" ^ (str_of_attr_label al) ^ "')"
     | ForeignKey(al) -> "ForeignKey('" ^ (str_of_attr_label al) ^ "')"
 
+let rec str_of_query_filter q =
+    match q with
+    (* Get rid of quotes in a string *)
+    | StringLiteral(l) -> let len = (String.length l) in
+                            (String.sub l 1 (len-2) )
+    | IntLiteral(l) -> string_of_int(l)
+    | FPLiteral(l) -> string_of_float(l)
+    | Id(s) -> s
+    | Binop(a, op, b) -> (str_of_query_filter a) ^ (str_of_op op) ^ ":" ^(str_of_query_filter b)
+    | Assign(l, asgn, r) -> l ^ ":" ^ "=" ^ (str_of_query_filter r)
+
+let rec str_of_query_params q =
+    match q with
+    | StringLiteral(l) -> l
+    | IntLiteral(l) -> string_of_int(l)
+    | FPLiteral(l) -> string_of_float(l)
+    | Id(s) -> s
+    | Binop(a, op, b) -> (str_of_query_params a) ^ "=" ^ (str_of_query_params b)
 
 let rec str_of_expr exp =
     match exp with
@@ -95,7 +113,7 @@ let rec str_of_expr exp =
     | FPrint(fp, e) -> fp ^ ".write(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | FRead(fp) -> fp ^ ".readline()"
     | AddTableCall(f1) -> "controller.session.add(" ^ f1 ^ ")"
-    | GetTableCall(f1, e) -> "global_get(" ^ f1 ^ "," ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
+    | GetTableCall(f1, e) -> "controller.session.query(" ^ f1 ^ ").filter(\"" ^ (String.concat " and " (List.map str_of_query_filter e)) ^ "\").params(" ^ (String.concat " , " (List.map str_of_query_params e)) ^ ")"
     | TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | Print(e) -> "print(" ^ (String.concat "," (List.map str_of_expr e)) ^ ", end='')"
     | Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
@@ -188,7 +206,7 @@ let str_of_program program =
         (let l = (str_of_conn_block program.conn) in
         match l with
         | "" -> "conn_block = False\n\n"
-        | _ -> "conn_block = True\n\n")
+        | _ -> l ^ "conn_block = True\n\n" )
         ^ "\n\n" ^
          (str_of_table_block program.tables) ^ "\n\n" 
 
