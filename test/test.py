@@ -6,15 +6,29 @@ numTests = 0
 numCorrect = 0
 undefinedExpected = 0
 totalTests = 15
+failedTests = []
+failedToCompile = []
 
 #Remove old files
-try:
-  subprocess.call('rm */*.clx');
-  subprocess.call('rm */*.out');
-except:
-  print 'Did not remove any files'
 
-failedTests = []
+def remove_cruft():
+  try:
+    subprocess.call('rm */*.clx');
+    subprocess.call('rm */*.err');
+    subprocess.call('rm */*.out');
+  except:
+    pass
+    #print 'Did not remove any files'
+
+
+def num_tests(subdirs):
+  count = 0
+  for dir in subdirs:
+    for file in os.listdir(dir):
+      if file.endswith('.cl'):
+        count = count + 1
+  return count
+
 
 def get_immediate_subdirectories(dir):
     return [name for name in os.listdir(dir)
@@ -26,12 +40,14 @@ def compileTests(subdirs):
             if file.endswith('.cl'):
                 #print files
                 compileFile = dir +'/' + file                
-                print pathToCoral + ' '+  compileFile
+                #print pathToCoral + ' '+  compileFile
                 with open(dir+'/'+file+'.err', 'w') as outfile:
                   subprocess.call([pathToCoral, compileFile], stdout=outfile, stderr=outfile)
                 outfile.close()
                 if not os.path.exists(compileFile+'x'):
-                    print 'Output cl failed for compileFile' +  dir+'/'+file
+                  #print 'Coral could not compile:' +  dir+'/'+file
+                  failedToCompile.append(dir+'/'+file)
+
                 
 def runFiles(subdirs):
     for dir in subdirs:    
@@ -65,6 +81,7 @@ def compare(subdirs):
                     failedTests.append(dir + '/' + fileName[0])
                                 
 
+remove_cruft()
 current_directory = os.getcwd()
 subdirs = get_immediate_subdirectories(current_directory)
 
@@ -74,18 +91,24 @@ compileTests(subdirs)
 runFiles(subdirs)
 compare(subdirs)
 
-print 'Correct :' +  str(numCorrect) + ' Total:' + str(numTests)
-print 'Failed :' +  str(numTests - numCorrect)
+numTests = num_tests(subdirs)
+
+
+
+print 'Correct : ' +  str(numCorrect) + ' Total: ' + str(numTests)
+print 'Failed : ' +  str(numTests - numCorrect)
+
+
+print ''
+print 'The following files did not compile.\n'
+print failedToCompile
+
+print ''
+print 'The following files did not return the expected result: \n'
 print failedTests          
+
+print ''
+print str((numCorrect/float(numTests))*100)  + '% PASSED'
+remove_cruft()
           
-
-            
-
-
-
-
-
-
-
-
 

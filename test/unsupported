@@ -1,0 +1,6 @@
+printf('%f', a);
+# We use java style print
+
+globals are prefixed with the global keyword
+
+add tests for exceptions

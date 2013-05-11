@@ -12,7 +12,7 @@ type="sqlite";
 
 void main() {
 
-	a = 1;
+	int a = 1;
 
 	if (a == 1) {
 		a = 2;
