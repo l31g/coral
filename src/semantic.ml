@@ -47,7 +47,7 @@ let rec variable_exists vname env =
 
 let rec find_variable vname env =
 	try
-		List.find (fun v_decl -> 
+		List.find (fun v_decl ->
 				match v_decl with
 				| VarDecl(t, v, e) -> v = vname) env.variables
 	with Not_found ->
@@ -96,8 +96,14 @@ let rec check_conn_attr ca  =
 let rec check_conn_block cb =
     match cb with
     | ConnBlock(a1, a2, a3, a4, a5, a6) ->
-        (check_conn_attr a1), (check_conn_attr a2), (check_conn_attr a3),
-        (check_conn_attr a4), (check_conn_attr a5), (check_conn_attr a6)
+        let _ = (check_conn_attr a1) in
+        let _ = (check_conn_attr a2) in
+        let _ = (check_conn_attr a3) in
+        let _ = (check_conn_attr a4) in
+        let _ = (check_conn_attr a5) in
+        let _ = (check_conn_attr a6) in
+        NoType
+    | NoConnBlock -> NoType
 
 (* check table declarations *)
 
@@ -121,7 +127,7 @@ let rec check_expr exp env =
                          (let t2 = (check_expr b env) in
                             if(t1=FloatType && t2=IntType) then
                             	t1
-                            else 
+                            else
                             	if(t1=IntType && t2=FloatType) then
                             		t2
                             	else
@@ -160,7 +166,7 @@ let rec sys_check_var_decl vdec env =
 
 let rec check_formal f env =
     match f with
-    | Formal(t, n) ->	
+    | Formal(t, n) ->
                         (* Need the symbol table for this *)
                         if (not (t = IntType)) then
                             raise(Error("Formal Error"))
@@ -214,7 +220,7 @@ let rec get_return fdef stmts env =
 		with Not_found -> Nostmt
 
 let rec check_fdef fdef env =
-	let _ = (List.map (fun x -> check_formal x env) fdef.formals) in 
+	let _ = (List.map (fun x -> check_formal x env) fdef.formals) in
 		let _ = (List.map (fun x -> sys_check_var_decl x env) fdef.locals) in
 			let _ = (List.map (fun x -> check_stmt x env) fdef.body) in
 				let _ = (get_return fdef fdef.body env) in
@@ -226,7 +232,7 @@ let rec sys_check_fdef fdef env =
 	if (function_exists f_name env) then
 		raise (Error ("you already declared function " ^ f_name ^ " bro"))
 	(* check rest of function def *)
-	else 
+	else
 		let _ = (check_fdef fdef env) in
 		(* no error thrown, add function to symbol table *)
 			env.functions <- fdef::env.functions

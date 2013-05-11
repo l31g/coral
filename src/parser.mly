@@ -37,10 +37,10 @@
 %%
 
 program:
-	CORDBCONN conn_block ENDDBCONN CORDB tables_list ENDDB fdef_list 	{ {
-							conn = $2;
-                            tables = List.rev $5;
-							funcs = List.rev $7
+	conn_block table_block fdef_list 	{ {
+							conn = $1;
+                            tables = $2;
+							funcs = List.rev $3
 		} }
 
 fdef_list:
@@ -168,9 +168,12 @@ conn_attribute:
     conn_label ASSIGN STRINGLITERAL SEMI { ConnAttr($1, $3) }
 
 conn_block:
+                                { NoConnBlock }
+    | CORDBCONN
     conn_attribute conn_attribute
     conn_attribute conn_attribute
-    conn_attribute conn_attribute { ConnBlock($1, $2, $3, $4, $5, $6) }
+    conn_attribute conn_attribute
+    ENDDBCONN                       { ConnBlock($2, $3, $4, $5, $6, $7) }
 
 attribute_label:
     ID      { AttrLabel($1) }
@@ -206,5 +209,9 @@ table:
 tables_list:
 							  { [] }
 	| tables_list table { $2 :: $1 }
+
+table_block:
+                                { NoTableBlock }
+    | CORDB tables_list ENDDB { TableBlock($2) }
 
 
