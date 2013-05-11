@@ -10,11 +10,66 @@ Date: 	May 10, 2013
 
 # CORaL Project Report #
 
-fds
+*Last Updated:May 10, 2013*
+
+***Authors:***
+
+* Shane Chin, sac2171  
+* Molly Karcher, mdk2133  
+* Luis E. P. lep2141  
+* Brian Wagner, bhw2113  
+* Miguel Yanez, may2114  
+
+***Affiliation:***
+
+* Columbia University  
 
 ## Introduction [intro] ##
 
-bla ble bli  
+###Design Goals of the CORaL Programming Language###
+
+Our language addresses the problem of no native support in high-level languages for SQL queries and table manipulation. Currently, in order to talk to SQL databases in languages such as C, a bunch of complicated code is required and the queries are still implemented directly as ugly SQL statements represented by strings in your program. Our language will have specific data types and new keywords that will allow users to directly access and manipulate tables. Once the compiler is run, these commands can be translated into SQL commands.
+
+The target users of our language are programmers who need to access and manipulate large amounts of data quickly and easily. We will assume that users have experience with high-level languages (i.e. Java/C) and knowledge of databases and database management, but may not have deep knowledge of SQL, just relational algebra.
+
+Different from high-level programming languages, the scope of SQL includes data insert, query, update and delete, schema creation and modification, and data access control. As such it makes the way users program and communicate different than they would with higher-level languages. Also, due to SQL’s roots in relational algebra and tuple relational calculus, the structure of the language is radically different from high-level languages. SQL became a standard of the American National Standards Institute (ANSI) in 1986, and of the International Organization for Standards (ISO) in 1987. Since then, the standard has been enhanced several times with added features. Many have attempted to implement variations of SQL that allow the user to program in a more procedural fashion; this has made the language to branch of depending on the different vendors.
+
+One of the first languages that seeked to combine the power of a high-level programming language with the database manipulation capabilities of SQL is Embedded SQL. Embedded SQL statements are SQL statements written inline with the program source code of the host language. The embedded SQL statements are parsed by an embedded SQL preprocessor and replaced by host-language calls to a code library.
+
+Another such attempt to bridge the gap of procedural languages and SQL is Oracle’s PL/SQL. PL/SQL’s general syntax resembles that of Ada or Pascal. It supports variables, conditions, loops and exceptions.  
+
+
+Finally, another such language from yet another vendor is Microsoft’s Transact-SQL. T-SQL expands on the SQL standard to include procedural programming, local variables, various support functions for string processing, data processing, mathematics, etc.
+
+There is one problem that plagues all of these languages however, they aren’t portable, universal, and their syntax is clunky. Having dealt, with these languages the CORaL team has decided that there is an opportunity to address this problem with a proper language implementation. Unlike the languages described above, CORaL seeks to create a cleaner, easier to use, readable syntax that allows us to describe database manipulations using object-relational methods.
+
+####Vendor-neutral, portable, and universal####
+
+SQL code is not completely portable among different database systems, which can lead to vendor lock-in. The different makers do not perfectly follow the standard, they add extensions, and the standard is sometimes ambiguous. As such the proprietary languages that extended SQL to add procedural elements to it, suffer from different syntax as well as different levels of complexity. CORaL aims to remedy the vendor lock-in by offering a neutral, portable, and universal solution to the procedural extension of the SQL language. In order to remain backwards compatible with current systems, as well as to try and gain widespread adoption CORaL will support Oracle and Microsoft database implementations.
+
+####Clean, familiar, and intuitive####
+
+A primary goal of our language is to make interacting with SQL databases through a high-level language into a simple and intuitive experience. Because the language will natively support database manipulation, the SQL objects and data types will be just like the language’s primitives and standard data types, so interacting with them will not only be much cleaner, but feel as familiar as manipulating strings or integers.
+
+CORaL will be similar in syntax and structure to C and Java, but support additional data types, such as database tables, entries, and queries. These data types will have many built-in functions by which users can perform relational algebra and construct queries. At compile time, the database-related objects and functions will be transformed into SQL code which can be sent to the database.
+
+This will allow for more robust and streamlined programming for any applications which require complicated use of a database, and improve the ease with which such programs can be documented and maintained. The simple use and syntax of the database types will allow programmers who have only limited understanding of databases to easily construct queries and incorporate database usage into their applications, which will decrease the time needed to create the applications and the knowledge required.
+
+The driving force behind the creation of CORaL is to integrate database manipulation into high-level programming. Currently, in languages such as C and Java, SQL queries are represented by strings, and any database code looks foreign and bulky. CORaL will transform this interaction from a dense, confusing web of strange keywords into a set of simple, elegant, and easy-to-read data types and commands.
+
+####Object-relational, versatile and productive####
+
+One of the biggest parts of the CORaL programming language is the ability to write code without added cognitive strain. Most SQL databases do not provide any built in mechanism for manipulating data as objects. Despite this missing feature, it is something that clearly most programmers want, as every SQL implementation has an Object Relational Mapper which simulates the effect of object orientation with an added abstraction layer. 
+
+Our language will directly implement this relational mapper as a native feature of the language. By creating a language with strong object-relations, most programmers will have no problem picking up. Our intended stack and implementation allows our language to be versatile; less code allows developers to be more productive. 
+
+The encapsulation of data within objects fits in with how developers already see the data, and as such allows for easier transition. While our language will have less similarities with SQL, we hope that the code reuse capabilities of object orientation will allow for smaller code, which is easier to maintain, and more versatile. All this results with developers who can write less, and do more.
+
+####Easy-peasy####
+
+The culmination of all these design requirements results in a language that is user-friendly above all else. The overall goal is to aid towards programmers with limited knowledge of SQL syntax, and to eliminate the need for creating queries when using different flavors of SQL. One of the ideas behind the design of SQL was to make queries appear almost as sentences. While this works for trivial statements, it completely falls apart when you have a much larger statement to translate into a query. This forms the leading problem that the CORaL programming language aims to solve; that SQL is hard to parse for humans. This language allows one to represent a SQL query in a way that seems far more intuitive, especially to someone with programming experience, the main target audience of the language. 
+
+By drawing functionality and syntax from commonly used languages, CORaL serves as an easy transition from any high-level programming language. The problem with these languages is that they become clunky and difficult to use once databases connection and integration is required. In building these features directly into the language, programming with a database becomes exponentially easier, leaving no better explanation for the language than easy-peasy. 
 
 ## Language Tutorial [tut] ##
 
@@ -65,7 +120,7 @@ An understanding of the source code for this program will enable the user to do 
 	void printExp(int b, int e)
 	{
 		int result = b**e;
-		printf("The result of " + base " ^ " + exp + 
+		printf("The result of " + b " ^ " + e + 
 				" is " + result);
 	}
 
@@ -181,7 +236,7 @@ The above program demonstrates how to define and populate a new database within 
 		/* We’ll also omit the code used 
 		to fill the database, but assume that 
 		it is present */
-		fp = open(“query_results.txt”, "w");
+		fp = fopen(“query_results.txt”, "w");
 		fprintf(fp, "People over the age of 21\n");
 		result = People.get(age>21);
 		size = sizeof(result);
@@ -208,6 +263,15 @@ Here is the output of this program as they would be displayed in `query_results.
 	Brian Wagner
 	Miguel Yanez
 
+We've shown off a lot of CORaL functionality in the above program. The first new concept is querying. The `get()` function is a built-in function that every `Table` has. It is used to search through rows within a database table that match the arguments of the function. The arguments to the function are the attributes of the `Table` on which `get()` is being called on. For example `User.get(age>21, name="Luis")` translates to the following SQL:
+
+	SELECT "User".age AS age , "User".name AS name FROM "User" WHERE age > 21 and name == "ed" 
+
+In the future more complicated `get()` expressions will be supported.
+
+Another concept introduced in this program is the notion of files. A `File` is an object in CORaL, and the functiones used to operate on it are included in the standard library. These include `fopen()`, `fclose()`, `fprintf()`, `freadline()` functions, which operate as one would expect. 
+
+With a working knowledge of CORaL queries under your belt, you can begin fully utilizing the language for database manipulation. These example programs, while simple, contain all of the building blocks required to create the powerful, yet clean and efficient, object-relational programs typical of the CORaL language. We trust that you have found them both useful and inspirational.
 
 ## Language Reference Manual [man] ##
 

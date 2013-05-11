@@ -90,8 +90,8 @@ let rec str_of_query_filter q =
     | IntLiteral(l) -> string_of_int(l)
     | FPLiteral(l) -> string_of_float(l)
     | Id(s) -> s
-    | Binop(a, op, b) -> (str_of_query_filter a) ^ (str_of_op op) ^ ":" ^(str_of_query_filter b)
-    | Assign(l, asgn, r) -> l ^ ":" ^ "=" ^ (str_of_query_filter r)
+    | Binop(a, op, b) -> (str_of_query_filter a) ^ (str_of_op op) ^ ":" ^ (str_of_query_filter a)
+    | Assign(l, asgn, r) -> l ^ "=" ^ ":" ^ l
 
     | Call(s, expr) -> "" (* should not ever be called in this context *)
     | Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
@@ -118,10 +118,10 @@ let rec str_of_query_params q =
     | Id(s) -> s
     | Binop(a, op, b) -> (str_of_query_params a) ^ "=" ^ (str_of_query_params b)
 
-    | Assign(l, asgn, r) -> l ^ ":" ^ "=" ^ (str_of_query_filter r)
+    | Assign(l, asgn, r) -> l ^ "=" ^ (str_of_query_params r)
     | Call(s, expr) -> "" (* should not ever be called in this context *)
     | Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
-    | Neg(expr) -> "-" ^ (str_of_query_filter expr)
+    | Neg(expr) -> "-" ^ (str_of_query_params expr)
     | Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
     | Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
     | FPrint(s, expr) -> ""
