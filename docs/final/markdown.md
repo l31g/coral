@@ -11,7 +11,10 @@ Date: 	May 10, 2013
 #CORaL Project Report
 ##Introduction [intro]
 bla ble bli  
-		int main	
+
+			int main(){}  
+
+
 ##Language Tutorial [tut]
 ble bli blo
 ##Language Reference Manual [man]
