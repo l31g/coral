@@ -96,7 +96,7 @@ let rec str_of_expr exp =
     | AddTableCall(f1) -> "controller.session.add(" ^ f1 ^ ")"
     | GetTableCall(f1, e) -> "global_get(" ^ f1 ^ "," ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
-    | Print(e) -> "print " ^ (String.concat "," (List.map str_of_expr e))
+    | Print(e) -> "print(" ^ (String.concat "," (List.map str_of_expr e)) ^ ", end='')"
     | Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
     | Unop(a, uop) -> a ^ "=" ^ a ^ (str_of_uop uop)
     | Notop(e) -> "not " ^ (str_of_expr e)
@@ -164,6 +164,7 @@ let rec str_of_table tb =
 
 let str_of_program program =
         "#!/usr/bin/env python\n" ^
+        "from __future__ import print_function\n" ^
         "import sys\nsys.path.append(\"../../backend\")\n" ^
         "import controller\nfrom controller import *\n\n" ^
         (str_of_conn_block program.conn) ^ "\n\n" ^

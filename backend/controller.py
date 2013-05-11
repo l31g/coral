@@ -6,6 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, ForeignKey, String
 from sqlalchemy.schema import PrimaryKeyConstraint
 
+
 server = None
 port = None
 user = None
