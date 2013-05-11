@@ -21,14 +21,12 @@
 %nonassoc NOELSE
 %nonassoc ELSE
 %right ASSIGN
+%left PLEQ MIEQ MUEQ DVEQ
 %right EQUAL NOT
 %left DOT
-%left EQ NEQ
-%left LT GT LEQ GEQ
-%left PLUS MINUS
+%left EQ NEQ LT GT LEQ GEQ
+%left PLUS MINUS DECR INCR
 %left TIMES DIVIDE MOD EXP
-%left PLEQ MIEQ MUEQ DVEQ
-%left DECR INCR
 %left AND OR
 
 %start	program
@@ -189,7 +187,7 @@ attribute_label:
     ID      { AttrLabel($1) }
 
 attribute:
-    dtype attribute_label SEMI		{ Attr($2,$1) }
+    attribute_label COLON dtype SEMI		{ Attr($1,$3) }
 
 attribute_group:
      attribute               { [$1] }
