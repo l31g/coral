@@ -205,7 +205,6 @@ key_decls:
 
 table_label:
 	ID 		{ TableLabel($1) }
-	| ID COLON ID { TableLabelRel($1, $3) }
 
 table_body:
     attribute_group key_decls_list fdef_list { TableBody($1,$2,$3) }

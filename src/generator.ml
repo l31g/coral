@@ -140,7 +140,6 @@ let rec str_of_stmt s lvl =
 let rec str_of_table_label tl =
     match tl with
     | TableLabel(l) -> "" ^ l
-    | TableLabelRel(l,r) -> "" ^ l ^ " : " ^ r
 
 let str_of_fdef fdef globals lvl =
     (tab lvl) ^ "def " ^ fdef.fname ^ "(" ^

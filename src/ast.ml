@@ -7,7 +7,6 @@ type asignmt = Eql | Ple | Mie | Mue | Dve
 
 type dtype = VoidType | IntType | StringType | TableType | NoType | FloatType | FileType
 
-
 type conn_label = ServerConn | PortConn | UserConn | PassConn | TypeConn | DBConn
 
 type conn_attribute =
@@ -29,8 +28,6 @@ type key_decls =
 
 type table_label =
     TableLabel of string
-    | TableLabelRel of string * string
-
 
 type expr =
     IntLiteral of int
