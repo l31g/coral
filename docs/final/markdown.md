@@ -139,7 +139,7 @@ The actual definition of databases in CORaL takes place outside of the other fun
 After the creation of the `Person` table, that table can be referenced and accessed by all functions within a CORaL program. Creating a new `Person` object is done within the lines
 
 	Person samplePerson = Person(firstName = "John", lastName = "Example", age = 25);
-In CORaL, new database object are always defined using the `[name of object] [variable name] = [name of object]` syntax. The various object attributes are filled in between the parentheses following the name of the object, and are done in the key-value format. The order of the keys does not matter, and any values not specified will be filled in as `null`.
+In CORaL, new database object are always defined using the `[name of object] [variable name] = [name of object](attribute list)` syntax. The various object attributes are filled in between the parentheses following the name of the object, and are done in the key-value format. The order of the keys does not matter, and any values not specified will be filled in as `null`.
 
 To formally add the new object to the database table, CORaL simply invokes the function `[new object].add()`.
 
