@@ -53,7 +53,11 @@ let rec find_variable vname env =
 	with Not_found ->
 		match env.parent with
 			Some(parent) -> find_variable vname parent
-			| _ -> raise (Failure ("Variable " ^ vname ^ "not declared bro"))
+			| _ -> raise (Failure ("Variable " ^ vname ^ " not declared bro"))
+
+let rec variable_type vdec env =
+	match vdec with
+	| VarDecl(t, v, e) -> t
 
 (* find tables in symbol table *)
 let rec table_exists tname env =
@@ -102,7 +106,7 @@ let rec check_expr exp env =
     | IntLiteral(l) -> IntType
     | StringLiteral(l) -> StringType
     | FPLiteral(l) -> FloatType
-	(* TODO ID need variable symbol table *)
+	| Id(v) -> (variable_type (find_variable v env) env)
 	| Call(f, e) -> if (function_exists f env) then
     					let f1 = (find_function f env) in
     					let fmls = f1.formals in
@@ -123,10 +127,12 @@ let rec check_expr exp env =
                             	else
                             		(check_type t1 t2)
                          ))
-    (* TODO Unop  need variable symbol table *)
+    (* TODO Unop need variable symbol table *)
 	| Notop(e) -> (check_expr e env)
 	| Neg(e) -> (check_expr e env)
-    | Assign(l, asgn, r) -> (check_expr r env)
+    | Assign(l, asgn, r) -> (let t1 = (variable_type (find_variable l env) env) in
+    						 let t2 = (check_expr r env) in
+    						 	(check_type t1 t2))
     | Parens(p) -> (check_expr p env)
     | Noexpr -> NoType
 
@@ -148,13 +154,11 @@ let rec check_var_decl vdec env =
 let rec sys_check_var_decl vdec env =
 	match vdec with
 	| VarDecl(t, v, e) -> if (variable_exists v env) then
-							let _ = raise (Error ("variable " ^ v ^ " already declared"))
-								in t
+							raise (Error ("variable " ^ v ^ " already declared"))
 						  else
-						  	let _ = (check_var_decl vdec env) in
+						  	let _ = (env.variables <- vdec::env.variables) in
 						  	(* no error so add to symbol table *)
-						  		let _ = env.variables <- vdec::env.variables
-						  			in t
+						  		(check_var_decl vdec env)
 
 let rec check_formal f env =
     match f with
@@ -179,9 +183,10 @@ let rec check_stmt s env =
     | Nostmt -> NoType
 
 let rec check_fdef fdef env =
-	(List.map (fun x -> check_formal x env) fdef.formals), 
-	(List.map (fun x -> sys_check_var_decl x env) fdef.locals), 
-	(List.map (fun x -> check_stmt x env) fdef.body)
+	let _ = (List.map (fun x -> check_formal x env) fdef.formals) in 
+		let _ = (List.map (fun x -> sys_check_var_decl x env) fdef.locals) in
+			let _ = (List.map (fun x -> check_stmt x env) fdef.body) in
+				true
 
 let rec sys_check_fdef fdef env =
 	let f_name = fdef.fname in
