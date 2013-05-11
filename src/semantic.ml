@@ -24,6 +24,23 @@ let rec string_of_coral_type t =
     | FloatType -> "float"
     | FileType -> "File"
 
+let rec string_of_coral_op o =
+	match o with
+    Add -> "+"
+    | Sub -> "-"
+    | Mult -> "*"
+    | Div -> "/"
+    | Mod -> "%"
+    | Equal -> "=="
+    | Neq -> "!="
+    | Less -> "<"
+    | Leq -> "<="
+    | Greater -> ">="
+    | Geq -> ">"
+    | And -> "&&"
+    | Or -> "||"
+    | Exp -> "**"
+
 (* check types *)
 exception Error of string
 
@@ -48,7 +65,7 @@ let rec find_function fname scope =
 	with Not_found ->
 		match scope.parent with
 			Some(parent) -> find_function fname parent
-			| _ -> raise (Failure ("Function " ^ fname ^ " not declared bro"))
+			| _ -> raise (Failure ("function " ^ fname ^ " not declared bro"))
 
 (* find variables in symbol table *)
 let rec variable_exists vname scope =
@@ -69,7 +86,7 @@ let rec find_variable vname scope =
 	with Not_found ->
 		match scope.parent with
 			Some(parent) -> find_variable vname parent
-			| _ -> raise (Failure ("Variable " ^ vname ^ " not declared bro"))
+			| _ -> raise (Failure ("variable " ^ vname ^ " not declared bro"))
 
 let rec variable_type vdec =
 	match vdec with
@@ -95,7 +112,7 @@ let rec find_table tname scope =
 	with Not_found ->
 		match scope.parent with
 			Some(parent) -> find_table tname parent
-			| _ -> raise (Failure ("Declare your table bro"))
+			| _ -> raise (Failure ("table " ^ tname ^ " not declared bro"))
 
 (* check db connection section *)
 let rec check_conn_label co =
@@ -260,7 +277,8 @@ let rec get_return fdef stmts env =
 							| Return(expr) -> ((check_expr expr env) = r_type)
 							| _ -> false ) stmts
 		with Not_found ->
-			raise (Error ("function " ^ fdef.fname ^ " does not return type of correct value"))
+			raise (Error ("function " ^ fdef.fname ^ " declared with return type of " ^
+			(string_of_coral_type r_type) ^ " but has no return statement"))
 	else
 		try
 			List.find (fun s ->
@@ -273,7 +291,7 @@ let rec check_fdef fdef env =
 	let _ = (List.map (fun x -> check_formal x env) fdef.formals) in
 		let _ = (List.map (fun x -> sys_check_var_decl x env) fdef.locals) in
 			let _ = (List.map (fun x -> check_stmt x env) fdef.body) in
-				(* let _ = (get_return fdef fdef.body env) in *)
+				let _ = (get_return fdef fdef.body env) in
 					true
 
 let rec sys_check_fdef fdef env =
