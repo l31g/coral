@@ -1,17 +1,17 @@
 type op = (* Binary operators *)
     Add
     | Sub
-    | Mult 
-    | Div 
-    | Mod 
-    | Equal 
-    | Neq 
-    | Less 
-    | Leq 
-    | Greater 
+    | Mult
+    | Div
+    | Mod
+    | Equal
+    | Neq
+    | Less
+    | Leq
+    | Greater
     | Geq
-    | And 
-    | Or 
+    | And
+    | Or
     | Exp
 
 type uop = (* ++ and -- operators *)
@@ -33,8 +33,10 @@ type dtype =
     | NoType
     | FloatType
     | FileType
+    | UserType
 
-type conn_label = 
+
+type conn_label =
     ServerConn
     | PortConn
     | UserConn
@@ -88,6 +90,7 @@ type expr =
 
 type var_decl =
     VarDecl of dtype * string * expr
+    | UDecl of dtype * string * string * expr
 
 type formal =
     Formal of dtype * string

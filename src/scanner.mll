@@ -66,6 +66,7 @@ rule token = parse
 	|	"server"				{ SERVER }
 	|	"port"					{ PORT }
 	| 	"user"					{ USER }
+	| 	"user_t"				{ USERTYPE }
 	|	"password"				{ PASS }
 	| 	"type"					{ TYPE }
 	| 	"DBName"				{ DBNAME }

@@ -142,8 +142,9 @@ Now let us create a simple database, with only one table, and add an entry to it
  
 	int main()
 	{
+		user_t Person samePerson;
 		connectDB;
-		Person samplePerson = Person(firstName = "John", lastName = "Example", age = 25);
+		samplePerson = Person(firstName = "John", lastName = "Example", age = 25);
 		samplePerson.add();
 		closeDB;
 		return 0;
@@ -155,13 +156,57 @@ The actual definition of databases in CORaL takes place outside of the other fun
 
 After the creation of the `Person` table, that table can be referenced and accessed by all functions within a CORaL program. Creating a new `Person` object is done within the lines
 
-	Person samplePerson = Person(firstName = "John", lastName = "Example", age = 25);
-In CORaL, new database object are always defined using the `[name of object] [variable name] = [name of object](attribute list)` syntax. The various object attributes are filled in between the parentheses following the name of the object, and are done in the key-value format. The order of the keys does not matter, and any values not specified will be filled in as `null`.
+	user_t Person samplePerson = Person(firstName = "John", lastName = "Example", age = 25
 
-To formally add the new object to the database table, CORaL simply invokes the function `[new object].add()`.
+In CORaL, new database object are always defined using the `user_t [name of table] [variable name] = [name of table](attribute list)` syntax. The various object attributes are filled in between the parentheses following the name of the object, and are done in the key-value format. The order of the keys does not matter, and any values not specified will be filled in as `null`.
+
+To formally add the new object to the database table, CORaL simply invokes the function `[new table row].add()`.
 
 ### Database Connections, Queries, and File Manipulation in CORaL ###
 
+The above program demonstrates how to define and populate a new database within a CORaL program. A database, however, isn't of much use to the user unless it can be queried. The below program will demonstrate how to create queries, and also how to print the results to local files. We're going to define the same database schema as the previous example, but omit the code filling it for the sake of clarity.
+
+	#cordbconn
+	// The same connection as used above.
+	#enddbconn
+
+	#cordb
+	// The same connection as used above.
+	#enddb
+
+	int main() {
+		File fp;
+		int i;
+		int size;
+		/* We’ll also omit the code used 
+		to fill the database, but assume that 
+		it is present */
+		fp = open(“query_results.txt”, "w");
+		fprintf(fp, "People over the age of 21\n");
+		result = People.get(age>21);
+		size = sizeof(result);
+
+		for(i=0; i < size; i++) {
+
+			user_t Person user = result[i];
+			fprintf(fp, user.firstName + " " 
+					+ user.lastName + "\n");
+	
+		}
+	
+		fclose(fp);
+
+		return 0;
+}
+
+Here is the output of this program as they would be displayed in `query_results.txt`:
+
+	People over the age of 21
+	Shane Chin
+	Molly Karcher
+	Luis E. P.
+	Brian Wagner
+	Miguel Yanez
 
 
 ## Language Reference Manual [man] ##
