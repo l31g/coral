@@ -1,7 +1,10 @@
-import subprocess, os, filecmp
+import subprocess, os, filecmp,sys
+
+sys.path.append("../backend")
 
 numTests = 0
 numCorrect = 0
+undefinedExpected = 0
 
 def get_immediate_subdirectories(dir):
     return [name for name in os.listdir(dir)
@@ -13,23 +16,32 @@ def compileTests(subdirs):
             if file.endswith('.cl'):
                 #print files
                 compileFile = dir +'/' + file                
-                subprocess.call([pathToCoral, compileFile])
+                #subprocess.call([pathToCoral, compileFile])
                 
 def runFiles(subdirs):
     for dir in subdirs:    
         for file in os.listdir(dir):
             if file.endswith('.clx'):
-                with open(file+'.out', 'w') as outfile:
-                    subprocess.call(["python", file], stdout=outfile, stderr=outfile)
+                fileName = file.split('.')
+                with open(dir+'/'+fileName[0]+'.out', 'w') as outfile:
+                    subprocess.call(["python", dir+'/'+file], stdout=outfile, stderr=outfile)
                 outfile.close()
                     
 def compare(subdirs):
     for dir in subdirs:    
         for file in os.listdir(dir):
             if file.endswith('.out'):
-                numTests = numTests + 1                            
-                fileName = file.rsplit['.'][0]
-                if(True == filecmp.cmp(file, fileName+'.exp')):
+                global numTests                
+                numTests = numTests + 1            
+                fileName = file.split('.')
+                expectedFile  = dir + '/' + fileName[0] +'.exp'
+                if not os.path.exists(expectedFile):
+                    global undefinedExpected
+                    undefinedExpected = undefinedExpected + 1
+                    print fileName[0] + ' does not have expected file.'
+                    continue
+                if(True == filecmp.cmp(dir + '/' + file, dir + '/' + fileName[0]+'.exp')):
+                    global numCorrect
                     numCorrect = numCorrect + 1
                                 
 
@@ -44,7 +56,7 @@ runFiles(subdirs)
 compare(subdirs)
 
 print 'Correct :' +  str(numCorrect) + ' Total:' + str(numTests)
-print 'Failed :' +  str(numCorrect- numTests)                    
+print 'Failed :' +  str(numTests - numCorrect)                    
 
             
 
