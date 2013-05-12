@@ -108,20 +108,20 @@ expr:
 	| NOT expr 						{ Notop($2) }
 	| ID INCR 						{ Unop($1, Incr) }
 	| ID DECR 						{ Unop($1, Decr) }
-	| MINUS expr 						{ Neg($2)}
-	| PLUS expr  						{ Pos($2)}
-    | SIZEOF LPAREN expr RPAREN      { SizeOf($3) }
+	| MINUS expr 					{ Neg($2)}
+	| PLUS expr  					{ Pos($2)}
+    | SIZEOF LPAREN expr RPAREN     { SizeOf($3) }
 	| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }
-    | FPRINT LPAREN ID COMMA actuals_opt RPAREN      { FPrint($3, $5) }
-    | FREAD LPAREN  ID RPAREN             { FRead($3) }
-    | CLOSE LPAREN ID RPAREN              { Close($3) }
-    | OPEN LPAREN STRINGLITERAL COMMA STRINGLITERAL RPAREN        { Open($3, $5) }
+    | FPRINT LPAREN ID COMMA actuals_opt RPAREN 	{ FPrint($3, $5) }
+    | FREAD LPAREN  ID RPAREN             	{ FRead($3) }
+    | CLOSE LPAREN ID RPAREN              	{ Close($3) }
+    | OPEN LPAREN STRINGLITERAL COMMA STRINGLITERAL RPAREN	{ Open($3, $5) }
 	| ID LPAREN actuals_opt RPAREN	{ Call($1, $3) }
-    | ID LSQUARE expr RSQUARE     { Array($1, $3) }
-    | ID DOT ADD LPAREN RPAREN { AddTableCall($1) }
-    | ID DOT GET LPAREN actuals_opt RPAREN  { GetTableCall($1, $5) }
-	| ID DOT ID LPAREN actuals_opt RPAREN { TableCall($1, $3, $5) }
-	| ID DOT ID				{ TableAttr($1, $3) }
+    | ID LSQUARE expr RSQUARE     	{ Array($1, $3) }
+    | ID DOT ADD LPAREN RPAREN 		{ AddTableCall($1) }
+    | ID DOT GET LPAREN actuals_opt RPAREN 	{ GetTableCall($1, $5) }
+	| ID DOT ID LPAREN actuals_opt RPAREN	{ TableCall($1, $3, $5) }
+	| ID DOT ID						{ TableAttr($1, $3) }
 	| LPAREN expr RPAREN			{ Parens($2) }
 
 expr_opt:
@@ -200,12 +200,12 @@ attribute:
     attribute_label COLON dtype SEMI		{ Attr($1,$3) }
 
 attribute_group:
-     attribute               { [$1] }
+     attribute               	{ [$1] }
     | attribute_group attribute { $2 :: $1 }
 
 key_decls_list:
 								{ [] }
-	| key_decls_list key_decls    { $2 :: $1 }
+	| key_decls_list key_decls 	{ $2 :: $1 }
 
 key_decls:
     PRIMARYKEY LPAREN attribute_label RPAREN SEMI { PrimaryKey($3) }
