@@ -527,24 +527,43 @@ The `#cordb` marks the beginning of the section and `#enddb` marks the end of th
 
 ### Global Declarations ###
 
-The global declarations are the top level of the grammar.
+The global declarations are the top level of the grammar, and consist of global variables and functions. These are visible to all parts of the CORaL program.
 
 #### Global Variables ####
 
-Global variables can be declared after the database blocks, but before the function definitions.
+Global variables can be declared after the database blocks, but before the function definitions. They are declared with the following syntax:
+
+	global int myGlobalInt;
+
+They can also be initialized during declaration, as follows:
+
+	global int myString = "Hello";
+
+Now, the variables `myGlobalInt` and `myString` can be accessed from within any function body in the rest of the program.
 
 #### Function Definitions ####
 
 A CORaL function definition will have the following structure
 
-	[type-specifier] [identifier] ([parameter-type-list]){[statement-list]}
-Functions may return `void`, `int`, `float`, `string`, and `Table`. The parameter type list must declare the types of each parameter unless the only parameter is `void`, which signifies that the function accepts no parameters.
+	[dtype] [identifier] ( [formals_opt] ) { [statement-list] }
+
+The `dtype` specifies the return type of the function. Functions may return a value of type `int`, `float`, `string`, `Table`, or `user_t`. If a function is declared with a return type of `void`, it cannot return a value.
+
+The formals_opt is a list of formal parameters for the function. A formal parameter is declared with: `dtype ID`, where the `dtype` is a type and `ID` is the name of the parameter. The parameter list is to be left empty if a function receives no formal parameters.
+
+The body of a function is a list of statements, and must be written within brackets `{ }`.
 
 #### Scope ####
 
-The source text for a program will be kept in one file that will be compiled at one time. Upon compilation time, the scope of the identifiers will be validated.
+Scope is defined as the region of the program text within which the identifier's characteristics are understood. In CORaL, scopes are determined at compile time. The same identifier may be used for different purposes as long as their uses fall into different namespaces. 
 
-The lexical scope of an identifier is the region of the program text within which the identifier's characteristics are understood. The same identifier may be used for different purposes as long as their uses fall into different namespaces. The scope of a parameter of a function definition begins at the start of the block defining the function, and persists though the function until the function declaration ends at the end of its declarator, and persists to the end of the block. The scope of a table is the entirety of the program.
+* The scope of a table is the entire program.
+* The scope of a global variable is the entire program.
+* The scope of a function is the entire program.
+* The scope of an instance variable is the body of the function it is declared within.
+* The scope of a formal parameter is the body of the function to which it belongs.
+
+Functions have global scope, but they must be declared above the point at which they are called, and cannot be called recursively.
 
 ### Grammar ###
 
