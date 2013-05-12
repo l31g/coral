@@ -70,9 +70,9 @@ stmt_list:
 
 stmt:
 	expr SEMI							{ Expr ($1) }
-	| error                            { Expr(Noexpr) }
-    | CONNECTDB SEMI                      { ConnectDB }
-    | CLOSEDB SEMI                        { CloseDB }
+	| error                            	{ Expr(Noexpr) }
+    | CONNECTDB SEMI                   	{ ConnectDB }
+    | CLOSEDB SEMI                      { CloseDB }
     | LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
 	| RETURN expr SEMI 					{ Return($2) }
 	| IF LPAREN expr RPAREN stmt %prec NOELSE		{ If($3, $5, Nostmt)}
