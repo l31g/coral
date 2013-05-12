@@ -16,6 +16,7 @@ int main() {
 		return a;
 	}	
 	else{
+    /* Coral does not handle return in else */
 		return a;
 	}
 
