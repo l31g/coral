@@ -97,6 +97,7 @@ let rec str_of_query_filter q =
     | Call(s, expr) -> "" (* should not ever be called in this context *)
     | Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
     | Neg(expr) -> "-" ^ (str_of_query_filter expr)
+    | Pos(expr) -> "+" ^ (str_of_query_filter expr)
     | Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
     | Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
     | FPrint(s, expr) -> ""
@@ -123,6 +124,7 @@ let rec str_of_query_params q =
     | Call(s, expr) -> "" (* should not ever be called in this context *)
     | Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
     | Neg(expr) -> "-" ^ (str_of_query_params expr)
+    | Pos(expr) -> "+" ^ (str_of_query_params expr)
     | Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
     | Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
     | FPrint(s, expr) -> ""
@@ -157,6 +159,7 @@ let rec str_of_expr exp =
     | Unop(a, uop) -> a ^ "=" ^ a ^ (str_of_uop uop)
     | Notop(e) -> "not " ^ (str_of_expr e)
     | Neg(e) -> "-" ^ (str_of_expr e)
+    | Pos(e) -> "+" ^ (str_of_expr e)
     | Assign(l, asgn, r) -> l ^ (str_of_asgn asgn) ^ (str_of_expr r)
     | Parens(p) -> "(" ^ (str_of_expr p) ^ ")"
     | Array(id, e) -> id ^ "[" ^ (str_of_expr e) ^ "]"
@@ -240,8 +243,9 @@ let rec str_of_table_block tb =
 let str_of_program program =
         "#!/usr/bin/env python\n" ^
         "from __future__ import print_function\n" ^
-        "import sys\nsys.path.append(\"../../backend\")\n" ^
-        "import controller\nfrom controller import *\n\n" ^
+        "import coral_backend\n" ^
+        "from coral_backend import *" ^
+        "\n\n" ^
         (let l = (str_of_conn_block program.conn) in
         match l with
         | "" -> "conn_block = False\n\n"

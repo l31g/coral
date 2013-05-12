@@ -12,3 +12,5 @@ src/build
 scanner.ml
 parser.ml
 parser.output
+build
+dist

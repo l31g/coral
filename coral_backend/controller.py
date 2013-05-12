@@ -33,9 +33,9 @@ def global_get(table_name, **kwargs):
 
     return results
 
-def sizeof(table_name):
-    size = session.query(table_name).count()
-    return size
+def sizeof(query_result):
+
+    return query_result.count()
 
 def setServer(s):
     global server

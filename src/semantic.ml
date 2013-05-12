@@ -26,7 +26,7 @@ let rec string_of_coral_type t =
     | FloatType -> "float"
     | FileType -> "File"
     | UserType -> "user_t"
-    | NoType -> ""
+    | NoType -> "null_type"
 
 let rec string_of_coral_op o =
 	match o with
@@ -215,8 +215,10 @@ let rec check_expr exp env =
 								raise (Error ("the .add() function can only be called on variables of type user_t"))
 							else
 								NoType
-	(*| GetTableCall(f1, e) ->	if (table_exists f1) then *)
-
+	| GetTableCall(f1, e) ->	if (table_exists f1 env.scope) then
+									UserType
+								else
+									raise (Error ("the .get() function can only be called on Tables"))
 	(* TODO TablCall(f1, f2, e) *)
     | Print(e) -> NoType
     | Binop(a, op, b) -> (let t1 = (check_expr a env) in
@@ -250,7 +252,13 @@ let rec check_expr exp env =
     									" to variable of type " ^ e2))
     						))
     | Parens(p) -> (check_expr p env)
-    (* TODO Array(id, e) *)
+    | Array(id, e) -> 	if ((variable_type (find_variable id env.scope)) == UserType) then
+    						if ((check_expr e env) == IntType) then
+    							UserType
+    						else
+    							raise (Error ("argument to array must be an integer"))
+    					else
+    						raise (Error ("array notation can only be used on user types"))
     | Noexpr -> NoType
 
 and check_actual formal actual env =

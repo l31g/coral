@@ -10,9 +10,9 @@ Date: 	May 10, 2013
 
 # CORaL Project Report #
 
-*Last Updated:May 10, 2013*
+*Last Updated: May 11, 2013*
 
-***Authors:***
+***Authors:***  
 
 * Shane Chin, sac2171  
 * Molly Karcher, mdk2133  
@@ -37,7 +37,6 @@ Different from high-level programming languages, the scope of SQL includes data 
 One of the first languages that seeked to combine the power of a high-level programming language with the database manipulation capabilities of SQL is Embedded SQL. Embedded SQL statements are SQL statements written inline with the program source code of the host language. The embedded SQL statements are parsed by an embedded SQL preprocessor and replaced by host-language calls to a code library.
 
 Another such attempt to bridge the gap of procedural languages and SQL is Oracle’s PL/SQL. PL/SQL’s general syntax resembles that of Ada or Pascal. It supports variables, conditions, loops and exceptions.  
-
 
 Finally, another such language from yet another vendor is Microsoft’s Transact-SQL. T-SQL expands on the SQL standard to include procedural programming, local variables, various support functions for string processing, data processing, mathematics, etc.
 
@@ -240,19 +239,14 @@ The above program demonstrates how to define and populate a new database within 
 		fprintf(fp, "People over the age of 21\n");
 		result = People.get(age>21);
 		size = sizeof(result);
-
+	
 		for(i=0; i < size; i++) {
-
 			user_t Person user = result[i];
-			fprintf(fp, user.firstName + " " 
-					+ user.lastName + "\n");
-	
+			fprintf(fp, user.firstName + " " + user.lastName + "\n");
 		}
-	
 		fclose(fp);
-
 		return 0;
-}
+	}
 
 Here is the output of this program as they would be displayed in `query_results.txt`:
 
@@ -275,7 +269,54 @@ With a working knowledge of CORaL queries under your belt, you can begin fully u
 
 ## Language Reference Manual [man] ##
 
-bli blo blu
+### Introduction ###
+
+This manual describes the CORaL 1.0 language as established in May of 2013. It is modeled after the C Reference Manual included in Appendix A of *The C Programming Language* by Kernighan and Ritchie.
+
+### Lexical Conventions ###
+
+CORaL programs are translated in several phases. Translation begins with searching for the `#` character in order to look for the `#cordbconn` and `#coordb` tags, which will be used to connect and create the database objects. Distinguishing between expressions defined inside and outside of these database definition tags is a main component of the preprocessing of a program, before the program is broken down into a series of tokens.
+
+#### Tokens ####
+
+CORaL implements implements six kinds of tokens: identifiers, keywords, constants, operators, and separators. Anything characterized as "white space" (which includes blanks, tabs, and newlines) is ignored by the compiler. Tokens consist of the longest sequential string characters that could constitute a token.
+
+#### Comments ####
+
+Comments in CORaL can be done in two styles. The first is an inline comment, designated by `//`. The compiler ignores everything after `//` until the conclusion of the line. Comments can also be begun with `/*` and concluded with `*/`. This flavor of comment can span multiple lines.
+
+#### Identifiers ####
+
+An identifier is a sequence of letters and digits. Identifiers in CORaL have similar restrictions as those in C. The first character of an identifier must be a letter (the '`_`' character counts as a letter). The language is case-sensitive, so upper and lower case letters are considered different, and identifiers can have any length.
+
+#### Keywords ####
+
+CORaL reserves the following identifiers for use as keywords:  
+
+	array		char		double		else		for
+
+#### String Literals ####
+
+A string literal is a sequence of characters surrounded by double quotes. An example would be `"this string"`. A string has type `string` and is initialized with the given characters. Adjacent string literals are concatenated into a simple string. String literals do not contain newline or double-quote characters; in order to represent them, one can use the following escape sequences:  
+
+	newline					\n
+	tab					\t
+	single quote 					\'
+	double quote					\"
+	question mark					\?
+	backslash					\\
+
+### Syntax Notation ###
+
+The syntax notation used in this manual indicates syntactic categories with *italic* type and literal words and characters with `console` type. Alternative categories are listed on separate lines. When describing the grammar of our language the *-->* symbol denotes the way that certain variables in the grammar are defined. The expression on the left hand side is the name of that expression and the right hand side shows the different definitions that a symbol can take on when it appears in a larger expression. The pipe | symbols represent "or" in this case. So for example, the grammar statement *S --> true* indicates that the expression *S* can take on either value *true* or value *false*.
+
+### Meaning of Identifiers ###
+
+The term identifier can refer to a function or an object (objects includes variables). Objects are locations in memory, and each object has a type which identifies how the object's data should be interpreted. Object names also have scopes, which are the regions of the program in which the object is know to the program.
+
+#### Basic Types ####
+
+
 
 ## Project Plan [plan] ##
 
