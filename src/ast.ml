@@ -87,6 +87,7 @@ type expr =
     | TableAttr of string * string
     | Parens of expr
     | Array of string * expr
+    | SizeOf of expr
     | Noexpr
 
 type var_decl =

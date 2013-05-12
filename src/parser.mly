@@ -13,7 +13,7 @@
 %token EQ WHILE INT FOR RETURN PRINT VOID BREAK CONTINUE
 %token IF ELSE
 %token STRING GLOBAL
-%token FPRINT FREAD USERTYPE
+%token FPRINT FREAD USERTYPE SIZEOF
 %token FLOAT ADD GET CONNECTDB LSQUARE RSQUARE CLOSEDB OPEN CLOSE FILE
 %token <int> INTLITERAL
 %token <string> STRINGLITERAL
@@ -110,6 +110,7 @@ expr:
 	| ID DECR 						{ Unop($1, Decr) }
 	| MINUS expr 						{ Neg($2)}
 	| PLUS expr  						{ Pos($2)}
+    | SIZEOF LPAREN expr RPAREN      { SizeOf($3) }
 	| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }
     | FPRINT LPAREN ID COMMA actuals_opt RPAREN      { FPrint($3, $5) }
     | FREAD LPAREN  ID RPAREN             { FRead($3) }

@@ -151,6 +151,7 @@ let rec str_of_expr exp =
     | Close(e) -> e ^ ".close()"
     | FPrint(fp, e) -> fp ^ ".write(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
     | FRead(fp) -> fp ^ ".readline()"
+    | SizeOf(e) -> "sizeof("^ (str_of_expr e) ^ ")"
     | AddTableCall(f1) -> "controller.session.add(" ^ f1 ^ ")"
     | GetTableCall(f1, e) -> "controller.session.query(" ^ f1 ^ ").filter(\"" ^ (String.concat " and " (List.map str_of_query_filter e)) ^ "\").params(" ^ (String.concat " , " (List.map str_of_query_params e)) ^ ")"
     | TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"

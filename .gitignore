@@ -14,3 +14,4 @@ parser.ml
 parser.output
 build
 dist
+coralc

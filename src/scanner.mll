@@ -100,6 +100,7 @@ rule token = parse
 	|	"fclose"				{ CLOSE }
 	|	"freadline"				{ FREAD }
 	|	"File"					{ FILE }
+	|	"sizeof"				{ SIZEOF }
 
 	|	eof						{ EOF }
 	| digit+ as lxm { INTLITERAL(int_of_string lxm) } (* integers *)
