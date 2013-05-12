@@ -1,8 +1,12 @@
 open Ast
 open Generator
 open Semantic
+open Parser
+open Scanner
+
 
 let _ =
+
 
    let source = open_in Sys.argv.(1) in
    let lexbuf = Lexing.from_channel source in
