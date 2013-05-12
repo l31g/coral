@@ -152,8 +152,8 @@ global_decl_list:
 	| global_decl_list global_decl { $2 :: $1 }
 
 global_decl:
-	| GLOBAL dtype ID ASSIGN expr SEMI		{ VarDecl($2, $3, $5) }
-	| GLOBAL dtype ID SEMI					{ VarDecl($2, $3, Noexpr) }
+	| GLOBAL dtype ID ASSIGN expr SEMI		{ GVarDecl($2, $3, $5) }
+	| GLOBAL dtype ID SEMI					{ GVarDecl($2, $3, Noexpr) }
 
 var_decl_list:
 							 { [] }
@@ -204,12 +204,11 @@ attribute_group:
     | attribute_group attribute { $2 :: $1 }
 
 key_decls_list:
-								{ [] }
+	| key_decls							{ [$1] }
 	| key_decls_list key_decls 	{ $2 :: $1 }
 
 key_decls:
     PRIMARYKEY LPAREN attribute_label RPAREN SEMI { PrimaryKey($3) }
-    | FOREIGNKEY LPAREN attribute_label RPAREN SEMI { ForeignKey($3) }
 
 table_label:
 	ID 		{ TableLabel($1) }

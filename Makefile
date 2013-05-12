@@ -17,8 +17,9 @@ backend:
 	python setup.py install
 
 backend_clean:
+	rm -rf dependencies/SQLAlchemy-0.8.1
 	rm -rf $(PYTHONBUILD)
-	rm -rf /dependencies/SQLAlchemy-0.8.1
+
 
 test: test/test.py
 	python test/test.py

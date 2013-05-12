@@ -59,7 +59,6 @@ type attribute =
 
 type key_decls =
     PrimaryKey of attr_label
-    | ForeignKey of attr_label
 
 type table_label =
     TableLabel of string
@@ -93,6 +92,7 @@ type expr =
 type var_decl =
     VarDecl of dtype * string * expr
     | UDecl of dtype * string * string * expr
+    | GVarDecl of dtype * string * expr
 
 type formal =
     Formal of dtype * string

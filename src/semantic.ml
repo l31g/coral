@@ -80,6 +80,7 @@ let rec variable_exists vname scope =
 		let _ = List.find (fun v_decl ->
 					match v_decl with
 					| VarDecl(t, v, e) -> v = vname
+                    | GVarDecl(t, v, e) -> raise(Not_found)
 					| UDecl(ut, tn, v, e) -> v = vname) scope.variables in true
 	with Not_found ->
 		match scope.parent with
@@ -91,7 +92,9 @@ let rec find_variable vname scope =
 		List.find (fun v_decl ->
 				match v_decl with
 				| VarDecl(t, v, e) -> v = vname
+                | GVarDecl(t, v, e) -> raise(Not_found)
 				| UDecl(ut, tn, v, e) -> v = vname) scope.variables
+
 	with Not_found ->
 		match scope.parent with
 			Some(parent) -> find_variable vname parent
@@ -101,6 +104,7 @@ let rec variable_type vdec =
 	match vdec with
 	| VarDecl(t, v, e) -> t
 	| UDecl(ut, tn, v, e) -> ut
+    | GVarDecl(t, v, e) -> t
 
 (* find attributes in symbol table *)
 let rec attr_exists aname scope =
@@ -148,7 +152,7 @@ let rec find_table tname scope =
 let rec attr_exists_in_table aname tname scope =
 	let tbl = (find_table tname scope) in
 	let t_bod = tbl.tbbody in
-	
+
 	match t_bod with
 	| TableBody(ag, kd, fd) -> 	try
 									let _ = List.find (fun att ->
@@ -296,7 +300,7 @@ let rec check_expr exp env =
 and check_actual formal actual env =
 	match formal with
 	| Formal(t, n) -> 	try (check_type t (check_expr actual env))
-						with Type_mismatch_error(e1, e2) -> 
+						with Type_mismatch_error(e1, e2) ->
 							raise (Error ("function expected value of type " ^ e1
 							^ " as argument but received value of type " ^ e2))
 
@@ -306,7 +310,7 @@ let rec check_var_decl vdec env =
     | VarDecl(t, v, e) -> 	(let t2 = (check_expr e env) in
     						if (t == FloatType && t2 == IntType) then
     							t
-    						else 
+    						else
     							try (check_type t (check_expr e env))
     							with Type_mismatch_error(e1, e2) ->
     								raise (Error ("cannot initialize variable " ^ v ^ " with type " ^
@@ -319,6 +323,16 @@ let rec check_var_decl vdec env =
     									raise (Error ("cannot initialize variable " ^ v ^
     									" with type " ^ e2 ^ " because it is declared as type " ^ e1))
     							)
+    | GVarDecl(t, v, Noexpr) -> t
+    | GVarDecl(t, v, e) -> (let t2 = (check_expr e env) in
+                                if (t == FloatType && t2 == IntType) then
+                                t
+                            else
+                                try (check_type t (check_expr e env))
+                                with Type_mismatch_error(e1, e2) ->
+                                    raise (Error ("cannot initialize variable " ^ v ^ " with type " ^
+                                    e2 ^ " because it is declared as type " ^ e1))
+                            )
 
 let rec sys_check_var_decl vdec env =
 	match vdec with
@@ -340,6 +354,13 @@ let rec sys_check_var_decl vdec env =
 									else
 										raise (Error ("unable to declare user type for table " ^
 										tn ^ " because table does not exist"))
+    | GVarDecl(t, v, e) -> if (variable_exists v env.scope) then
+                            raise (Error ("variable " ^ v ^ " already declared"))
+                          else
+                            let _ = (check_var_decl vdec env) in
+                            (* no error so add to symbol table *)
+                            let _ = env.scope.variables <- VarDecl(t, v, e)::env.scope.variables in
+                                true
 
 let rec check_formal f env =
     match f with
@@ -424,7 +445,7 @@ let rec sys_check_fdef fdef env =
 
 		let env' = { env with scope = scope';
 					 ret_type = fdef.return_type } in
-		
+
 		let _ = (check_fdef fdef env') in
 		(* no error thrown, add function to symbol table *)
 		let _ = env.scope.functions <- fdef::env.scope.functions in
@@ -434,7 +455,7 @@ let rec attr_name a =
 	match a with
 	| AttrLabel(s) -> s
 
-let rec check_attr attr env = 
+let rec check_attr attr env =
 	match attr with
 	| Attr(l, t) -> let name = (attr_name l) in
 					if (attr_exists name env.scope) then
@@ -450,7 +471,6 @@ let rec check_key k_dec env =
 								true
 							else
 								raise (Error ("primary key declared for non-existent attribute " ^ name))
-	| _ -> false
 
 let rec check_table_body tbody env =
 	match tbody with
