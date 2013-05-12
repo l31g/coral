@@ -1,9 +1,14 @@
 %{ open Ast
     open Lexing
+    exception Error of string
     let parse_error msg =
         let start_pos = Parsing.rhs_start_pos 1 in
             let lineNo = start_pos.pos_lnum in
-                print_endline ("There is a " ^ msg ^ " near line #" ^ string_of_int lineNo)
+                try
+                raise(Error(""))
+                with _ ->
+                    print_endline ("There is a " ^ msg ^ " near line #" ^ string_of_int lineNo); exit 2
+
 
 %}
 
@@ -152,8 +157,8 @@ global_decl_list:
 	| global_decl_list global_decl { $2 :: $1 }
 
 global_decl:
-	| GLOBAL dtype ID ASSIGN expr SEMI		{ VarDecl($2, $3, $5) }
-	| GLOBAL dtype ID SEMI					{ VarDecl($2, $3, Noexpr) }
+	| GLOBAL dtype ID ASSIGN expr SEMI		{ GVarDecl($2, $3, $5) }
+	| GLOBAL dtype ID SEMI					{ GVarDecl($2, $3, Noexpr) }
 
 var_decl_list:
 							 { [] }
@@ -204,12 +209,11 @@ attribute_group:
     | attribute_group attribute { $2 :: $1 }
 
 key_decls_list:
-								{ [] }
+	| key_decls							{ [$1] }
 	| key_decls_list key_decls 	{ $2 :: $1 }
 
 key_decls:
     PRIMARYKEY LPAREN attribute_label RPAREN SEMI { PrimaryKey($3) }
-    | FOREIGNKEY LPAREN attribute_label RPAREN SEMI { ForeignKey($3) }
 
 table_label:
 	ID 		{ TableLabel($1) }

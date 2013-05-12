@@ -17,33 +17,33 @@ let rec str_of_type t =
 
 let rec str_of_asgn a =
     match a with
-    | Eql -> "="
-    | Ple -> "+="
-    | Mie -> "-="
-    | Mue -> "*="
-    | Dve -> "/="
+    | Eql -> " = "
+    | Ple -> " += "
+    | Mie -> " -= "
+    | Mue -> " *= "
+    | Dve -> " /= "
 
 let rec str_of_op o =
     match o with
-    | Add -> "+"
-    | Sub -> "-"
-    | Mult -> "*"
-    | Div -> "/"
-    | Mod -> "%"
-    | Exp -> "**"
-    | Equal -> "=="
-    | Neq -> "!="
-    | Less -> "<"
-    | Leq -> "<="
-    | Greater -> ">"
-    | Geq -> ">="
-    | Or -> "or"
-    | And -> "and"
+    | Add -> " + "
+    | Sub -> " - "
+    | Mult -> " * "
+    | Div -> " / "
+    | Mod -> " % "
+    | Exp -> " ** "
+    | Equal -> " == "
+    | Neq -> " != "
+    | Less -> " < "
+    | Leq -> " <= "
+    | Greater -> " > "
+    | Geq -> " >= "
+    | Or -> " or "
+    | And -> " and "
 
 let rec str_of_uop u =
     match u with
-    | Incr -> "+1"
-    | Decr -> "-1"
+    | Incr -> " +1 "
+    | Decr -> " -1 "
 
 let rec str_of_conn_label co =
     match co with
@@ -81,7 +81,7 @@ let rec str_of_attr_group ag lvl =
 let rec str_of_key k =
     match k with
     | PrimaryKey(al) -> "PrimaryKeyConstraint('" ^ (str_of_attr_label al) ^ "')"
-    | ForeignKey(al) -> "ForeignKey('" ^ (str_of_attr_label al) ^ "')"
+    (*| ForeignKey(al) -> "ForeignKey('" ^ (str_of_attr_label al) ^ "')" *)
 
 let rec str_of_query_filter q =
     match q with
@@ -174,6 +174,8 @@ let rec str_of_var_decl vdec lvl =
     | VarDecl(t, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
     | UDecl(ut, tn, v, Noexpr) -> (tab lvl) ^ v ^ "= None"
     | UDecl(ut, tn, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
+    | GVarDecl(t, v, Noexpr) -> (tab lvl) ^ "global " ^ v
+    | GVarDecl(t, v, e) -> (tab lvl) ^ "global " ^ v ^ "\n" ^ (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
 
 let rec str_of_formal f =
     match f with
@@ -207,13 +209,6 @@ let rec str_of_table_label tl =
 let str_of_fdef fdef globals lvl =
     (tab lvl) ^ "def " ^ fdef.fname ^ "(" ^
             (String.concat "," (List.map str_of_formal fdef.formals)) ^ "):\n"
-
-    ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
-                    (String.concat l
-                        (List.map
-                            (fun x-> "global " ^ (str_of_var_decl x (lvl)))
-                        globals)))
-                    ^ "\n"
 
     ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
                             (String.concat l (List.map (fun x-> str_of_var_decl x (lvl)) fdef.locals)))

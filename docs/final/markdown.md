@@ -321,11 +321,11 @@ With a working knowledge of CORaL queries under your belt, you can begin fully u
 
 ### Introduction ###
 
-This manual describes the CORaL 1.0 language as established in May of 2013. It is modeled after the C Reference Manual included in Appendix A of *The C Programming Language* by Kernighan and Ritchie.
+This manual describes the CORaL 1.0 language as established in May of 2013. It is modeled after the C Reference Manual included in Appendix A of *The C Programming Language* by Kernighan and Ritchie. CORaL (C-like Object-Relational Language) integrates elements of C with native SQL support, that can be written directly into your source program. 
 
 ### Lexical Conventions ###
 
-CORaL programs are translated in several phases. Translation begins with searching for the `#` character in order to look for the `#cordbconn` and `#coordb` tags, which will be used to connect and create the database objects. Distinguishing between expressions defined inside and outside of these database definition tags is a main component of the preprocessing of a program, before the program is broken down into a series of tokens.
+CORaL programs are translated in several phases. Translation begins with searching for the `#` character in order to look for the `#cordbconn` and `#enddb` tags, which will be used to connect to a database, after which you can create database objects. This is similar to, but not exactly the same as a preprocessor element, in that it does not do any preprocessing. The CORaL backend reads between the tags and connects to the corresponding database when it sees the connectDB command within a CORaL program. So essentially, everything between the tags is read in by the compiler, but only processed and used when the programmer explicitly asks for a connection. Next, there are `#corddb` and `#enddb` tags, between which the programmer may define the database tables that they wish to include in their program, and then add them to the database that they have connected to. The programmer may only use this functionality if they also provide a database connection scheme between the `#corddbconn` and `#enddbconn` tags. 
 
 #### Tokens ####
 
@@ -333,51 +333,62 @@ CORaL implements implements six kinds of tokens: identifiers, keywords, constant
 
 #### Comments ####
 
-Comments in CORaL can be done in two styles. The first is an inline comment, designated by `//`. The compiler ignores everything after `//` until the conclusion of the line. Comments can also be begun with `/*` and concluded with `*/`. This flavor of comment can span multiple lines.
+Comments in CORaL can be done in two styles. The first is an inline comment, designated by `//`. The compiler ignores everything after `//` until the conclusion of the line. Comments can also be begun with `/*` and concluded with `*/`. This flavor of comment can span multiple lines. Once the compiler sees a `/*` it will ignore everything until it sees another `*/`. 
 
 #### Identifiers ####
 
-An identifier is a sequence of letters and digits. Identifiers in CORaL have similar restrictions as those in C. The first character of an identifier must be a letter (the '`_`' character counts as a letter). The language is case-sensitive, so upper and lower case letters are considered different, and identifiers can have any length.
+An identifier is a sequence of letters and digits. Identifiers in CORaL have similar restrictions as those in C. The first character of an identifier must be a letter (the '`_`' character counts as a letter). The language is case-sensitive, so upper and lower case letters are considered different, and identifiers can have any length. 
 
 #### Keywords ####
 
 CORaL reserves the following identifiers for use as keywords:  
 
-	array		char		double		else		for
+	if 				else 				while 			for	
+	return  		global  			server 			port  				
+	user 			password			type  			DBName 			
+	primary_key		foreign_key 		connectDB  		closeDB 
+	int  			float 				void 			Table
+	user_t 			get 				add  			sizeof	
+	string  		File
+
+Most of these reserved words are similar to those reserved in C, and one can interpolate what they will be used for. All of the words `server`, `port`, `user`, `password`, `type`, `DBName`, and `type` are required to connect to the database and will be described later in the language tutorial. The `connectDB` and `closeDB` words are used to connect to and disconnect from the database. The key-related words are also obviously used within database definitions. All of the words `int`, `string`, `float`, `void`, `File`, `Table` are types in the language and so cannot be used other than in that context. The `user_t` is a user-defined type, similar to `struct` in C and must be declared before each user-defined type. The remaining reserved words are `get`, `add`, `sizeof` are built-in functions that are used on database manipulations, so they cannot be used in any other context.  	
 
 #### String Literals ####
 
-A string literal is a sequence of characters surrounded by double quotes. An example would be `"this string"`. A string has type `string` and is initialized with the given characters. Adjacent string literals are concatenated into a simple string. String literals do not contain newline or double-quote characters; in order to represent them, one can use the following escape sequences:  
+A string literal is a sequence of characters surrounded by double quotes. An example would be `"this string"`. A string has type `string` and is initialized with the given characters that are valid for a general string literal; this includes any characters that are valid identifiers as well as whitespace characters. Adjacent string literals are concatenated into a simple string. String literals do not contain newline or double-quote characters; in order to represent them, one can use the following escape sequences:  
 
 	newline					\n
-	tab					\t
-	single quote 					\'
-	double quote					\"
-	question mark					\?
-	backslash					\\
+	tab						\t
+
+Strings can be concatenated in CORaL the same way that they would be in Java, using the `+` operator. 
 
 ### Syntax Notation ###
 
-The syntax notation used in this manual indicates syntactic categories with *italic* type and literal words and characters with `console` type. Alternative categories are listed on separate lines. When describing the grammar of our language the *-->* symbol denotes the way that certain variables in the grammar are defined. The expression on the left hand side is the name of that expression and the right hand side shows the different definitions that a symbol can take on when it appears in a larger expression. The pipe | symbols represent "or" in this case. So for example, the grammar statement *S --> true* indicates that the expression *S* can take on either value *true* or value *false*.
+Here, we are not describing the syntax of our language, but rather the syntax that we used within this manual to describe our language and our grammar. It should be noted that none of this is CORaL syntax, and is purely used in this document for clarification.
+
+It may have been interpolated already that the *italic* type is used to indicate syntactic categories, or grammar rules. The `console` type is used to indicated literal words or characters that are part of the CORaL grammar. 
+
+When describing the grammar of our language the *-->* symbol denotes the way that certain variables in the grammar are defined. The expression on the left hand side is the name of that expression and the right hand side shows the different definitions that a symbol can take on when it appears in a larger expression. The pipe | symbols represent "or" in this case. So for example, the grammar statement 
+	
+	*S --> true* 
+
+indicates that the expression *S* can take on either value *true* or value *false*. This syntax is very similar to the way our grammar was defined in the implementation stage, when written in OCaml, so our syntax throughout should look very familiar to those familiar with OCaml style.
 
 ### Meaning of Identifiers ###
 
-The term identifier can refer to a function or an object (objects includes variables). Objects are locations in memory, and each object has a type which identifies how the object's data should be interpreted. Object names also have scopes, which are the regions of the program in which the object is know to the program.
+The term identifier can refer to a function or an object (objects includes variables). Objects are locations in memory, and each object has a type which identifies how the object's data should be interpreted. Object names also have scopes, which are the regions of the program in which the object is know to the program. CORaL is not object-oriented by any means. So when we talk about *Objects*, what we really mean are *Tables*. Tables will be explained later, but are the closest thing that we have in CORaL to Objects, and we treat them the same as we would user-defined objects if CORaL were to be object-oriented.
 
 #### Basic Types ####
 
-The basic types in CORaL are `int`, `float`, `string`, and `void`. An `int` supports arithmetic operations; the `float` type is a single-precision floating point number; a `string` is a sequence of characters. The `void` type is an empty value used as the return value for a function that does not return anything. The `Table` type represents a table in the database
+The basic types in CORaL are `int`, `float`, `string`, `void`, `Table` and `user_t`. An `int` supports arithmetic operations; the `float` type is a single-precision floating point number; a `string` is a sequence of characters. CORaL has eliminated the need to user `char` types. The `void` type is an empty value used as the return value for a function that does not return anything. The `Table` type represents a table in the database and the type `Table` is only used when a `Table` is declared between the `#corddb` and `#enddb` blocks. The type `user_t` denotes a user-defined type. This is used whenever an instance of a `Table` type is defined, because the type will need to be the name which the user gives to it. `File` types are used when creating files.
 
 #### Derived Types####
 
 The derived types in CORaL are built out of the basic types in the following ways:  
 
-* *functions* that return an object of a given type
-* *tables* containing objects
-
-### Object and Lvalues ###
-
-Objects, as stated above, are regions of storage tagged with an identifying name. *Lvalues* are expressions that refer to objects. Some operations will produce *lvalues*, and others operate on *lvalues*.
+* *functions* : that return an object or variable of a given type
+* *Tables* : that emulate SQL tables
+* *user_t* : user-defined types, Table instances
 
 ### Expressions ###
 
@@ -389,11 +400,11 @@ Primary expressions are identifiers, constants, strings, or expressions that are
 
 #### Postfix Expressions ####
 
-Like all primary expressions, postfix expressions are also grouped left to right. When the expression is followed by a `.`*identifier*, it means that a method is being called on the function represented by the postfix expression. The postfix expressions `++` and `--` are used to increment or decrement the value of the operand represented by the expression by a value of one. 
+Like all primary expressions, postfix expressions are also grouped left to right. Postfix expressions that are valid expressions in CORaL are `++` and `--` which just indicate `+1` and `-1`, respectively. Other than this, there are no postfix expressions present in CORaL. 
 
 #### Unary Operators ####
 
-Expressions with unary operators are grouped right-to-left which is the opposite of everything that has come thus far. The operators `+` and `-` are the only unary operators in the language.
+Expressions with unary operators are grouped right-to-left which is the opposite of everything that has come thus far. The operators `+` and `-` are the only unary operators in the language. They can be applied to any expression that has either an `int` or `float` type. 
 
 #### Multiplicative Operators ####
 
@@ -405,41 +416,62 @@ The additive operators in the language are `+` and `-` and are also grouped from
 
 #### Relational Operators ####
 
-The relational operators are grouped from left-to-right, the same way that the additive and multiplicative operators are. The operators are `<`, `>`,`<=`, and `>=`. The `<` operator denotes "less than" and will return   
-**REVIEW**
+The relational operators are grouped from left-to-right, the same way that the additive and multiplicative operators are. The operators are `<`, `>`,`<=`, and `>=`. The < operator denotes “less than” and will return true if and only if the expression on the left evaluates to a value that is exclusively less than the value that the expression on the right hand side evaluates to. The > operator denotes “greater than” and will return true if and only if the expression on the left evaluates to a value that is exclusively greater than the value that the expression on the right evaluates to. The <= operator denotes “less than or equal to” and performs the same function as the < operator, but also evaluates to true if the two expressions have an equal numerical or logical value. The >= operator denotes “greater than or equal to” and performs the same function as the > operator, but also evaluates to true if the two expressions have an equal numerical or logical value. It should be noted that there are technically no boolean types in CORaL, so these expressions don't actually return type booleans. Semantically, we check them to be equal to integers either 0 or 1 and then generated code is just passed to the language that CORaL is translated into; Python. Python will actually correctly handle this matching of booleans, so from CORaLs standpoint, we still don't need boolean types. Every time from now on in this document, when we refer to an expression returning a boolean value, this is what we actually mean.
 
 #### Equality Operators ####
 
-**REVIEW**
+The `==` denotes “equal to” and `!=` denotes “not equal to” and will return a boolean value. The `==` and the != operators are analogous to the relational operators except for their lower precedence. Thus `a<b == c<d` is true whenever `a<b` and `c<d` have the same truth-value.)
 
-#### Logical AND Operator ####
+#### Logical Operators ####
 
-**REVIEW**
+The logical AND operator is denoted by `&&` in CORaL. The `&&` operator groups left-to-right and guarantees left-to-right evaluation. It returns true if both of the operands are logically equivalent and false if they are not. 
 
-#### Logical OR Operator ####
-
-**REVIEW**
+The logical OR operator is denoted by `||` in CORaL. The `||` operator groups left-to-right and guarantees left-to-right evaluation. It returns true if both of the operands are logically equivalent and false if they are not. 
 
 #### Assignment Expressions ####
 
-All of these expressions require an lvalue as left operand, and the lvalue must be modifiable: it must not have an incomplete type or be a function. The type of an assignment expression is that of the left operand, the value stored in the left operand after the assignment has taken place.
+There are several possible assignment operators in CORaL. The language utilizes the `=` assignment operator, which just simple assigns the value on the right to the value on the left. It also utilizes the `*=`, `/=`, `+=`, `-=` assignment operators, which perform the same assignment operation but first apply the designated operation between the left and right value.
 
-An expression of the form `T1 op= T2` is equivalent to `T1 = T1 op (T2)` except that `T1` is evaluated only once.  
-The `=` assign,meant operator replaces the object referred to by the lvalue. Both operands must have the same type in order for the assignment to be executed properly.
+The type of an assignment expression is that of the left operand, the value stored in the left operand after the assignment has taken place. However, type-checking does need to be implemented to make sure that a variable is not being assigned to a type that is not allowed.
+
+An expression of the form `T1 op= T2` is equivalent to `T1 = T1 op (T2)` except that `T1` is evaluated only once. This is how it is handled in CORaL.
 
 ### Declarations ###
 
-Declarations determine the type and name of an identifier.
+Declarations determine the type and name of an identifier. It is permissible in CORaL to both declare and initialize your variables at the same time, but it is not required. However, like C, all variable declarations must occur at the top of a function of file. Global variables are declared at the top of a file, and local variables are declared at the top of each function. If variables are declared after any other statements have been written, this should be an error in CORaL (note that is is just a warning in C). 
 
 #### Type Specifiers ####
 
-The type-specifiers assign a type to an object. They are: `void, int, string, float, and Table` Only one type-specifier is provided for a given declaration, unless they are used recursively to define an array.
+The type-specifiers assign a type to an object. They are: `void`, `int`, `string`, `float`, `user_t`, and `Table` Only one type-specifier is provided for a given declaration, anything else will result in an error in CORaL. Variables may only be declared once in a given scope. However, variables with the same name may be declared in different scopes if they are not overlapping.
 
 #### Initialization ####
 
-Objects can be initialized when declared in the following way
+Objects can be initialized when declared in the following way:
 
 	[type-specifier] [object-name] = [value]
+
+So for examples of all our basic types, we would have:
+
+	int a = 5;
+	string b = "hi";
+	float c = 5.0;
+
+Our other types are slightly more complicated to initialize. A `File` type, for example, requires that the right operand be an fopen command.
+
+	File f = fopen("output.txt", "w");
+
+Where the first parameter to fopen indicates the name of the file that is to be opened, and the second parameter indicated to CORaL whether the user intends to read from the file ("r"), write to the file ("w"), or perform both reading and writing operations ("rw");
+
+`Table` types require that they be initialized when they are declared. They are the only type in CORaL where this is true. And this is also the only type that cannot be declared using the assignment operator. They can be declared as follows:
+
+	Table Person {
+		name: String
+		primary_key(name);
+	}
+
+User-defined types are all `Tables` and are initialized in a special way. They can only be initialized by giving the variable the type of Table that you want, as follows:
+
+	user_t Person p = Person(name="John");
 
 ### Statements ###
 
@@ -806,7 +838,41 @@ Throughout the development process, it was relatively easy to maintain consisten
 
 ## Translator Architecture [arch] ##
 
-bla ble bli
+### Overview ###
+
+The CORaL translator takes a CORaL program (.cl) as an input and outputs a Python executable (clx). Our only intermediate representation is the AST. Our translator has a front-end and a back-end. The front-end is made up of the lexer and the parser, and it outputs the AST. The backend, composed by the semantic analyzer and code generator, takes the AST, checks it semantically and outputs the Python executable.  The coral.ml file orchestrates the whole translation process. 
+
+![Translator Block Diagram][]  
+
+[Translator Block Diagram]: ./architecture.png
+
+### Front-End ###
+
+#### Lexer (scanner.mll) ####
+
+The lexer, an ocamllex program, is used to break down the source CORaL file into tokens or lexemes. This process removes the comments and whitespace from the program. The lexer also reports a failure for any illegal characters. The list of different tokens the lexer recognizes is in the Appendix.
+
+#### Parser (parser.mly) ####
+
+The parser, an ocamlyacc program, receives the token stream from the lexer and builds an AST using the CORaL grammar. The parser contains the official CORaL grammar. 
+
+### Back-End ###
+
+#### Semantic Analyzer (semantic.ml) ####
+
+The semantic analyzer takes the AST from the front-end and traverses it doing various types of checks:  
+
+* Checks if a function exists when it is called  
+* Checks if a variable has been declared when it is used  
+* Checks if the variable types match when a variable is operated on or assigned  
+* Checks if the function has or needs a return value and checks its type  
+* Checks if the actual arguments match the formal arguments of a function  
+* Checks the database connection parameters  
+* Checks the table types and functions  
+
+#### Code Generator (generator.ml) ####
+
+
 
 ## Development and Run-Time Environment [dev] ##
 

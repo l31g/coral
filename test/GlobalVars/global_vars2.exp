@@ -1,0 +1,4 @@
+  File "./global_vars2.clx", line 16
+    global a="hi"
+            ^
+SyntaxError: invalid syntax
