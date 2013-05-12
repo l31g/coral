@@ -108,9 +108,9 @@ print 'Correct : ' +  str(numCorrect) + ' Total: ' + str(numTests)
 print 'Failed : ' +  str(numTests - numCorrect)
 
 
-#print ''
-#print 'The following files did not compile.\n'
-#print failedToCompile
+print ''
+print 'The following files did not compile.\n'
+print failedToCompile
 
 print ''
 print 'The following files did not return the expected result: \n'
