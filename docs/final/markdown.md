@@ -1062,6 +1062,15 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	Overall this has been a great experience, and I look forward to implementing another programming language as a personal project.
 
 * ***Brian Wagner*** :
+	I would say that this project has been my favorite large-scale programming project while at Columbia. It was definitely the most rewarding, and I learned an extraordinary amount at the same time. Being able to define our own language from the ground-up, and then see that through to the implementation of its compiler provided a great sense of ownership over the project, and it's incredible to be able to point to a working programming language and know that it is partly "mine."
+
+	Seeing how a compiler works, and how all the different components interact in order to translate a language, was a fascinating experience, and I think we made a good decision in choosing to implement the language in OCaml. This way, not only did we learn how a compiler works, we also learned how to program in a functional language, something that none of us had done before. I greatly enjoyed the challenge provided by learning a new language as you develop, and I have come away from this project with a strong interest in functional languages. I will definitely use OCaml again in the future.
+
+	I also learned a lot about working on a team to develop software. I had never worked on a team of this size during a programming project before, so this was a new experience, especially since I served as the team leader. Our team decided to do most of our development in a group setting, and I learned that that is a powerful way to ensure that everyone is committed and doing his or her part. The environment created by having a full team in the same area working together allows for open communication, collaboration, and support, and is a great way to make progress, assuming distractions can be limited. Overall, we did a great job at this.
+
+	Creating CORaL taught me a lot about functional languages and software development, and it also provided a new way of looking at existing programming languages. For example, partway through our project, we were trying to implement user-defined types, and realized that it was analogous to the way the C language uses structs, so we provided our own keyword, user_t, to serve as a sort of "struct" for CORaL.
+
+	All in all, this project was difficult, but the rewards and amount learned were certainly worth it. I think I may even try to create some smaller esoteric languages in the future on my own time.
 
 ###Advice for Future Teams###
 
@@ -1071,7 +1080,7 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	The lecture focuses heavily on theory, rather than implementation. It would be better to have a clearer connection between the two. When it came to being prepared for the final, the lectures definitely prepared us. But when it came to actually writing the compiler, we felt completely lost as to how to begin and ended up learning a lot of the implementation details from looking at Professor Edwards COMS W4115 slides from last semester. Solely based on lectures and homework assignments, we were ill-prepared to begin writing the compiler.
 
 * ***Course Content*** :
-	Lambda Calculus - We would like to see much more on usage, implementation, and interpretation of lambda calculus in the course, as well as it's applications to functional programming. We felt lambda calculus was a bit brushed over, and we did not get a full understanding 
+	Lambda Calculus - We would like to see much more on usage, implementation, and interpretation of lambda calculus in the course, as well as its applications to functional programming. We felt lambda calculus was a bit brushed over, and we did not get a full understanding 
 
 	Code optimization - This topic was covered rather heavily in lectures, and we believe that a lot of this content was superfluous, mostly because we did not need to do any code optimization when implementing our own compiler. Since we were just translating into a different language in our implementation, all of the code optimization steps that we had learned about in lectures were completely useless in this regard. Perhaps this topic could be shortened a little. 
 
