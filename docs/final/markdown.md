@@ -187,17 +187,18 @@ Now let us create a simple database, with only one table, and add an entry to it
 
 	#cordb
 	Table Person {
-		firstName : string;
-		lastName : string;
-		age : int;
-		primary_key(firstName);
+	    firstName : string;
+	    lastName : string;
+	    age : int;
+	    primary_key(firstName);
 	};
-	#enddb
+#enddb
  
 	int main()
 	{
-		user_t Person samePerson;
+		user_t Person samplePerson;
 		connectDB;
+
 		samplePerson = Person(firstName = "John", lastName = "Example", age = 25);
 		samplePerson.add();
 		closeDB;
@@ -208,7 +209,7 @@ This program, though short, has introduced many of the features of CORaL. We hav
 
 The actual definition of databases in CORaL takes place outside of the other function definitions and between the two preprocessor statements `#cordb` and `#enddb`. Here, SQL-like code is used to describe different tables in the database. Most variants of SQL will be understood by the compiler. Looking at the `Person` table within the database definition, we can see that the table definition is identical to SQL, with the exception of the table creation statement. 
 
-After the creation of the `Person` table, that table can be referenced and accessed by all functions within a CORaL program. Creating a new `Person` object is done within the lines
+After the creation of the `Person` table, that table can be referenced and accessed by all functions within a CORaL program. Creating a new `Person` object is done with the lines
 
 	user_t Person samplePerson = Person(firstName = "John", lastName = "Example", age = 25
 
@@ -229,37 +230,50 @@ The above program demonstrates how to define and populate a new database within 
 	#enddb
 
 	int main() {
-		File fp;
-		int i;
-		int size;
-		/* We’ll also omit the code used 
-		to fill the database, but assume that 
-		it is present */
-		fp = fopen(“query_results.txt”, "w");
-		fprintf(fp, "People over the age of 21\n");
-		result = People.get(age>21);
-		size = sizeof(result);
-	
-		for(i=0; i < size; i++) {
-			user_t Person user = result[i];
-			fprintf(fp, user.firstName + " " + user.lastName + "\n");
-		}
-		fclose(fp);
-		return 0;
+	    File fp;
+	    int i;
+	    int size;
+	    user_t Person u;
+	    user_t Person result;    
+	    
+	    connectDB;
+	    user_t Person molly = Person(firstName="molly", age=22);
+	    user_t Person miguel = Person(firstName="miguel", age=22);
+	    user_t Person shane = Person(firstName="shane", age=22);
+	    user_t Person brian = Person(firstName="brian", age=21);
+
+	    molly.add();
+	    miguel.add();
+	    shane.add();
+	    brian.add();
+
+	    fp = fopen("output.txt", "w");
+	    fprintf(fp, "People over the age of 21\n");
+	    result = Person.get(age>21);
+	    size = sizeof(result);
+
+	    for(i=0; i < size; i++) {
+		u = result[i];
+	        fprintf(fp, u.firstName + "\n");
+	    }
+	    fclose(fp);
+	    
+	    closeDB;
+
+	    return 0;
 	}
 
 Here is the output of this program as they would be displayed in `query_results.txt`:
 
 	People over the age of 21
-	Shane Chin
-	Molly Karcher
-	Luis E. P.
-	Brian Wagner
-	Miguel Yanez
+	molly
+	miguel
+	shane
+
 
 We've shown off a lot of CORaL functionality in the above program. The first new concept is querying. The `get()` function is a built-in function that every `Table` has. It is used to search through rows within a database table that match the arguments of the function. The arguments to the function are the attributes of the `Table` on which `get()` is being called on. For example `User.get(age>21, name="Luis")` translates to the following SQL:
 
-	SELECT "User".age AS age , "User".name AS name FROM "User" WHERE age > 21 and name == "ed" 
+	SELECT "User".age AS age , "User".name AS name FROM "User" WHERE age > 21 and name == "Luis" 
 
 In the future more complicated `get()` expressions will be supported.
 
