@@ -809,7 +809,15 @@ shane
 
 ## Conclusions [conc] ##
 
+###CORaL Team Lessons###
+
 ###Individual Lessons###
+
+* ***Shane Chine*** :
+
+* ***Molly Karcher*** : 
+
+* ***Luis Pena*** :
 
 * ***Miguel A. Yanez*** :
 	This project has been one of the most challenging yet rewarding experiences during my time here at Columbia. Building a programming language that is elegant, and simple, yet functional is a very interesting problem. Through designing and implementing CORaL I have learned and grown to appreciate the details and complexity that bright minds like those of Brian Kerninghan and Dennis Ritchie faced when developing C.
@@ -819,6 +827,12 @@ shane
 	Time management also proved to be quite effective as our meetings were always efficient and effective. Everyone's opinions were voiced and we handled disagreements in a respectful manner. Our iterative development style also proved quite useful for this in that if there were any changes to be made, it was easy to do so. 
 
 	Overall this has been a great experience, and I look forward to implementing another programming language as a personal project.
+
+* ***Brian Wagner*** :
+
+###Advice for Future Teams###
+
+###Suggestions to Instructors###
 
 ## Appendix [appendix] ##
 
