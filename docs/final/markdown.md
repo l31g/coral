@@ -860,7 +860,7 @@ The parser, an ocamlyacc program, receives the token stream from the lexer and b
 
 #### Semantic Analyzer (semantic.ml) ####
 
-The semantic analyzer takes the AST from the front-end and traverses it doing various types of checks:  
+The semantic analyzer, an OCaml program, takes the AST from the front-end and traverses it doing various types of checks:  
 
 * Checks if a function exists when it is called  
 * Checks if a variable has been declared when it is used  
@@ -872,7 +872,7 @@ The semantic analyzer takes the AST from the front-end and traverses it doing va
 
 #### Code Generator (generator.ml) ####
 
-
+The code generator, an OCaml program, takes the AST, after is has been checked by the semantic analyzer, and translates it into a Python program with the database connections. This Python program can be executed from the command line as is. 
 
 ## Development and Run-Time Environment [dev] ##
 
