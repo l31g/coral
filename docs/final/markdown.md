@@ -712,25 +712,29 @@ The stylesheet we used during development, which has been included in our souce 
 	| OtherCase(x) -> (check_something_else x) (* checks another case *)
 
 	** Avoid useless comments **
-	Don't comment something unless it is performing a function that is not immediately apparent. Do more than simply stating the obvious.
+	Don't comment something unless it is performing a function that is not 
+	immediately apparent. Do more than simply stating the obvious.
 
 	# Naming conventions #
 
 	** Function and variable names **
 
-	Use lower case for the first character in a variable name. If a name is composed of multiple words, use underscores, not camelcase.
+	Use lower case for the first character in a variable name. If a name is 
+	composed of multiple words, use underscores, not camelcase.
 
 	i.e. str_of_program
 
 	** Use meaningful names **
 
-	Longer names that make the value's meaning readily apparent are preferable to shorter names. 
+	Longer names that make the value's meaning readily apparent are 
+	preferable to shorter names. 
 
 	# Indenting #
 
 	** Long expressions **
 
-	Break them up using newlines and indents to keep them around 80 characters, in the following manner
+	Break them up using newlines and indents to keep them around 80 
+	characters, in the following manner
 
 	let x = "long line " ^
 			"is very long"
@@ -747,7 +751,8 @@ The stylesheet we used during development, which has been included in our souce 
 
 	** Do not leave any unmatched cases **
 
-	The Ocaml compiler will warn you, so once it does, go back and add them in. If you don't know what to do, flag it with a TODO comment.
+	The Ocaml compiler will warn you, so once it does, go back and 
+	add them in. If you don't know what to do, flag it with a TODO comment.
 
 
 	* Style guide adapted from *
@@ -761,7 +766,27 @@ As explained above, the development of our compiler was heavily weighted toward 
 
 [add_del]: add_del.png
 
+Finally, to back up my earlier claim that our team got plenty of sleep during our week-long development coral-athon, below is the "git punchcard," which displays at which points during the day, and which days out of the week, our commits were made. As you can see, there are no commits made between the hours of 4am and 10am, which we consider to be a grand achievement. ![punch][]
+
+[punch]: punch_card.png
+
 ### Project Log ###
+
+February 12: We meet to discuss potential language ideas. A few are more "pet" languages, while the two we like the most are one that helps the user manipulate databases but looks like C, and an "easier vhdl" that makes writing hardware less miserable.
+
+February 15: We meet with Jared during his office hours, and he tells us that the C-like language that manipulates databases sounds like the coolest idea. We decide to run with that one.
+
+February 20: We meet to divide up the work for our white paper. We name our language CORaL (C-like Object-Relational Language), and come up with buzzwords.
+
+March 3: We meet and begin discussing how to implement our language. Some work is preliminarily divided up. Miguel and Luis are to begin outlining the compiler architecture, and Brian is going to work on the language tutorial.
+
+March 25: Now that the midterm and spring break are over, we start to focus more on our language. We meet to finish up the tutorial and write the language reference manual together.
+
+April 10: Miguel and Luis have the basic architecture working. Our compiler can compile and run a "Hello world" test program, but not do much else.
+
+April 20: Part of the grammar has been implemented by Molly, and Brian and Miguel have added the corresponding parts to the generator. Shane has started working on test programs.
+
+May 1-11: We meet, but are focused now on the PLT final exam first. After its over, the week-long CORal-athon begins!
 
 ## Language Evolution [evol] ##
 
