@@ -14,6 +14,8 @@ type trans_environment = {
 	scope : symbol_table;
 	ret_type : dtype;
 	in_loop : bool;
+	in_query: bool;
+	in_table : string;
 }
 
 (* helper funcs for printing error messages *)
@@ -230,11 +232,15 @@ let rec check_expr exp env =
 							else
 								NoType
 	| GetTableCall(f1, e) ->	if (table_exists f1 env.scope) then
-									UserType
+									let env' = { env with in_query = true;
+									 			  in_table = f1; } in
+									let _ = (List.map (fun x -> check_expr x env') e) in
+										UserType
 								else
 									raise (Error ("the .get() function can only be called on Tables"))
 	| TableCall(f1, f2, e) -> NoType (* not used *)
-    | Print(e) -> NoType
+    | Print(e) -> 	let _ = (List.map (fun x -> check_expr x env) e) in
+    					NoType
     | Binop(a, op, b) -> (let t1 = (check_expr a env) in
                          (let t2 = (check_expr b env) in
                             if(t1=FloatType && t2=IntType) then
@@ -256,8 +262,15 @@ let rec check_expr exp env =
 	| Notop(e) -> (check_expr e env)
 	| Neg(e) -> (check_expr e env)
 	| Pos(e) -> (check_expr e env)
-    | Assign(l, asgn, r) -> (let t1 = (variable_type (find_variable l env.scope)) in
-    						(let t2 = (check_expr r env) in
+    | Assign(l, asgn, r) -> if (env.in_query) then
+    							if (attr_exists_in_table l env.in_table env.scope) then
+    								(check_expr r env)
+    							else
+    								raise (Error ("cannot query for attribute " ^ l ^
+    								" because it is not defined in table " ^ env.in_table))
+    						else
+    							(let t1 = (variable_type (find_variable l env.scope)) in
+    							(let t2 = (check_expr r env) in
     						 	if (t1 == FloatType && t2 == IntType) then
     						 		t1
     						 	else
@@ -265,7 +278,7 @@ let rec check_expr exp env =
     								with Type_mismatch_error(e1, e2) ->
     									raise (Error ("cannot assign value of type " ^ e1 ^
     									" to variable of type " ^ e2))
-    						))
+    							))
     | Parens(p) -> (check_expr p env)
     | Array(id, e) -> 	if ((variable_type (find_variable id env.scope)) == UserType) then
     						if ((check_expr e env) == IntType) then
@@ -476,13 +489,15 @@ let rec check_program (p:program) =
 		variables = [];
 		functions = [];
 		table_list = [];
-		table_attrs = []
+		table_attrs = [];
 	} in
 
 	let global_env = {
 		scope = global_scope;
 		ret_type = NoType;
-		in_loop = false
+		in_loop = false;
+		in_query = false;
+		in_table = "";
 	} in
 
     let _ = (check_conn_block p.conn) in

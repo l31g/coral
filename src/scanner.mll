@@ -106,7 +106,7 @@ rule token = parse
 	| digit+ as lxm { INTLITERAL(int_of_string lxm) } (* integers *)
 	| "\""(letter | digit | symbol)* "\"" as lxm { STRINGLITERAL(lxm) }
 	| ['0'-'9']+'.'['0'-'9']* as lxm { FPLITERAL(float_of_string lxm) }
-	| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '_' '0'-'9']* as lxm { ID(lxm) }
+	| ['a'-'z' '_' 'A'-'Z']['a'-'z' 'A'-'Z' '_' '0'-'9']* as lxm { ID(lxm) }
 	| _  as char				{
 									let pos = lexbuf.Lexing.lex_curr_p in
 									raise (Failure("Illegal character: "^ Char.escaped char ^ " in line #" ^ (string_of_int pos.Lexing.pos_lnum))) }
