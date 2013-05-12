@@ -10,6 +10,7 @@ type="sqlite";
 #cordb
 #enddb
 
+
 void main() {	
 
 	int i = 0;
@@ -20,11 +21,8 @@ void main() {
 	printf(i);
 
 	/* this is a multi line
-	comment and probably won't work */
+	comment */
 
 	// single line comment
-
-
 	printf(i);
-	printf("\n");
 }
