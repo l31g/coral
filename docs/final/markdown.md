@@ -827,6 +827,9 @@ to trying to create my next language!
 
 
 * ***Molly Karcher*** : 
+	Throughout the duration of this project I learned first and foremost, the importance of flexibility in design. Our original design plan (at least as far as the grammar was concerned) ended up being pretty drastically different than originally planned, and the whole team had to be open to and understanding of a dynamically changing product. 
+
+	Similarly, you learn the importance of maintaining good off-line documentation, or at the very least having at least one person in the group per moving part, that knows that part through and through. Keeping everyone in the group updated as to progress and where we were in development was a key challenge for us, and pretty much mandated that we develop while physically sitting next to each other. Though I definitely learned this through every other large-scale programming project I've been a part of, this project confirmed that above all, proximity to your fellow programmers is key. Remotely working, or working independently will slow down the development process with unnecessary confusion.
 
 * ***Luis Pena*** :
 
