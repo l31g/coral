@@ -891,7 +891,9 @@ April 10: Miguel and Luis have the basic architecture working. Our compiler can 
 
 April 20: Part of the grammar has been implemented by Molly, and Brian and Miguel have added the corresponding parts to the generator. Shane has started working on test programs.
 
-May 1-11: We meet, but are focused now on the PLT final exam first. After its over, the week-long CORal-athon begins!
+May 1: We meet, but are focused now on the PLT final exam first.
+
+May 6: The week-long CORal-athon begins! (and extends to May 12)
 
 ## Language Evolution [evol] ##
 
