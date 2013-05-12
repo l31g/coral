@@ -531,7 +531,23 @@ Assuming the Person table has been populated with a series of rows of People, th
 
 #### File Statements ####
 
-In CORaL, file manipulation is built directly into the language, there is no standard library. As a result, file commands are built directly into the grammar as statements. 
+In CORaL, file manipulation is built directly into the language, there is no standard library. As a result, file commands are built directly into the grammar as statements. Files are types, as described above, but there are also several built-in functions to manipulate files. These functions are `fopen`, `fprintf`, `freadLine`, `fclose`, and these naming conventions were chosen to remain close to C in syntax. Opening a file is a statement that can be called like the following:
+
+	File f = fopen("output.txt", "w");
+
+This syntax was described above in initialization, so we will not go into detail about it here. 
+
+The next is `fprintf` which is used like the following. It takes the file pointer and then the string to be printed to the file.
+
+	fprintf(f, "Hello World\n");
+
+The next is `freadLine` which is used like the following. It is slightly different than the other built-in functions in that it must be assignment to something. It takes a file pointer and returns a string that is the next line to be read within that file. 
+
+	string p = freadLine(f);
+
+The final function is `fclose` which is very simple. It just takes the file pointer as a argument and closes the file.
+
+	fclose(f);
 
 ### Database Connection ###
 
