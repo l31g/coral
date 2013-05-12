@@ -475,11 +475,28 @@ User-defined types are all `Tables` and are initialized in a special way. They c
 
 ### Statements ###
 
-All statements in CORaL are executed and do not return values, but are rather executed for their effects. The groups are listed below.
+All statements in CORaL are executed and do not return values, but are rather executed for their effect. Most statements are exactly the same as you would expect in most other languages. The main difference that we will see here is in the database connection statements, that are entirely unique to CORaL. 
+
+#### Database Statements ####
+
+Database statements in CORaL are very simply, statements that are used to connect to the external database that you have already defined with the `#corddbconn` and `#enddbconn` and created database schemas for in the `#cordb` and `#enddb` block. If you have declared a connection and a schema block, it is not required to connect to or use the database. However, if you want to use your database, then the programmer must explicitly tell the program that they wish to connect to the database. This would be done with the following statements:
+
+	// connection block and schema block here
+
+	void main(){
+
+		connectDB;
+
+		// your program here
+
+		closeDB;
+	}
+
+Attempting to use database built-in functions without connecting to a database, or without defining a specification will not work in the CORaL grammar. 
 
 #### Expression Statement ####
 
-The majority of statements in CORaL ail fall into this category. Expression statements include assignments and function calls. Expressions can be null in certain cases.
+The majority of statements in CORaL ail fall into this category. Expression statements include assignments and function calls. Expression statements can be any type of expression that is defined in the CORaL grammar previously. These can be literals, assignment statements, arithmetic operators, build-in functions, function calls, and many others. To view a full listing of possible types of expressions, see the grammar at the end of this section, or the `parser.mly` file in the appendix. 
 
 #### Selection Statements ####
 
@@ -489,11 +506,32 @@ Selection statements are used for control flow within a function. In an `if` sta
 
 Iteration statements are concerned with looping. There are two types: `while` and `for`.  
 In a `while` statement, the statement is evaluated as long as the expression is true. In a `for` statement, the first expression is evaluated to initialize the loop. The second expression must be arithmetic; the loop is executed as long as the second expression is true. The third expression is evaluated after every iteration of the loop and used for re-initialization.  
-In either iteration-statement, any expression may be omitted.
+In either iteration-statement, any expression may be omitted. These are not different than what you would expect from most other languages.
 
 #### Jump Statements ####
 
 There is only one jump statement in CORaL, the `return` statement. `return` statements are used by functions to return to the caller. If an expression is present, the value of the statement is also returned. This value will be of the same type specified in the function definition. If a return is provided with no expression or no return is provided at all, the value will be undefined. 
+
+#### Built-in Function Statements ####
+
+Something that is also unique to CORaL, would be the series of built-in functions. These functions were defined specifically to assist programmers in writing SQL queries in a non-confusing syntax. There are two main built-in functions and they are named `add` and `get`. The `add` function is used to add a newly defined row to the database that has already been defined, and it is done like the following:
+
+	p.add();
+
+Where p is the name of a user_t type of the Person table (from example shown above). This function will save the row to the Table Person.
+
+The other built-in function is the `get` operation, which allows programmers to specify queries. It is called like follows:
+
+	p.get(age > 21);
+
+Assuming the Person table has been populated with a series of rows of People, this query will return a list of all people over the age of 21. Any number of variables can be specified in the `get` function. Assuming all rows are actually present in the database, we can create very complicated, interesting queries.
+
+	p.get(lastName="John", age>21, zip=10027);
+
+
+#### File Statements ####
+
+In CORaL, file manipulation is built directly into the language, there is no standard library. As a result, file commands are built directly into the grammar as statements. 
 
 ### Database Connection ###
 
