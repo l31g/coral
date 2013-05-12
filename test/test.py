@@ -80,6 +80,8 @@ def compare(subdirs):
                     global failedTests
                     failedTests.append(dir + '/' + fileName[0])
 
+stillIncorrect = []
+
 def recheck_failed():
   for file in failedToCompile:
     fileName = file.split('.')
@@ -89,6 +91,9 @@ def recheck_failed():
     if(True == filecmp.cmp(file+'.err', fileName[0]+'.exp')):
       global numCorrect
       numCorrect = numCorrect + 1
+    else:
+      stillIncorrect.append(fileName)
+      
 
 
 remove_cruft()
@@ -108,9 +113,14 @@ print 'Correct : ' +  str(numCorrect) + ' Total: ' + str(numTests)
 print 'Failed : ' +  str(numTests - numCorrect)
 
 
+#print ''
+#print 'The following files did not compile.\n'
+#print failedToCompile
+
 print ''
-print 'The following files did not compile.\n'
-print failedToCompile
+print 'The following files did not give the correct errors'
+print stillIncorrect
+
 
 print ''
 print 'The following files did not return the expected result: \n'
