@@ -1,4 +1,4 @@
-﻿Title: 	CORaL Project Report  
+Title: 	CORaL Project Report  
 Author:	Shane Chin, sac2171  
 	Molly Karcher, mdk2133  
 	Luis E. P. lep2141  
@@ -518,81 +518,149 @@ The lexical scope of an identifier is the region of the program text within whic
 
 The grammar of our language is specified below. Syntax for understanding the description of the grammar can be found in the syntax section. 
 
-	program		->	conn_block table_block global_decl_list fdef_list
+	program			->	conn_block table_block global_decl_list fdef_list
 	
-	fdef_list	->	
-				|	fdef_list fdef  
+	fdef_list		->	
+					|	fdef_list fdef  
 				
-	fdef		->	dtype ID LPAREN formals_opt RPAREN LBRACKET var_decl_list stmt_list RBRACKET
+	fdef			->	dtype ID LPAREN formals_opt RPAREN LBRACKET var_decl_list stmt_list RBRACKET
 
-	stmt_list	->  
-				|	stmt_list  stmt
+	stmt_list		->  
+					|	stmt_list  stmt
 
-	stmt		->	expr SEMI
-				|	error
-				|	CONNECTDB SEMI
-				|	CLOSEDB SEMI
-				|	LBRACKET stmt_list RBRACKET
-				|	RETURN expr SEMI
-				|	IF LPAREN expr RPAREN stmt NOELSE
-				|	IF LPAREN expr RPAREN stmt ELSE stmt
-				|	WHILE LPAREN expr RPAREN stmt
-				|	FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
+	stmt			->	expr SEMI
+					|	error
+					|	CONNECTDB SEMI
+					|	CLOSEDB SEMI
+					|	LBRACKET stmt_list RBRACKET
+					|	RETURN expr SEMI
+					|	IF LPAREN expr RPAREN stmt NOELSE
+					|	IF LPAREN expr RPAREN stmt ELSE stmt
+					|	WHILE LPAREN expr RPAREN stmt
+					|	FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
 
-	expr		->	INTLITERAL
-				|	STRINGLITERAL
-				|	FPLITERAL
-				|	ID ASSIGN expr
-				|	ID PLEG expr
-				|	ID MIEQ expr
-				|	ID MUEQ expr
-				|	ID DVEQ expr
-				|	expr PLUS expr
-				|	expr MINUS expr
-				|	expr TIMES expr
-				|	expr DIVIDE expr
-				|	expr MOD expr
-				|	expr EXP expr
-				|	expr EQ expr
-				|	expr NEQ expr
-				|	expr LT expr
-				|	expr LEQ expr
-				|	expr GT expr
-				|	expr GEQ expr
-				|	expr OR expr
-				|	expr AND expr
-				|	ID
-				|	NOT expr
-				|	ID INCR
-				|	ID DECR
-				|	MINUS expr
-				|	PLUS expr
-				|	SIZEOF LPAREN expr RPAREN
-				|	PRINT LPAREN actuals_opt RPAREN
-				|	FPRINT LPAREN ID COMMA actuals_opt RPAREN
-				|	FREAD LPAREN ID RPAREN
-				|	CLOSE LPAREN ID RPAREN
-				|	OPEN LPAREN STRINGLITERAL COMMA STRINGLITERAL RPAREN
-				|	ID LPAREN actuals_opt RPAREN
-				|	ID LSQUARE expr RSQUARE
-				|	ID DOT ADD LPAREN RPAREN
-				|	ID DOT GET LPAREN actuals_opt RPAREN
-				|	ID DOT ID LPAREN actuals_opt RPAREN
-				|	ID DOT ID
-				|	LPAREN expr RPAREN
+	expr			->	INTLITERAL
+					|	STRINGLITERAL
+					|	FPLITERAL
+					|	ID ASSIGN expr
+					|	ID PLEG expr
+					|	ID MIEQ expr
+					|	ID MUEQ expr
+					|	ID DVEQ expr
+					|	expr PLUS expr
+					|	expr MINUS expr
+					|	expr TIMES expr
+					|	expr DIVIDE expr
+					|	expr MOD expr
+					|	expr EXP expr
+					|	expr EQ expr
+					|	expr NEQ expr
+					|	expr LT expr
+					|	expr LEQ expr
+					|	expr GT expr
+					|	expr GEQ expr
+					|	expr OR expr
+					|	expr AND expr
+					|	ID
+					|	NOT expr
+					|	ID INCR
+					|	ID DECR
+					|	MINUS expr
+					|	PLUS expr
+					|	SIZEOF LPAREN expr RPAREN
+					|	PRINT LPAREN actuals_opt RPAREN
+					|	FPRINT LPAREN ID COMMA actuals_opt RPAREN
+					|	FREAD LPAREN ID RPAREN
+					|	CLOSE LPAREN ID RPAREN
+					|	OPEN LPAREN STRINGLITERAL COMMA STRINGLITERAL RPAREN
+					|	ID LPAREN actuals_opt RPAREN
+					|	ID LSQUARE expr RSQUARE
+					|	ID DOT ADD LPAREN RPAREN
+					|	ID DOT GET LPAREN actuals_opt RPAREN
+					|	ID DOT ID LPAREN actuals_opt RPAREN
+					|	ID DOT ID
+					|	LPAREN expr RPAREN
 
-	expr_opt	->  
-				|	expr
+	expr_opt		->  
+					|	expr
 
-	formals_opt	->	
-				|	formal_list
+	formals_opt		->	
+					|	formal_list
 
-	formal_list	->	formal
-				|	formal_list COMMA formal
+	formal_list		->	formal
+					|	formal_list COMMA formal
 
-	formal		-> dtype ID
+	formal			-> dtype ID
 
-	actuals_opt	->
+	actuals_opt		->	
+					|	actuals_list  
+
+	actuals_list	->	expr  
+					|	actuals_list COMMA expr
+
+	global_decl_list->	global_decl_list global_decl
+
+	global_decl		->	GLOBAL type ID ASSIGN expr SEMI
+					|	GLOBAL type ID SEMI
+
+	var_decl_list	->	  
+					|	var_decl_list var_decl
+
+	var_decl		->	
+					|	dtype ID ASSIGN expr SEMI
+					|	dtype ID ID SEMI
+					|	dtype ID ASSIGn expr SEMI
+					|	dtype ID ID SEMI
+
+	dtype			->		
+					|	VOID
+					|	INT
+					|	STRING
+					|	TABLE
+					|	FLOAT
+					|	FILE
+					|	USERTYPE
+
+	conn_label		->	SERVER
+					|	PORT
+					|	USER
+					|	PASS
+					|	TYPE
+					|	DBNAME
+
+	conn_attribute	->	conn_label ASSIGN STRINGLITERAL SEMI
+
+	conn_block		->	  
+					|	CORDBCONN
+						conn_attribute conn_attribute
+						conn_attribute conn_attribute
+						conn_attribute conn_attribute
+						ENDDBCONN
+
+	attribute_label	->	ID
+
+	attribute		->	attribute_label COLON dtype SEMI
+
+	attribue_group	->	attribute
+					|	attribute_group attribute
+
+	key_decls_list	->	  
+					|	key_decls_list key_decls
+
+	key_decls		->	PRIMARYKEY LPAREN attribute_label RPAREN SEMI
+					|	FOREIGNKEY LPAREN attribute_label RPAREN SEMI
+
+	table_label		->	ID
+
+	table_body		->	attribute_group key_decls_list fdef_list
+
+	table			->	TABLE table_label LBRACKET table_body RBRACKET SEMI
+
+	tables_list		->	  
+					|	tables_list table
+
+	table_block		->	  
+					|	CORDB tables_list ENDDB
 
 ## Project Plan [plan] ##
 
@@ -900,109 +968,70 @@ An Example Test:
 		printf(i);
 	}
 
-With expected outut:
-	0
-	0
-	0
+Running this test program should output the following:
 
+	000
 
-A more complicated test:
+A more complicated test is shown here:
+	
 	#cordbconn
-
 	server="";
-	
-user="";
-
+	user="";
 	password="";
-
 	port="";
-	
-DBName="";
-
+	DBName="";
 	type="sqlite";
-	
-#enddbconn
-	
+	#enddbconn
 
-#cordb
-Table
-	Person {
-
+	#cordb
+	Table Person {
 		firstName : string;
-
 		lastName : string;
-
 		age : int;
-
-		primary_key(firstName);
-	
-};
-	
-#enddb
-
-
+		primary_key(firstName);	
+	};
+	#enddb
 
 	int main() {
-    
 		File fp;
-
 		int i;
-
 		int size;
-
 		user_t Person u;
-    
 		user_t Person result;
+		
 		user_t Person molly = Person(firstName="molly", age=22);
-
-    		user_t Person miguel = Person(firstName="miguel", age=22);
-    
+    	user_t Person miguel = Person(firstName="miguel", age=22);
 		user_t Person shane = Person(firstName="shane", age=22);
-    
 		user_t Person brian = Person(firstName="brian", age=21);
-
     
 		molly.add();
-
 		miguel.add();
-
 		shane.add();
 		brian.add();
 
-
 		connectDB;
-
  
 		fp = fopen("output.txt", "w");
-
 		fprintf(fp, "People over the age of 21\n");
-
 		result = Person.get(age>21);
-    size = sizeof(result);
-
+    	size = sizeof(result);
 
 		for(i=0; i < size; i++) {
 			u = result[i];
-
 			fprintf(fp, u.firstName + "\n");
 
 		}
-    
 		fclose(fp);
-
 		closeDB;
-
 		return 0;
-
 	}
 
 
-Expected value manually tested as test program doesn't support file output:
+The expected output is to be added to the file `output.txt` as specified in the fopen. However, with our current test suite, we could not test writing to files so we did a manual testing of all tests that included file manipulation. This test is still present in the test suite, but just prints to STDOUT in order to more properly test the database functionality. Below is the expected output (or what would be in `output.txt`) after the above program is run:
 
-molly
-miguel
-shane
-
+	molly
+	miguel
+	shane
 
 
 ## Conclusions [conc] ##
@@ -1012,17 +1041,9 @@ shane
 ###Individual Lessons###
 
 * ***Shane Chin*** :
+	This project has taught me the importance of regression testing in software development; I had heard of the practice bieng used but rarely really understood the merit without the help of an incredibly difficult and large program. I learned the merit to reducing the scope of your project in areas in which it is too ambitious. 
 
-	This project has taught me the importance of regression testing in software development; I had heard of the practice bieng used but rarely 
-
-really understood the merit without the help of an incredibly difficult and large program. I learned the merit to reducing the scope of your project 
-
-in areas in which it is too ambitious. 
-
-	I learned the joys of working with a highly productive, punctual team, which was really willing to put in the work required. I look forward 
-
-to trying to create my next language!
-
+	I learned the joys of working with a highly productive, punctual team, which was really willing to put in the work required. I look forward to trying to create my next language!
 
 * ***Molly Karcher*** : 
 	Throughout the duration of this project I learned first and foremost, the importance of flexibility in design. Our original design plan (at least as far as the grammar was concerned) ended up being pretty drastically different than originally planned, and the whole team had to be open to and understanding of a dynamically changing product. 
