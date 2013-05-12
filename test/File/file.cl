@@ -22,15 +22,8 @@ void main() {
 	connectDB;
 	f = fopen("output", "w");
 	fprintf(f, "hello");
-	fprintf(f, c.name);
-	b = freadline(f);
 	
-	while (b != "" ) {
-        	printf(b);
-        	b = freadline(f);
-    	}
-
-    	fclose(f);
+  fclose(f);
 
 	closeDB;
 
