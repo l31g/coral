@@ -11,7 +11,7 @@ Here's how it works:
 
 2. The compiler is now installed in `/usr/local/bin` Run it like so:
 
-	coralc path/to/program.cl
+    coralc path/to/program.cl
 
 3. This outputs a program.clx executable. (Open up the source and you'll see some Python)
 
