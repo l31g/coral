@@ -6,22 +6,22 @@ all:
 	echo "make all in $$i..."; \
 	(cd $$i; $(MAKE) $(MFLAGS) all); done
 
-install: clean
+install: backend_clean backend clean
 	@for i in $(SUBDIRS); do \
 	echo "make all in $$i..."; \
 	(cd $$i; $(MAKE) $(MFLAGS) install); done
 
 backend:
 	echo "making Backend"
+	cd dependencies; tar xvzf *; cd SQLAlchemy-0.8.1; python setup.py install
 	python setup.py install
 
 backend_clean:
 	rm -rf $(PYTHONBUILD)
+	rm -rf /dependencies/SQLAlchemy-0.8.1
 
-test:
-	@for i in $(SUBDIRS); do \
-	echo "make test in $$i..."; \
-	(cd $$i; $(MAKE) $(MFLAGS) test); done
+test: test/test.py
+	python test/test.py
 
 clean: backend_clean
 	@for i in $(SUBDIRS); do \

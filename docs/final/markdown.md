@@ -496,7 +496,23 @@ bla ble bli
 
 ## Development and Run-Time Environment [dev] ##
 
-ble bli blo
+We had the following programming and development environment:
+
+* Languages: OCaml, OCamlyacc, OCamllex, Python
+* Development: Sublime Text 2, GitHub, Google Drive, GNU Make
+
+CORaL can be compiled and installed using a series of Makefile commands. The installer and the locations used follow the Unix conventions.
+
+Here are the following commands which can be run from the top-level directory of the CORaL directory.
+
+* `make all` : Compiles the source.
+* `make install` : Compiles the source, installs dependencies and installs coralc into `/usr/local/bin`.
+* `make backend` : Installs Python backend and dependencies.
+* `make test` : Runs the test suite.
+* `make backend_clean`: Cleans the backend install.
+* `make clean` : Cleans all directories.
+
+
 
 ## Test Plan [test] ##
 
