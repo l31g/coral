@@ -1,1 +1,4 @@
-testing function
+Traceback (most recent call last):
+  File "Functions/function.clx", line 3, in <module>
+    import coral_backend
+ImportError: No module named coral_backend

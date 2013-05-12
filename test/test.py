@@ -96,7 +96,7 @@ current_directory = os.getcwd()
 subdirs = get_immediate_subdirectories(current_directory)
 
 fileList = []
-pathToCoral = '../src/build/coralc'
+pathToCoral = '../src/coralc'
 compileTests(subdirs)
 runFiles(subdirs)
 compare(subdirs)
@@ -108,9 +108,9 @@ print 'Correct : ' +  str(numCorrect) + ' Total: ' + str(numTests)
 print 'Failed : ' +  str(numTests - numCorrect)
 
 
-print ''
-print 'The following files did not compile.\n'
-print failedToCompile
+#print ''
+#print 'The following files did not compile.\n'
+#print failedToCompile
 
 print ''
 print 'The following files did not return the expected result: \n'
