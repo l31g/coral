@@ -1059,6 +1059,8 @@ Upon install, tests are performed to ensure the product behaves as expected.
 Regression Tests:
 Our main testing methodology went through the test files, which gave an indication for all the behaviour that was and was not supported. We included tests with a multitude of language features, as well as tests which are geared toward a singular purpose.
 
+We have two stages of tests, one for file compilation, and another for runtime errors. These correspond to output files `filename.err` and `filename.out`.
+
 An Example Test:
 
 	#cordbconn
