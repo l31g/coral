@@ -813,7 +813,18 @@ shane
 
 ###Individual Lessons###
 
-* ***Shane Chine*** :
+* ***Shane Chin*** :
+
+	This project has taught me the importance of regression testing in software development; I had heard of the practice bieng used but rarely 
+
+really understood the merit without the help of an incredibly difficult and large program. I learned the merit to reducing the scope of your project 
+
+in areas in which it is too ambitious. 
+
+	I learned the joys of working with a highly productive, punctual team, which was really willing to put in the work required. I look forward 
+
+to trying to create my next language!
+
 
 * ***Molly Karcher*** : 
 
