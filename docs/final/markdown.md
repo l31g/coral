@@ -838,7 +838,41 @@ Throughout the development process, it was relatively easy to maintain consisten
 
 ## Translator Architecture [arch] ##
 
-bla ble bli
+### Overview ###
+
+The CORaL translator takes a CORaL program (.cl) as an input and outputs a Python executable (clx). Our only intermediate representation is the AST. Our translator has a front-end and a back-end. The front-end is made up of the lexer and the parser, and it outputs the AST. The backend, composed by the semantic analyzer and code generator, takes the AST, checks it semantically and outputs the Python executable.  The coral.ml file orchestrates the whole translation process. 
+
+![Translator Block Diagram][]  
+
+[Translator Block Diagram]: ./architecture.png
+
+### Front-End ###
+
+#### Lexer (scanner.mll) ####
+
+The lexer, an ocamllex program, is used to break down the source CORaL file into tokens or lexemes. This process removes the comments and whitespace from the program. The lexer also reports a failure for any illegal characters. The list of different tokens the lexer recognizes is in the Appendix.
+
+#### Parser (parser.mly) ####
+
+The parser, an ocamlyacc program, receives the token stream from the lexer and builds an AST using the CORaL grammar. The parser contains the official CORaL grammar. 
+
+### Back-End ###
+
+#### Semantic Analyzer (semantic.ml) ####
+
+The semantic analyzer takes the AST from the front-end and traverses it doing various types of checks:  
+
+* Checks if a function exists when it is called  
+* Checks if a variable has been declared when it is used  
+* Checks if the variable types match when a variable is operated on or assigned  
+* Checks if the function has or needs a return value and checks its type  
+* Checks if the actual arguments match the formal arguments of a function  
+* Checks the database connection parameters  
+* Checks the table types and functions  
+
+#### Code Generator (generator.ml) ####
+
+
 
 ## Development and Run-Time Environment [dev] ##
 
