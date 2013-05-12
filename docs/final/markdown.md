@@ -462,7 +462,11 @@ Functions may return `void`, `int`, `float`, `string`, and `Table`. The paramete
 
 The source text for a program will be kept in one file that will be compiled at one time. Upon compilation time, the scope of the identifiers will be validated.
 
-The lexical scope of an identifier is the region of the program text within which the identifier's characteristics are understood. The same identifier may be used for different purposes as long as their uses fall into different namespaces. The scope of a parameter of a function definition 
+The lexical scope of an identifier is the region of the program text within which the identifier's characteristics are understood. The same identifier may be used for different purposes as long as their uses fall into different namespaces. The scope of a parameter of a function definition begins at the start of the block defining the function, and persists though the function until the function declaration ends at the end of its declarator, and persists to the end of the block. The scope of a table is the entirety of the program.
+
+### Grammar ###
+
+
 
 ## Project Plan [plan] ##
 
