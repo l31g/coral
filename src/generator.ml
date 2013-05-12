@@ -110,6 +110,7 @@ let rec str_of_query_filter q =
     | TableAttr(s, p) -> ""
     | Parens(expr) -> ""
     | Array(s, expr) -> ""
+    | SizeOf(e) -> ""
     | Noexpr -> ""
 
 let rec str_of_query_params q =
@@ -131,6 +132,7 @@ let rec str_of_query_params q =
     | FRead(s) -> ""
     | Open(s, p) -> ""
     | Close(s) -> ""
+    | SizeOf(e) -> ""
     | AddTableCall(s) -> ""
     | GetTableCall(s, expr) -> ""
     | TableCall(s, p, expr) -> ""
