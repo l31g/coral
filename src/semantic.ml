@@ -211,7 +211,10 @@ let rec check_expr exp env =
 						StringType
 					else
 						raise (Error ("argument of fread() must have type File"))
-	(*| AddTableCall(f1) ->	if ((variable_type (find_variable f1 env)))*)
+	| AddTableCall(f1) ->	if ((variable_type (find_variable f1 env.scope)) != UserType) then
+								raise (Error ("the .add() function can only be called on variables of type user_t"))
+							else
+								NoType
 	(*| GetTableCall(f1, e) ->	if (table_exists f1) then *)
 
 	(* TODO TablCall(f1, f2, e) *)
@@ -270,8 +273,12 @@ let rec check_var_decl vdec env =
     								e2 ^ " because it is declared as type " ^ e1))
     						)
     | UDecl(ut, tn, v, Noexpr) -> ut
-    | UDecl(ut, tn, v, e) ->	let t2 = (check_expr e env) in
-    								(check_type t2 UserType)
+    | UDecl(ut, tn, v, e) ->	(let t2 = (check_expr e env) in
+    								try (check_type t2 UserType)
+    								with Type_mismatch_error(e1, e2) ->
+    									raise (Error ("cannot initialize variable " ^ v ^
+    									" with type " ^ e2 ^ " because it is declared as type " ^ e1))
+    							)
 
 let rec sys_check_var_decl vdec env =
 	match vdec with
