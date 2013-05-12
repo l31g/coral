@@ -109,6 +109,7 @@ expr:
 	| ID INCR 						{ Unop($1, Incr) }
 	| ID DECR 						{ Unop($1, Decr) }
 	| MINUS expr 						{ Neg($2)}
+	| PLUS expr  						{ Pos($2)}
 	| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }
     | FPRINT LPAREN ID COMMA actuals_opt RPAREN      { FPrint($3, $5) }
     | FREAD LPAREN  ID RPAREN             { FRead($3) }
@@ -162,7 +163,6 @@ var_decl:
 	| dtype ID SEMI					{ VarDecl($1, $2, Noexpr) }
     | dtype ID ID ASSIGN expr SEMI  { UDecl($1, $2, $3, $5) }
     | dtype ID ID SEMI              { UDecl($1, $2, $3, Noexpr) }
-
 
 dtype:
     VOID   { VoidType }

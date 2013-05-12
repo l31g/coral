@@ -73,6 +73,7 @@ type expr =
     | Binop of expr * op * expr
     | Unop of string * uop
     | Neg of expr
+    | Pos of expr
     | Notop of expr
     | Print of expr list
     | FPrint of string * expr list
