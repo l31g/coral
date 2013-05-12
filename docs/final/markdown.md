@@ -473,7 +473,7 @@ The attributes of a connection specify the connection details in order to connec
 
 #### Section ####
 
-In order to define the section where the database connection details will be specified the following preprocessor identifiers `#cordbconn`, `#enddbconn`.  
+In order to define the section where the database connection details will be specified the following identifiers `#cordbconn`, `#enddbconn` will be used.  
 The `#cordbconn` marks the beginning of the section and `#enddbconn` marks the end of the section where database connection details are specified.
 
 ### Database Schema ###
@@ -520,7 +520,100 @@ The lexical scope of an identifier is the region of the program text within whic
 
 ## Project Plan [plan] ##
 
-blo blu bla
+### Development Process ###
+
+Our development was very much team-focused. While we did assign different components and sub-components to individual team members, we chose to do most of our development in a group setting so that we were more easily able to ask one another how the parts fit together and ensure compatibility across the components. In addition, this was greatly beneficial for debugging the compiler source code, because we chose to develop in OCaml, which is a language none of us had used before. Due to the fact that we were often in the same room together while working, we were able to quickly help each other with OCaml syntax, style, and errors.
+
+However, this approach became difficult as the end of the semester neared, because all of our team members became extremely busy, so it was hard to coordinate meetings where all of us could join. The approach we took was essentially a week-long hackathon: everyone finished up most of their other responsibilities by the last day of classes so that we could spend the next week coding our compiler. At this point, we had implemented the basic shell of it, which included a near-complete lexer, about a third of our grammar, and a basic code generator. Still, the bulk of the work remained, which did cause a rather unpleasantly large amount of work to need to be completed in a small timeframe. This time pressure acted as a great source of motivation, though, and we managed to cultivate a very focused and energized experience during our development sessions, and ended up getting plenty of sleep throughout the week while still completing our compiler on time.
+
+### Roles and Responsibilities ###
+
+The assigned team member roles were as follows:
+
+Brian : Team Manager
+Molly : Language Guru
+Luis : System Architect
+Miguel : System Integrator
+Shane : System Tester
+
+In the initial stages, Miguel and Luis assembled a functioning shell of our compiler after learning how the layout should be and how the various parts worked together. Luis coded the scanner, while Miguel coded small parts of the syntax analyzer and code generator. Molly was in charge of the grammar, and added the rest of that into the syntax analyzer. I assisted with the code generator and syntax analyzer before tackling the semantic analyzer. Meanwhile, Shane wrote various tests and a script to run suites of tests on the different parts of our language. All members also wrote several small test cases on their own.
+
+Due to the fact that we did most of our development together, the roles and responsibilities were more fluid than they would have been had we developed in more isolated conditions. Team members would often assist other team members with their modules, and everyone ended up contributing to nearly all of the modules. In all, the work ended up being pretty evenly distributed.
+
+### Implementation Style Sheet ###
+
+The stylesheet we used during development, which has been included in our souce code, is reproduced here:
+
+	# Team CORaL OCaml Style Sheet #
+
+	# Pushing to git #
+	
+	** Do not break the git repo **
+	The first rule about contributing to the git repo is that you do not break the git repo. All code must compile, and any prior functionality that was modified must be tested again before the changes can be committed.
+
+	** Avoid merging when possible **
+	Always pull before you commit. If there are conflicts, resolve them quickly and push your code. If you are going to work on a different branch, alert the other team members before you do.
+
+	# Comments #
+
+	** Place comments above the line that they refer to **
+
+	(* sum a list of integers *)
+	let sum = List.fold_left (+) 0
+
+	** In matching cases, they may be placed to the left of the case **
+
+	Match a with
+	| SomeCase(x, y) -> (check_something x) (* checks in this case *)
+	| OtherCase(x) -> (check_something_else x) (* checks another case *)
+
+	** Avoid useless comments **
+	Don't comment something unless it is performing a function that is not immediately apparent. Do more than simply stating the obvious.
+
+	# Naming conventions #
+
+	** Function and variable names **
+
+	Use lower case for the first character in a variable name. If a name is composed of multiple words, use underscores, not camelcase.
+
+	i.e. str_of_program
+
+	** Use meaningful names **
+
+	Longer names that make the value's meaning readily apparent are preferable to shorter names. 
+
+	# Indenting #
+
+	** Long expressions **
+
+	Break them up using newlines and indents to keep them around 80 characters, in the following manner
+
+	let x = "long line " ^
+			"is very long"
+
+	** Matching expressions **
+
+	Should be indented with a new case on each line, as follows
+
+	match an_expr with
+	| Case(y) -> ...
+	| DifferentCase(m) -> ...
+
+	# Pattern matching #
+
+	** Do not leave any unmatched cases **
+
+	The Ocaml compiler will warn you, so once it does, go back and add them in. If you don't know what to do, flag it with a TODO comment.
+
+
+	* Style guide adapted from *
+	[Cornell OCaml Style Guide](http://www.cs.cornell.edu/courses/cs3110/2008fa/handouts/style.htm)
+
+### Project Timeline ###
+
+As explained above, the development of our compiler was heavily weighted toward the end of the semester. To wit, we include the graph of the team's commits to our git repo below.
+
+### Project Log ###
 
 ## Language Evolution [evol] ##
 
