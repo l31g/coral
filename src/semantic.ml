@@ -9,12 +9,14 @@ type symbol_table = {
 	mutable table_attrs : (dtype * string) list;
 }
 
+(* local translation env *)
 type trans_environment = {
 	scope : symbol_table;
 	ret_type : dtype;
 	in_loop : bool;
 }
 
+(* helper funcs for printing error messages *)
 let rec string_of_coral_type t =
 	match t with
     VoidType -> "void"
@@ -23,7 +25,7 @@ let rec string_of_coral_type t =
     | TableType -> "Table"
     | FloatType -> "float"
     | FileType -> "File"
-    | UserType -> "user"
+    | UserType -> "user_t"
     | NoType -> ""
 
 let rec string_of_coral_op o =
@@ -45,11 +47,12 @@ let rec string_of_coral_op o =
 
 (* check types *)
 exception Error of string
+exception Type_mismatch_error of string * string
+
 
 let check_type t1 t2 =
     if (not(t1 = t2)) then
-        raise(Error("type mismatch between " ^ (string_of_coral_type t1) ^
-         " and " ^ (string_of_coral_type t2)))
+        raise ( Type_mismatch_error((string_of_coral_type t1), (string_of_coral_type t2)))
     else t1
 
 (* find functions in symbol table *)
@@ -74,7 +77,8 @@ let rec variable_exists vname scope =
 	try
 		let _ = List.find (fun v_decl ->
 					match v_decl with
-					| VarDecl(t, v, e) -> v = vname) scope.variables in true
+					| VarDecl(t, v, e) -> v = vname
+					| UDecl(ut, tn, v, e) -> v = vname) scope.variables in true
 	with Not_found ->
 		match scope.parent with
 			Some(parent) -> variable_exists vname parent
@@ -84,7 +88,8 @@ let rec find_variable vname scope =
 	try
 		List.find (fun v_decl ->
 				match v_decl with
-				| VarDecl(t, v, e) -> v = vname) scope.variables
+				| VarDecl(t, v, e) -> v = vname
+				| UDecl(ut, tn, v, e) -> v = vname) scope.variables
 	with Not_found ->
 		match scope.parent with
 			Some(parent) -> find_variable vname parent
@@ -93,6 +98,7 @@ let rec find_variable vname scope =
 let rec variable_type vdec =
 	match vdec with
 	| VarDecl(t, v, e) -> t
+	| UDecl(ut, tn, v, e) -> ut
 
 (* find attributes in symbol table *)
 let rec attr_exists aname scope =
@@ -166,6 +172,8 @@ let rec check_conn_block cb =
         NoType
     | NoConnBlock -> NoType
 
+(* let rec check_query exp = *)
+
 let rec check_expr exp env =
     match exp with
     | IntLiteral(l) -> IntType
@@ -181,6 +189,7 @@ let rec check_expr exp env =
     						let _ = (List.map2 (fun x y -> check_actual x y env) fmls e) in
     							IntType
     				else
+    					(*if (table_exists f env.scope) then*)
     					let _ = (find_function f env.scope) in
     						IntType
 	(* TODO TableAttr(t, a) *)
@@ -201,7 +210,8 @@ let rec check_expr exp env =
 					else
 						raise (Error ("argument of fread() must have type File"))
 	(*| AddTableCall(f1) ->	if ((variable_type (find_variable f1 env)))*)
-	(* TODO GetTableCall(f1, e) *)
+	(*| GetTableCall(f1, e) ->	if (table_exists f1) then *)
+
 	(* TODO TablCall(f1, f2, e) *)
     | Print(e) -> NoType
     | Binop(a, op, b) -> (let t1 = (check_expr a env) in
@@ -212,8 +222,11 @@ let rec check_expr exp env =
                             	if(t1=IntType && t2=FloatType) then
                             		t2
                             	else
-                            		(check_type t1 t2)
-                         ))
+                            		try (check_type t1 t2)
+                            		with Type_mismatch_error(e1, e2) ->
+                            			raise (Error ("operator " ^ (string_of_coral_op op) ^
+                            			" cannot be applied to arguments of type " ^ e1 ^ " and " ^ e2))
+                        ))
     | Unop(a, uop) -> let t = (variable_type (find_variable a env.scope)) in
     					if (t = IntType || t = FloatType) then
     						t
@@ -222,11 +235,15 @@ let rec check_expr exp env =
 	| Notop(e) -> (check_expr e env)
 	| Neg(e) -> (check_expr e env)
     | Assign(l, asgn, r) -> (let t1 = (variable_type (find_variable l env.scope)) in
-    						 let t2 = (check_expr r env) in
+    						(let t2 = (check_expr r env) in
     						 	if (t1 == FloatType && t2 == IntType) then
     						 		t1
     						 	else
-    						 		(check_type t1 t2))
+    						 		try (check_type t1 t2)
+    								with Type_mismatch_error(e1, e2) ->
+    								raise (Error ("cannot assign value of type " ^ e1 ^
+    								" to variable of type " ^ e2))
+    						))
     | Parens(p) -> (check_expr p env)
     (* TODO Array(id, e) *)
     | Noexpr -> NoType
@@ -243,6 +260,9 @@ let rec check_var_decl vdec env =
     							t
     						else 
     							(check_type t (check_expr e env))
+    | UDecl(ut, tn, v, Noexpr) -> ut
+    | UDecl(ut, tn, v, e) ->	let t2 = (check_expr e env) in
+    								(check_type t2 UserType)
 
 let rec sys_check_var_decl vdec env =
 	match vdec with
@@ -253,6 +273,17 @@ let rec sys_check_var_decl vdec env =
 						  	(* no error so add to symbol table *)
 						  	let _ = env.scope.variables <- vdec::env.scope.variables in
 						  		true
+	| UDecl(ut, tn, v, e) ->	if (variable_exists v env.scope) then
+									raise (Error ("variable " ^ v ^ " already declared"))
+								else
+									if (table_exists tn env.scope) then
+										let _ = (check_var_decl vdec env) in
+										(* no error caught so add to symbol table *)
+										let _ = env.scope.variables <- VarDecl(ut, v, e)::env.scope.variables in
+											true
+									else
+										raise (Error ("unable to declare user type for table " ^
+										tn ^ " because table does not exist"))
 
 let rec check_formal f env =
     match f with
@@ -412,5 +443,6 @@ let rec check_program (p:program) =
 
     let _ = (check_conn_block p.conn) in
     	let _ = check_table_block p.tables global_env in
-    		let _ = (List.map (fun x -> sys_check_fdef x global_env) p.funcs) in
-    			true
+    		let _ = (List.map (fun x -> sys_check_var_decl x global_env) p.globals) in
+    			let _ = (List.map (fun x -> sys_check_fdef x global_env) p.funcs) in
+    				true

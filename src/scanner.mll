@@ -1,16 +1,32 @@
 {
 	open Parser
+
+	let incrLineNum lexbuf =
+		let pos = lexbuf.Lexing.lex_curr_p in
+			lexbuf.Lexing.lex_curr_p <- { pos with
+				Lexing.pos_lnum =
+					pos.Lexing.pos_lnum + 1;
+
+				Lexing.pos_bol =
+					pos.Lexing.pos_cnum;
+			}
+
+
 }
+
+
 let letter = ['a' - 'z' 'A' - 'Z' ' ' '0' - '9']
 let digit = ['0' - '9']
 let symbol = "\\n" | "\\t" | '.' | '*' | "\\" | '?' | '`' | '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' | '(' | ')' | '-' | '+' | '=' | '{' | '}' | '[' | ']' | '|' | ';' | '>' | '<' | ','
-let whitespace = [' ' '\t' '\n' '\r']
+let whitespace = [' ' '\t']
+
+
 
 rule token = parse
-		whitespace+	{ token lexbuf }
+	 whitespace+				{ token lexbuf }
+	| ['\n' '\r']				{ incrLineNum lexbuf; token lexbuf }
 	| "/*"						{ comment lexbuf }
 	| "//"						{ singleComment lexbuf }
-	| '\n'						{ NEWLINE }
 
 	|	'+'						{ PLUS }
 	|	'-'						{ MINUS }
@@ -90,11 +106,17 @@ rule token = parse
 	| "\""(letter | digit | symbol)* "\"" as lxm { STRINGLITERAL(lxm) }
 	| ['0'-'9']+'.'['0'-'9']* as lxm { FPLITERAL(float_of_string lxm) }
 	| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '_' '0'-'9']* as lxm { ID(lxm) }
+	| _  as char				{
+									let pos = lexbuf.Lexing.lex_curr_p in
+									raise (Failure("Illegal character: "^ Char.escaped char ^ " in line #" ^ (string_of_int pos.Lexing.pos_lnum))) }
 
 and comment = parse
 		"*/" { token lexbuf }
+		| "\n" { incrLineNum lexbuf; token lexbuf }
 		| _	 { comment lexbuf }
 
 and singleComment = parse
-		"\n" { token lexbuf }
+		"\n" { incrLineNum lexbuf; token lexbuf }
 		| _ { singleComment lexbuf }
+
+
