@@ -240,8 +240,9 @@ let rec str_of_table_block tb =
 let str_of_program program =
         "#!/usr/bin/env python\n" ^
         "from __future__ import print_function\n" ^
-        "import sys\nsys.path.append(\"../../backend\")\n" ^
-        "import controller\nfrom controller import *\n\n" ^
+        "import coral_backend\n" ^
+        "from coral_backend import *" ^
+        "\n\n" ^
         (let l = (str_of_conn_block program.conn) in
         match l with
         | "" -> "conn_block = False\n\n"

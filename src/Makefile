@@ -7,12 +7,16 @@ OBJS = parser.cmo scanner.cmo ast.cmo semantic.cmo generator.cmo coral.cmo
 OUTPUTS = *.cmo *.cmi *.mli *~ scanner.ml parser.ml parser.output
 BINDIR = ./build
 
+install: all
+	cp coralc /usr/local/bin
+	cp coralc /bin
+
 all: coralc
+	chmod a+x coralc
 
 coralc : $(OBJS)
-	mkdir $(BINDIR)
 	$(OCAML) -o coralc $(OBJS)
-	mv coralc $(BINDIR)
+	chmod +x coralc
 
 parser.ml parser.mli : parser.mly
 	$(YACC) -v parser.mly
