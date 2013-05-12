@@ -921,7 +921,7 @@ April 20: Part of the grammar has been implemented by Molly, and Brian and Migue
 
 May 1: We meet, but are focused now on the PLT final exam first.
 
-May 6: The week-long CORal-athon begins! (and extends to May 12)
+May 6: The week-long CORaL-athon begins! (and extends to May 12)
 
 ## Language Evolution [evol] ##
 
