@@ -974,6 +974,17 @@ The expected output is to be added to the file `output.txt` as specified in the 
 
 ###Suggestions to Instructors###
 
+* ***Theory vs Implementation*** :
+	The lecture focuses heavily on theory, rather than implementation. It would be better to have a clearer connection between the two. When it came to being prepared for the final, the lectures definitely prepared us. But when it came to actually writing the compiler, we felt completely lost as to how to begin and ended up learning a lot of the implementation details from looking at Professor Edwards COMS W4115 slides from last semester. Solely based on lectures and homework assignments, we were ill-prepared to begin writing the compiler.
+
+* ***Course Content*** :
+	Lambda Calculus - We would like to see much more on usage, implementation, and interpretation of lambda calculus in the course, as well as it's applications to functional programming. We felt lambda calculus was a bit brushed over, and we did not get a full understanding 
+
+	Code optimization - This topic was covered rather heavily in lectures, and we believe that a lot of this content was superfluous, mostly because we did not need to do any code optimization when implementing our own compiler. Since we were just translating into a different language in our implementation, all of the code optimization steps that we had learned about in lectures were completely useless in this regard. Perhaps this topic could be shortened a little. 
+
+* ***Project Check-ins*** :
+	This suggestion is mostly just a way for the instructors to have more control over whether or not the students procrastinate their work or not. Our team still ended up procrastinating writing the entire compiler until a couple weeks before it was due. It would be at least a little motivating to do it earlier, if we were required to give deliverables to our assigned TA at different check-points throughout the semester. These could be instructor-defined, or you could allow teams to define their own deliverables, or milestones.  
+
 ## Appendix [appendix] ##
 
 `scanner.mll`
