@@ -79,7 +79,17 @@ def compare(subdirs):
                 else:
                     global failedTests
                     failedTests.append(dir + '/' + fileName[0])
-                                
+
+def recheck_failed():
+  for file in failedToCompile:
+    fileName = file.split('.')
+    #print file+'.err' + ' ' + fileName[0]+'.exp'
+    if not os.path.exists(fileName[0]+'.exp'):
+      continue
+    if(True == filecmp.cmp(file+'.err', fileName[0]+'.exp')):
+      global numCorrect
+      numCorrect = numCorrect + 1
+
 
 remove_cruft()
 current_directory = os.getcwd()
@@ -90,10 +100,9 @@ pathToCoral = '../src/build/coralc'
 compileTests(subdirs)
 runFiles(subdirs)
 compare(subdirs)
+recheck_failed()
 
 numTests = num_tests(subdirs)
-
-
 
 print 'Correct : ' +  str(numCorrect) + ' Total: ' + str(numTests)
 print 'Failed : ' +  str(numTests - numCorrect)
