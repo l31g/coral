@@ -333,17 +333,20 @@ CORaL implements implements six kinds of tokens: identifiers, keywords, constant
 
 #### Comments ####
 
-Comments in CORaL can be done in two styles. The first is an inline comment, designated by `//`. The compiler ignores everything after `//` until the conclusion of the line. Comments can also be begun with `/*` and concluded with `*/`. This flavor of comment can span multiple lines.
+Comments in CORaL can be done in two styles. The first is an inline comment, designated by `//`. The compiler ignores everything after `//` until the conclusion of the line. Comments can also be begun with `/*` and concluded with `*/`. This flavor of comment can span multiple lines. Once the compiler sees a `/*` it will ignore everything until it sees another `*/`. 
 
 #### Identifiers ####
 
-An identifier is a sequence of letters and digits. Identifiers in CORaL have similar restrictions as those in C. The first character of an identifier must be a letter (the '`_`' character counts as a letter). The language is case-sensitive, so upper and lower case letters are considered different, and identifiers can have any length.
+An identifier is a sequence of letters and digits. Identifiers in CORaL have similar restrictions as those in C. The first character of an identifier must be a letter (the '`_`' character counts as a letter). The language is case-sensitive, so upper and lower case letters are considered different, and identifiers can have any length. 
 
 #### Keywords ####
 
 CORaL reserves the following identifiers for use as keywords:  
 
-	array		char		double		else		for
+	if 				else 				while 			for	
+	return  		global  			server 			port  				
+	user 			password			type  			DBName 			
+	primary_key		foreign_key 		connectDB  		closeDB 		
 
 #### String Literals ####
 
