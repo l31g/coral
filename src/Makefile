@@ -9,7 +9,6 @@ BINDIR = ./build
 
 install: all
 	cp coralc /usr/local/bin
-	cp coralc /bin
 
 all: coralc
 	chmod a+x coralc
@@ -34,7 +33,7 @@ scanner.ml : scanner.mll
 clean:
 	rm -rf $(OUTPUTS)
 	rm -rf $(BINDIR)
-
+	rm -rf coralc
 
 
 ast.cmo:
