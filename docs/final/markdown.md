@@ -10,7 +10,7 @@ Date: 	May 10, 2013
 
 # CORaL Project Report #
 
-*Last Updated: May 11, 2013*  
+*Last Updated: May 12, 2013*  
 
 ***Authors:***  
 
@@ -343,13 +343,13 @@ An identifier is a sequence of letters and digits. Identifiers in CORaL have sim
 
 CORaL reserves the following identifiers for use as keywords:  
 
-	if 				else 				while 			for	
-	return  		global  			server 			port  				
-	user 			password			type  			DBName 			
-	primary_key		foreign_key 		connectDB  		closeDB 
-	int  			float 				void 			Table
-	user_t 			get 				add  			sizeof	
-	string  		File
+	if				else				while			for  
+	return			global				server			port  
+	user			password			type			DBName  
+	primary_key		foreign_key			connectDB		closeDB  
+	int				float				void			Table  
+	user_t			get					add				sizeof  
+	string			File  
 
 Most of these reserved words are similar to those reserved in C, and one can interpolate what they will be used for. All of the words `server`, `port`, `user`, `password`, `type`, `DBName`, and `type` are required to connect to the database and will be described later in the language tutorial. The `connectDB` and `closeDB` words are used to connect to and disconnect from the database. The key-related words are also obviously used within database definitions. All of the words `int`, `string`, `float`, `void`, `File`, `Table` are types in the language and so cannot be used other than in that context. The `user_t` is a user-defined type, similar to `struct` in C and must be declared before each user-defined type. The remaining reserved words are `get`, `add`, `sizeof` are built-in functions that are used on database manipulations, so they cannot be used in any other context.  	
 
@@ -891,19 +891,29 @@ The stylesheet we used during development, which has been included in our souce 
 
 ### Project Timeline ###
 
-As explained above, the development of our compiler was heavily weighted toward the end of the semester. To wit, we include the graph of the team's commits to our git repo, as well as a chart of code additions versus deletions, below. ![commits][] ![add_del][]
+As explained above, the development of our compiler was heavily weighted toward the end of the semester. To wit, we include the graph of the team's commits to our git repo, as well as a chart of code additions versus deletions, below.  
 
-[commits]: commits.png
+![Contributions][]  
 
-[add_del]: add_del.png
 
-Finally, to back up my earlier claim that our team got plenty of sleep during our week-long development coral-athon, below is the "git punchcard," which displays at which points during the day, and which days out of the week, our commits were made. As you can see, there are no commits made between the hours of 4am and 10am, which we consider to be a grand achievement. ![punch][]
+![Code Frequency][]  
 
-[punch]: punch_card.png
+
+[Contributions]: commits.png
+
+[Code Frequency]: add_del.png
+
+Finally, to back up my earlier claim that our team got plenty of sleep during our week-long development coral-athon, below is the "git punchcard," which displays at which points during the day, and which days out of the week, our commits were made. As you can see, there are no commits made between the hours of 4am and 10am, which we consider to be a grand achievement.  
+
+![Punch Card][]
+
+[Punch Card]: punch_card.png
+[Contributions]: commits.png
+[Code Frequency]: add_del.png
 
 ### Project Log ###
 
-February 12: We meet to discuss potential language ideas. A few are more "pet" languages, while the two we like the most are one that helps the user manipulate databases but looks like C, and an "easier vhdl" that makes writing hardware less miserable.
+February 12: We meet to discuss potential language ideas. A few are more "pet" languages, while the two we like the most are one that helps the user manipulate databases but looks like C, and an "easier VHDL" that makes writing hardware less miserable.
 
 February 15: We meet with Jared during his office hours, and he tells us that the C-like language that manipulates databases sounds like the coolest idea. We decide to run with that one.
 
@@ -949,17 +959,17 @@ The CORaL translator takes a CORaL program (.cl) as an input and outputs a Pytho
 
 ### Front-End ###
 
-#### Lexer (scanner.mll) ####
+#### Lexer (scanner.mll) [Luis, Miguel] ####
 
-The lexer, an ocamllex program, is used to break down the source CORaL file into tokens or lexemes. This process removes the comments and whitespace from the program. The lexer also reports a failure for any illegal characters. The list of different tokens the lexer recognizes is in the Appendix.
+The lexer, an OCamllex program, is used to break down the source CORaL file into tokens or lexemes. This process removes the comments and whitespace from the program. The lexer also reports a failure for any illegal characters. The list of different tokens the lexer recognizes is in the Appendix.
 
-#### Parser (parser.mly) ####
+#### Parser (parser.mly) [Shane, Molly, Luis, Brian, Miguel]####
 
-The parser, an ocamlyacc program, receives the token stream from the lexer and builds an AST using the CORaL grammar. The parser contains the official CORaL grammar. 
+The parser, an OCamlyacc program, receives the token stream from the lexer and builds an AST using the CORaL grammar. The parser contains the official CORaL grammar. 
 
 ### Back-End ###
 
-#### Semantic Analyzer (semantic.ml) ####
+#### Semantic Analyzer (semantic.ml) [Molly, Brian, Miguel] ####
 
 The semantic analyzer, an OCaml program, takes the AST from the front-end and traverses it doing various types of checks:  
 
@@ -971,7 +981,7 @@ The semantic analyzer, an OCaml program, takes the AST from the front-end and tr
 * Checks the database connection parameters  
 * Checks the table types and functions  
 
-#### Code Generator (generator.ml) ####
+#### Code Generator (generator.ml) [Brian, Miguel]####
 
 The code generator, an OCaml program, takes the AST, after is has been checked by the semantic analyzer, and translates it into a Python program with the database connections. This Python program can be executed from the command line as is. 
 
@@ -1101,7 +1111,7 @@ Acceptance Tests:
 Upon install, tests are performed to ensure the product behaves as expected.
 
 Regression Tests:
-Our main testing methodology went through the test files, which gave an indication for all the behaviour that was and was not supported. We included tests with a multitude of language features, as well as tests which are geared toward a singular purpose.
+Our main testing methodology went through the test files, which gave an indication for all the behavior that was and was not supported. We included tests with a multitude of language features, as well as tests which are geared toward a singular purpose.
 
 We have two stages of tests, one for file compilation, and another for runtime errors. These correspond to output files `filename.err` and `filename.out`.
 
@@ -1214,7 +1224,7 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	We were implementing our compiler in OCaml, which is a language that was new to all of us. In addition, none of us had programmed in a functional language before. Thus, not only were we confronted by the task of writing a compiler, but the actual implementation was somewhat foreign to us. Thus, we ran into all sorts of OCaml syntax errors. However, we quickly learned that a lot of our problems were tricky, and that Stack Overflow wasn't too helpful with OCaml syntax errors. Our best resources therefore became each other, and it was often much quicker to have a teammate help you debug than to search aimlessly on the internet for the solution to your syntax error. Turns out Columbia students are pretty bright.
 
 * ***Functional Languages Are Powerful Tools*** :
-	Originally, we mostly decided to implement our compiler in OCaml just for the heck of it. We had heard from peers who took PLT with Prof. Edwards (and who had therefore used OCaml) that OCaml is great for compilers, and that could not have been more true. It took some getting used to the way of thinking about programming in a functional mindset, but we quickly learned just how powerful OCaml is. It allows us to write compicated recursive functions quickly and efficiently, and it amazed us how much we could do with so few lines of code. Not only this, but once you can get OCaml to compile, it generally works, which meant that we didn't need to do much debugging beyond sytax errors. We all think using OCaml was a great decision, and we recommend it to future teams wholeheartedly.
+	Originally, we mostly decided to implement our compiler in OCaml just for the heck of it. We had heard from peers who took PLT with Prof. Edwards (and who had therefore used OCaml) that OCaml is great for compilers, and that could not have been more true. It took some getting used to the way of thinking about programming in a functional mindset, but we quickly learned just how powerful OCaml is. It allows us to write complicated recursive functions quickly and efficiently, and it amazed us how much we could do with so few lines of code. Not only this, but once you can get OCaml to compile, it generally works, which meant that we didn't need to do much debugging beyond syntax errors. We all think using OCaml was a great decision, and we recommend it to future teams wholeheartedly.
 
 ###Individual Lessons###
 
@@ -1268,7 +1278,7 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	Cliche/stupid as it sounds, it's still important, and it is in fact possible. We did our best to create an environment conducive to teamwork during our dev-athon. Having a nice, open space with plenty of light and taking regular breaks to get food and fresh air was critical to the preservation of our collective sanity. We also made sure that we were all focused, but that the atmosphere was still light enough to make it kind of fun.
 
 * ***Use OCaml (If you want)*** :
-	Like we said above, we went with OCaml as our development language, even though none of us had used it (or any other functional language before) before. This turned out to be a great decision, and added to the amount we learned during the project. It will blow your minds how powerful OCaml is, and how much it can do in five lines when it would have taken you 50 in C. OCaml is also great because often if it compiles, it works. It does exactly what you think it will, assuming you unerstand it.
+	Like we said above, we went with OCaml as our development language, even though none of us had used it (or any other functional language before) before. This turned out to be a great decision, and added to the amount we learned during the project. It will blow your minds how powerful OCaml is, and how much it can do in five lines when it would have taken you 50 in C. OCaml is also great because often if it compiles, it works. It does exactly what you think it will, assuming you understand it.
 
 ###Suggestions to Instructors###
 
@@ -1408,10 +1418,6 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	and singleComment = parse
 			"\n" { incrLineNum lexbuf; token lexbuf }
 			| _ { singleComment lexbuf }
-
-
-
-
 
 `parser.mly`
 
