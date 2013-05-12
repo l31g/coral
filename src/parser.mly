@@ -1,9 +1,14 @@
 %{ open Ast
     open Lexing
+    exception Error of string
     let parse_error msg =
         let start_pos = Parsing.rhs_start_pos 1 in
             let lineNo = start_pos.pos_lnum in
-                print_endline ("There is a " ^ msg ^ " near line #" ^ string_of_int lineNo)
+                try
+                raise(Error(""))
+                with _ ->
+                    print_endline ("There is a " ^ msg ^ " near line #" ^ string_of_int lineNo); exit 2
+
 
 %}
 
