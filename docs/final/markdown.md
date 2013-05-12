@@ -475,11 +475,28 @@ User-defined types are all `Tables` and are initialized in a special way. They c
 
 ### Statements ###
 
-All statements in CORaL are executed and do not return values, but are rather executed for their effects. The groups are listed below.
+All statements in CORaL are executed and do not return values, but are rather executed for their effect. Most statements are exactly the same as you would expect in most other languages. The main difference that we will see here is in the database connection statements, that are entirely unique to CORaL. 
+
+#### Database Statements ####
+
+Database statements in CORaL are very simply, statements that are used to connect to the external database that you have already defined with the `#corddbconn` and `#enddbconn` and created database schemas for in the `#cordb` and `#enddb` block. If you have declared a connection and a schema block, it is not required to connect to or use the database. However, if you want to use your database, then the programmer must explicitly tell the program that they wish to connect to the database. This would be done with the following statements:
+
+	// connection block and schema block here
+
+	void main(){
+
+		connectDB;
+
+		// your program here
+
+		closeDB;
+	}
+
+Attempting to use database built-in functions without connecting to a database, or without defining a specification will not work in the CORaL grammar. 
 
 #### Expression Statement ####
 
-The majority of statements in CORaL ail fall into this category. Expression statements include assignments and function calls. Expressions can be null in certain cases.
+The majority of statements in CORaL ail fall into this category. Expression statements include assignments and function calls. Expression statements can be any type of expression that is defined in the CORaL grammar previously. These can be literals, assignment statements, arithmetic operators, build-in functions, function calls, and many others. To view a full listing of possible types of expressions, see the grammar at the end of this section, or the `parser.mly` file in the appendix. 
 
 #### Selection Statements ####
 
@@ -489,11 +506,32 @@ Selection statements are used for control flow within a function. In an `if` sta
 
 Iteration statements are concerned with looping. There are two types: `while` and `for`.  
 In a `while` statement, the statement is evaluated as long as the expression is true. In a `for` statement, the first expression is evaluated to initialize the loop. The second expression must be arithmetic; the loop is executed as long as the second expression is true. The third expression is evaluated after every iteration of the loop and used for re-initialization.  
-In either iteration-statement, any expression may be omitted.
+In either iteration-statement, any expression may be omitted. These are not different than what you would expect from most other languages.
 
 #### Jump Statements ####
 
 There is only one jump statement in CORaL, the `return` statement. `return` statements are used by functions to return to the caller. If an expression is present, the value of the statement is also returned. This value will be of the same type specified in the function definition. If a return is provided with no expression or no return is provided at all, the value will be undefined. 
+
+#### Built-in Function Statements ####
+
+Something that is also unique to CORaL, would be the series of built-in functions. These functions were defined specifically to assist programmers in writing SQL queries in a non-confusing syntax. There are two main built-in functions and they are named `add` and `get`. The `add` function is used to add a newly defined row to the database that has already been defined, and it is done like the following:
+
+	p.add();
+
+Where p is the name of a user_t type of the Person table (from example shown above). This function will save the row to the Table Person.
+
+The other built-in function is the `get` operation, which allows programmers to specify queries. It is called like follows:
+
+	p.get(age > 21);
+
+Assuming the Person table has been populated with a series of rows of People, this query will return a list of all people over the age of 21. Any number of variables can be specified in the `get` function. Assuming all rows are actually present in the database, we can create very complicated, interesting queries.
+
+	p.get(lastName="John", age>21, zip=10027);
+
+
+#### File Statements ####
+
+In CORaL, file manipulation is built directly into the language, there is no standard library. As a result, file commands are built directly into the grammar as statements. 
 
 ### Database Connection ###
 
@@ -695,11 +733,11 @@ The grammar of our language is specified below. Syntax for understanding the des
 	attribue_group	->	attribute
 					|	attribute_group attribute
 
-	key_decls_list	->	  
+	key_decls_list	->
+					|   key_decls	  
 					|	key_decls_list key_decls
 
 	key_decls		->	PRIMARYKEY LPAREN attribute_label RPAREN SEMI
-					|	FOREIGNKEY LPAREN attribute_label RPAREN SEMI
 
 	table_label		->	ID
 
@@ -879,7 +917,7 @@ The parser, an ocamlyacc program, receives the token stream from the lexer and b
 
 #### Semantic Analyzer (semantic.ml) ####
 
-The semantic analyzer takes the AST from the front-end and traverses it doing various types of checks:  
+The semantic analyzer, an OCaml program, takes the AST from the front-end and traverses it doing various types of checks:  
 
 * Checks if a function exists when it is called  
 * Checks if a variable has been declared when it is used  
@@ -891,7 +929,7 @@ The semantic analyzer takes the AST from the front-end and traverses it doing va
 
 #### Code Generator (generator.ml) ####
 
-
+The code generator, an OCaml program, takes the AST, after is has been checked by the semantic analyzer, and translates it into a Python program with the database connections. This Python program can be executed from the command line as is. 
 
 ## Development and Run-Time Environment [dev] ##
 
@@ -1323,14 +1361,22 @@ The expected output is to be added to the file `output.txt` as specified in the 
 			| _ { singleComment lexbuf }
 
 
+
+
+
 `parser.mly`
 
 	%{ open Ast
-		open Lexing
-		let parse_error msg =
-			let start_pos = Parsing.rhs_start_pos 1 in
-				let lineNo = start_pos.pos_lnum in
-					print_endline ("There is a " ^ msg ^ " near line #" ^ string_of_int lineNo)
+	    open Lexing
+	    exception Error of string
+	    let parse_error msg =
+	        let start_pos = Parsing.rhs_start_pos 1 in
+	            let lineNo = start_pos.pos_lnum in
+	                try
+	                raise(Error(""))
+	                with _ ->
+	                    print_endline ("There is a " ^ msg ^ " near line #" ^ string_of_int lineNo); exit 2
+
 
 	%}
 
@@ -1371,8 +1417,8 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	program:
 		conn_block table_block global_decl_list fdef_list 	{ {
 								conn = $1;
-								tables = $2;
-								globals = List.rev $3;
+	                            tables = $2;
+	                            globals = List.rev $3;
 								funcs = List.rev $4
 			} }
 
@@ -1397,10 +1443,10 @@ The expected output is to be added to the file `output.txt` as specified in the 
 
 	stmt:
 		expr SEMI							{ Expr ($1) }
-		| error								{ Expr(Noexpr) }
-		| CONNECTDB SEMI				   	{ ConnectDB }
-		| CLOSEDB SEMI					  { CloseDB }
-		| LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
+		| error                            	{ Expr(Noexpr) }
+	    | CONNECTDB SEMI                   	{ ConnectDB }
+	    | CLOSEDB SEMI                      { CloseDB }
+	    | LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
 		| RETURN expr SEMI 					{ Return($2) }
 		| IF LPAREN expr RPAREN stmt %prec NOELSE		{ If($3, $5, Nostmt)}
 		| IF LPAREN expr RPAREN stmt ELSE stmt 			{ If($3, $5, $7) }
@@ -1437,16 +1483,16 @@ The expected output is to be added to the file `output.txt` as specified in the 
 		| ID DECR 						{ Unop($1, Decr) }
 		| MINUS expr 					{ Neg($2)}
 		| PLUS expr  					{ Pos($2)}
-		| SIZEOF LPAREN expr RPAREN	 { SizeOf($3) }
+	    | SIZEOF LPAREN expr RPAREN     { SizeOf($3) }
 		| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }
-		| FPRINT LPAREN ID COMMA actuals_opt RPAREN 	{ FPrint($3, $5) }
-		| FREAD LPAREN  ID RPAREN			 	{ FRead($3) }
-		| CLOSE LPAREN ID RPAREN			  	{ Close($3) }
-		| OPEN LPAREN STRINGLITERAL COMMA STRINGLITERAL RPAREN	{ Open($3, $5) }
+	    | FPRINT LPAREN ID COMMA actuals_opt RPAREN 	{ FPrint($3, $5) }
+	    | FREAD LPAREN  ID RPAREN             	{ FRead($3) }
+	    | CLOSE LPAREN ID RPAREN              	{ Close($3) }
+	    | OPEN LPAREN STRINGLITERAL COMMA STRINGLITERAL RPAREN	{ Open($3, $5) }
 		| ID LPAREN actuals_opt RPAREN	{ Call($1, $3) }
-		| ID LSQUARE expr RSQUARE	 	{ Array($1, $3) }
-		| ID DOT ADD LPAREN RPAREN 		{ AddTableCall($1) }
-		| ID DOT GET LPAREN actuals_opt RPAREN 	{ GetTableCall($1, $5) }
+	    | ID LSQUARE expr RSQUARE     	{ Array($1, $3) }
+	    | ID DOT ADD LPAREN RPAREN 		{ AddTableCall($1) }
+	    | ID DOT GET LPAREN actuals_opt RPAREN 	{ GetTableCall($1, $5) }
 		| ID DOT ID LPAREN actuals_opt RPAREN	{ TableCall($1, $3, $5) }
 		| ID DOT ID						{ TableAttr($1, $3) }
 		| LPAREN expr RPAREN			{ Parens($2) }
@@ -1479,8 +1525,8 @@ The expected output is to be added to the file `output.txt` as specified in the 
 		| global_decl_list global_decl { $2 :: $1 }
 
 	global_decl:
-		| GLOBAL dtype ID ASSIGN expr SEMI		{ VarDecl($2, $3, $5) }
-		| GLOBAL dtype ID SEMI					{ VarDecl($2, $3, Noexpr) }
+		| GLOBAL dtype ID ASSIGN expr SEMI		{ GVarDecl($2, $3, $5) }
+		| GLOBAL dtype ID SEMI					{ GVarDecl($2, $3, Noexpr) }
 
 	var_decl_list:
 								 { [] }
@@ -1489,60 +1535,59 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	var_decl:
 		| dtype ID ASSIGN expr SEMI		{ VarDecl($1, $2, $4) }
 		| dtype ID SEMI					{ VarDecl($1, $2, Noexpr) }
-		| dtype ID ID ASSIGN expr SEMI  { UDecl($1, $2, $3, $5) }
-		| dtype ID ID SEMI			  { UDecl($1, $2, $3, Noexpr) }
+	    | dtype ID ID ASSIGN expr SEMI  { UDecl($1, $2, $3, $5) }
+	    | dtype ID ID SEMI              { UDecl($1, $2, $3, Noexpr) }
 
 	dtype:
-		VOID   { VoidType }
-		| INT  { IntType }
-		| STRING { StringType }
-		| TABLE { TableType }
-		| FLOAT { FloatType }
-		| FILE  { FileType }
-		| USERTYPE { UserType }
+	    VOID   { VoidType }
+	    | INT  { IntType }
+	    | STRING { StringType }
+	    | TABLE { TableType }
+	    | FLOAT { FloatType }
+	    | FILE  { FileType }
+	    | USERTYPE { UserType }
 
 	conn_label:
-		SERVER	  { ServerConn }
-		| PORT	  { PortConn }
-		| USER	  { UserConn }
-		| PASS	  { PassConn }
-		| TYPE	  { TypeConn }
-		| DBNAME	{ DBConn }
+	    SERVER      { ServerConn }
+	    | PORT      { PortConn }
+	    | USER      { UserConn }
+	    | PASS      { PassConn }
+	    | TYPE      { TypeConn }
+	    | DBNAME    { DBConn }
 
 	conn_attribute:
-		conn_label ASSIGN STRINGLITERAL SEMI { ConnAttr($1, $3) }
+	    conn_label ASSIGN STRINGLITERAL SEMI { ConnAttr($1, $3) }
 
 	conn_block:
-									{ NoConnBlock }
-		| CORDBCONN
-		conn_attribute conn_attribute
-		conn_attribute conn_attribute
-		conn_attribute conn_attribute
-		ENDDBCONN					   { ConnBlock($2, $3, $4, $5, $6, $7) }
+	                                { NoConnBlock }
+	    | CORDBCONN
+	    conn_attribute conn_attribute
+	    conn_attribute conn_attribute
+	    conn_attribute conn_attribute
+	    ENDDBCONN                       { ConnBlock($2, $3, $4, $5, $6, $7) }
 
 	attribute_label:
-		ID	  { AttrLabel($1) }
+	    ID      { AttrLabel($1) }
 
 	attribute:
-		attribute_label COLON dtype SEMI		{ Attr($1,$3) }
+	    attribute_label COLON dtype SEMI		{ Attr($1,$3) }
 
 	attribute_group:
-		 attribute			   	{ [$1] }
-		| attribute_group attribute { $2 :: $1 }
+	     attribute               	{ [$1] }
+	    | attribute_group attribute { $2 :: $1 }
 
 	key_decls_list:
-									{ [] }
+		| key_decls							{ [$1] }
 		| key_decls_list key_decls 	{ $2 :: $1 }
 
 	key_decls:
-		PRIMARYKEY LPAREN attribute_label RPAREN SEMI { PrimaryKey($3) }
-		| FOREIGNKEY LPAREN attribute_label RPAREN SEMI { ForeignKey($3) }
+	    PRIMARYKEY LPAREN attribute_label RPAREN SEMI { PrimaryKey($3) }
 
 	table_label:
 		ID 		{ TableLabel($1) }
 
 	table_body:
-		attribute_group key_decls_list fdef_list { TableBody($1,$2,$3) }
+	    attribute_group key_decls_list fdef_list { TableBody($1,$2,$3) }
 
 	table:
 		TABLE table_label LBRACKET table_body RBRACKET	SEMI { {
@@ -1555,124 +1600,127 @@ The expected output is to be added to the file `output.txt` as specified in the 
 		| tables_list table { $2 :: $1 }
 
 	table_block:
-									{ NoTableBlock }
-		| CORDB tables_list ENDDB { TableBlock($2) }
+	                                { NoTableBlock }
+	    | CORDB tables_list ENDDB { TableBlock($2) }
+
+
+
 
 
 `ast.ml`
 
 	type op = (* Binary operators *)
-		Add
-		| Sub
-		| Mult
-		| Div
-		| Mod
-		| Equal
-		| Neq
-		| Less
-		| Leq
-		| Greater
-		| Geq
-		| And
-		| Or
-		| Exp
+	    Add
+	    | Sub
+	    | Mult
+	    | Div
+	    | Mod
+	    | Equal
+	    | Neq
+	    | Less
+	    | Leq
+	    | Greater
+	    | Geq
+	    | And
+	    | Or
+	    | Exp
 
 	type uop = (* ++ and -- operators *)
-		Incr
-		| Decr
+	    Incr
+	    | Decr
 
 	type asignmt = (* =, +=, -=, *=, /= *)
-		Eql
-		| Ple
-		| Mie
-		| Mue
-		| Dve
+	    Eql
+	    | Ple
+	    | Mie
+	    | Mue
+	    | Dve
 
 	type dtype =
-		VoidType
-		| IntType
-		| StringType
-		| TableType
-		| NoType
-		| FloatType
-		| FileType
-		| UserType
+	    VoidType
+	    | IntType
+	    | StringType
+	    | TableType
+	    | NoType
+	    | FloatType
+	    | FileType
+	    | UserType
 
 
 	type conn_label =
-		ServerConn
-		| PortConn
-		| UserConn
-		| PassConn
-		| TypeConn
-		| DBConn
+	    ServerConn
+	    | PortConn
+	    | UserConn
+	    | PassConn
+	    | TypeConn
+	    | DBConn
 
 	type conn_attribute =
-		ConnAttr of conn_label * string
+	    ConnAttr of conn_label * string
 
 	type conn_block =
-		ConnBlock of conn_attribute * conn_attribute * conn_attribute * conn_attribute * conn_attribute * conn_attribute
-		| NoConnBlock
+	    ConnBlock of conn_attribute * conn_attribute * conn_attribute * conn_attribute * conn_attribute * conn_attribute
+	    | NoConnBlock
 
 	type attr_label =
-		AttrLabel of string
+	    AttrLabel of string
 
 	type attribute =
-		Attr of attr_label * dtype
+	    Attr of attr_label * dtype
 
 	type key_decls =
-		PrimaryKey of attr_label
-		| ForeignKey of attr_label
+	    PrimaryKey of attr_label
 
 	type table_label =
-		TableLabel of string
+	    TableLabel of string
 
 	type expr =
-		IntLiteral of int
-		| StringLiteral of string
-		| FPLiteral of float
+	    IntLiteral of int
+	    | StringLiteral of string
+	    | FPLiteral of float
 		| Id of string
 		| Call of string * expr list
-		| Binop of expr * op * expr
-		| Unop of string * uop
-		| Neg of expr
-		| Pos of expr
-		| Notop of expr
-		| Print of expr list
-		| FPrint of string * expr list
-		| FRead of string
-		| Assign of string * asignmt * expr
-		| Open of string * string
-		| Close of string
-		| AddTableCall of string
-		| GetTableCall of string * expr list
-		| TableCall of string * string * expr list
-		| TableAttr of string * string
-		| Parens of expr
-		| Array of string * expr
-		| SizeOf of expr
-		| Noexpr
+	    | Binop of expr * op * expr
+	    | Unop of string * uop
+	    | Neg of expr
+	    | Pos of expr
+	    | Notop of expr
+	    | Print of expr list
+	    | FPrint of string * expr list
+	    | FRead of string
+	    | Assign of string * asignmt * expr
+	    | Open of string * string
+	    | Close of string
+	    | AddTableCall of string
+	    | GetTableCall of string * expr list
+	    | TableCall of string * string * expr list
+	    | TableAttr of string * string
+	    | Parens of expr
+	    | Array of string * expr
+	    | SizeOf of expr
+	    | Noexpr
 
 	type var_decl =
-		VarDecl of dtype * string * expr
-		| UDecl of dtype * string * string * expr
+	    VarDecl of dtype * string * expr
+	    | UDecl of dtype * string * string * expr
+	    | GVarDecl of dtype * string * expr
 
 	type formal =
-		Formal of dtype * string
+	    Formal of dtype * string
 
 	type stmt =
-		Block of stmt list
+	    Block of stmt list
 		| Expr of expr
-		| Return of expr
-		| If of expr * stmt * stmt
-		| For of expr * expr * expr * stmt
-		| While of expr * stmt
-		| CloseDB
-		| ConnectDB
-		| Nostmt
+	    | Return of expr
+	    | If of expr * stmt * stmt
+	    | For of expr * expr * expr * stmt
+	    | While of expr * stmt
+	    | CloseDB
+	    | ConnectDB
+	    | Nostmt
 
 	type func_def = {
-			return_type : dtype;
+	        return_type : dtype;
 			fname	: string;
 			formals	: formal list;
 			locals	: var_decl list;
@@ -1680,533 +1728,27 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	}
 
 	type table_body =
-		TableBody of attribute list * key_decls list * func_def list
+	    TableBody of attribute list * key_decls list * func_def list
 
 	type table = {
-		tbname : table_label;
-		tbbody : table_body;
+	    tbname : table_label;
+	    tbbody : table_body;
 	}
 
 	type table_block =
-		TableBlock of table list
-		| NoTableBlock
+	    TableBlock of table list
+	    | NoTableBlock
 
 	type program = {
-				conn : conn_block;
-				tables : table_block;
-				globals : var_decl list;
-				funcs  : func_def list;
+	            conn : conn_block;
+	            tables : table_block;
+	            globals : var_decl list;
+	            funcs  : func_def list;
 	}
 
-`semantic.ml`
-	
-	open Ast
-
-	(* make the symbol table *)
-	type symbol_table = {
-		parent : symbol_table option;
-		mutable variables : var_decl list;
-		mutable functions : func_def list;
-		mutable table_list : table list;
-		mutable table_attrs : (dtype * string) list;
-	}
-
-	(* local translation env *)
-	type trans_environment = {
-		scope : symbol_table;
-		ret_type : dtype;
-		in_loop : bool;
-		in_query: bool;
-		in_table : string;
-	}
-
-	(* helper funcs for printing error messages *)
-	let rec string_of_coral_type t =
-		match t with
-		VoidType -> "void"
-		| IntType -> "int"
-		| StringType -> "string"
-		| TableType -> "Table"
-		| FloatType -> "float"
-		| FileType -> "File"
-		| UserType -> "user_t"
-		| NoType -> "null_type" (* values which cannot be assigned *)
-
-	let rec string_of_coral_op o =
-		match o with
-		Add -> "+"
-		| Sub -> "-"
-		| Mult -> "*"
-		| Div -> "/"
-		| Mod -> "%"
-		| Equal -> "=="
-		| Neq -> "!="
-		| Less -> "<"
-		| Leq -> "<="
-		| Greater -> ">="
-		| Geq -> ">"
-		| And -> "&&"
-		| Or -> "||"
-		| Exp -> "**"
-
-	(* check types *)
-	exception Error of string
-	exception Type_mismatch_error of string * string
 
 
-	let check_type t1 t2 =
-		if (not(t1 = t2)) then
-			raise ( Type_mismatch_error((string_of_coral_type t1), (string_of_coral_type t2)))
-		else t1
 
-	(* find functions in symbol table *)
-	let rec function_exists fname scope =
-		try
-			let _ = List.find (fun func_def -> func_def.fname = fname) scope.functions in true
-		with Not_found ->
-			match scope.parent with
-				Some(parent) -> function_exists fname parent
-				| _ -> false
-
-	let rec find_function fname scope =
-		try
-			List.find (fun func_def -> func_def.fname = fname) scope.functions
-		with Not_found ->
-			match scope.parent with
-				Some(parent) -> find_function fname parent
-				| _ -> raise (Failure ("function " ^ fname ^ " referenced but not declared"))
-
-	(* find variables in symbol table *)
-	let rec variable_exists vname scope =
-		try
-			let _ = List.find (fun v_decl ->
-						match v_decl with
-						| VarDecl(t, v, e) -> v = vname
-						| UDecl(ut, tn, v, e) -> v = vname) scope.variables in true
-		with Not_found ->
-			match scope.parent with
-				Some(parent) -> variable_exists vname parent
-				| _ -> false
-
-	let rec find_variable vname scope =
-		try
-			List.find (fun v_decl ->
-					match v_decl with
-					| VarDecl(t, v, e) -> v = vname
-					| UDecl(ut, tn, v, e) -> v = vname) scope.variables
-		with Not_found ->
-			match scope.parent with
-				Some(parent) -> find_variable vname parent
-				| _ -> raise (Failure ("variable " ^ vname ^ " referenced but not declared"))
-
-	let rec variable_type vdec =
-		match vdec with
-		| VarDecl(t, v, e) -> t
-		| UDecl(ut, tn, v, e) -> ut
-
-	(* find attributes in symbol table *)
-	let rec attr_exists aname scope =
-		try
-			let _ = List.find (fun a_decl ->
-						match a_decl with
-						| (t, n) -> n = aname) scope.table_attrs in true
-		with Not_found ->
-			match scope.parent with
-			Some(parent) -> attr_exists aname parent
-			| _ -> false
-
-	let rec find_attr aname scope =
-		try
-			List.find (fun a_decl ->
-					match a_decl with
-					| (t, n) -> n = aname) scope.table_attrs
-		with Not_found ->
-			match scope.parent with
-			Some(parent) -> find_attr aname parent
-			| _ -> raise (Error ("attribute " ^ aname ^ " referenced but not declared"))
-
-	(* find tables in symbol table *)
-	let rec get_table_name table =
-		let t_label = table.tbname in
-			match t_label with
-			| TableLabel(l) -> l
-
-	let rec table_exists tname scope =
-		try
-			let _ = List.find (fun table -> (get_table_name table) = tname) scope.table_list in true
-		with Not_found ->
-			match scope.parent with
-				Some(parent) -> table_exists tname parent
-				| _ -> false
-
-	let rec find_table tname scope =
-		try
-			List.find (fun table -> (get_table_name table) = tname) scope.table_list
-		with Not_found ->
-			match scope.parent with
-				Some(parent) -> find_table tname parent
-				| _ -> raise (Failure ("Table " ^ tname ^ " referenced but not declared"))
-
-	let rec attr_exists_in_table aname tname scope =
-		let tbl = (find_table tname scope) in
-		let t_bod = tbl.tbbody in
-		
-		match t_bod with
-		| TableBody(ag, kd, fd) -> 	try
-										let _ = List.find (fun att ->
-														match att with
-														| Attr(a_label, t) ->
-																	match a_label with
-																	| AttrLabel(n) -> n = aname) ag in true
-									with Not_found -> false
-
-	(* check db connection section *)
-	let rec check_conn_label co =
-		match co with
-		| ServerConn -> co
-		| PortConn -> co
-		| UserConn -> co
-		| PassConn -> co
-		| TypeConn -> co
-		| DBConn -> co
-
-	let rec check_conn_attr ca  =
-		match ca with
-		| ConnAttr(cl, a) -> try
-								(check_conn_label cl)
-							with _ ->
-								raise(Error("ConnLabel Error"))
-
-	let rec check_conn_block cb =
-		match cb with
-		| ConnBlock(a1, a2, a3, a4, a5, a6) ->
-			let _ = (check_conn_attr a1) in
-			let _ = (check_conn_attr a2) in
-			let _ = (check_conn_attr a3) in
-			let _ = (check_conn_attr a4) in
-			let _ = (check_conn_attr a5) in
-			let _ = (check_conn_attr a6) in
-			NoType
-		| NoConnBlock -> NoType
-
-	let rec check_expr exp env =
-		match exp with
-		| IntLiteral(l) -> IntType
-		| StringLiteral(l) -> StringType
-		| FPLiteral(l) -> FloatType
-		| Id(v) -> (variable_type (find_variable v env.scope))
-		| Call(f, e) -> if (function_exists f env.scope) then
-							let f1 = (find_function f env.scope) in
-							let fmls = f1.formals in
-							if ((List.length fmls) != (List.length e)) then
-								raise (Error ("improper number of arguments to function " ^ f1.fname))
-							else
-								let _ = (List.map2 (fun x y -> check_actual x y env) fmls e) in
-									NoType
-						else
-							if (table_exists f env.scope) then
-								UserType
-							else
-								let _ = (find_function f env.scope) in
-									NoType
-		| TableAttr(t, a) ->	if ((variable_type (find_variable t env.scope)) == UserType) then
-									NoType
-								else
-									raise (Error ("only user types have attributes"))
-		| Open(fp, rw) -> 	if (not (rw = "\"r\"" || rw = "\"w\"" || rw = "\"rw\"")) then
-									raise (Error ("second argument to open must be \"r\", \"w\", or \"rw\""))
-							else
-								FileType
-		| Close(e) ->	if ((variable_type (find_variable e env.scope)) == FileType) then
-							NoType
-						else
-							raise (Error ("argument of fclose() must have type File"))
-		| FPrint(fp, e) -> 	if ((variable_type (find_variable fp env.scope)) == FileType) then
-								NoType
-							else
-								raise (Error ("first argument of fprintf() must have type File"))
-		| FRead(fp) ->	if ((variable_type (find_variable fp env.scope)) == FileType) then
-							StringType
-						else
-							raise (Error ("argument of fread() must have type File"))
-		| AddTableCall(f1) ->	if ((variable_type (find_variable f1 env.scope)) != UserType) then
-									raise (Error ("the .add() function can only be called on variables of type user_t"))
-								else
-									NoType
-		| GetTableCall(f1, e) ->	if (table_exists f1 env.scope) then
-										let env' = { env with in_query = true;
-										 			  in_table = f1; } in
-										let _ = (List.map (fun x -> check_expr x env') e) in
-											UserType
-									else
-										raise (Error ("the .get() function can only be called on Tables"))
-		| TableCall(f1, f2, e) -> NoType (* not used *)
-		| Print(e) -> 	let _ = (List.map (fun x -> check_expr x env) e) in
-							NoType
-		| Binop(a, op, b) -> (let t1 = (check_expr a env) in
-							 (let t2 = (check_expr b env) in
-								if(t1=FloatType && t2=IntType) then
-									t1
-								else
-									if(t1=IntType && t2=FloatType) then
-										t2
-									else
-										try (check_type t1 t2)
-										with Type_mismatch_error(e1, e2) ->
-											raise (Error ("operator " ^ (string_of_coral_op op) ^
-											" cannot be applied to arguments of type " ^ e1 ^ " and " ^ e2))
-							))
-		| Unop(a, uop) -> let t = (variable_type (find_variable a env.scope)) in
-							if (t = IntType || t = FloatType) then
-								t
-							else
-								raise (Error ("improper operator used on variable " ^ a))
-		| Notop(e) -> (check_expr e env)
-		| Neg(e) -> (check_expr e env)
-		| Pos(e) -> (check_expr e env)
-		| Assign(l, asgn, r) -> if (env.in_query) then
-									if (attr_exists_in_table l env.in_table env.scope) then
-										(check_expr r env)
-									else
-										raise (Error ("cannot query for attribute " ^ l ^
-										" because it is not defined in table " ^ env.in_table))
-								else
-									(let t1 = (variable_type (find_variable l env.scope)) in
-									(let t2 = (check_expr r env) in
-								 	if (t1 == FloatType && t2 == IntType) then
-								 		t1
-								 	else
-								 		try (check_type t1 t2)
-										with Type_mismatch_error(e1, e2) ->
-											raise (Error ("cannot assign value of type " ^ e1 ^
-											" to variable of type " ^ e2))
-									))
-		| Parens(p) -> (check_expr p env)
-		| Array(id, e) -> 	if ((variable_type (find_variable id env.scope)) == UserType) then
-								if ((check_expr e env) == IntType) then
-									UserType
-								else
-									raise (Error ("argument to array must be an integer"))
-							else
-								raise (Error ("array notation can only be used on user types"))
-		| SizeOf(e) -> 	if ((check_expr e env) == UserType) then
-							IntType
-						else
-							raise (Error ("sizeOf can only be used on a value of type user_t"))
-		| Noexpr -> NoType
-
-	and check_actual formal actual env =
-		match formal with
-		| Formal(t, n) -> 	try (check_type t (check_expr actual env))
-							with Type_mismatch_error(e1, e2) -> 
-								raise (Error ("function expected value of type " ^ e1
-								^ " as argument but received value of type " ^ e2))
-
-	let rec check_var_decl vdec env =
-		match vdec with
-		| VarDecl(t, v, Noexpr) -> t
-		| VarDecl(t, v, e) -> 	(let t2 = (check_expr e env) in
-								if (t == FloatType && t2 == IntType) then
-									t
-								else 
-									try (check_type t (check_expr e env))
-									with Type_mismatch_error(e1, e2) ->
-										raise (Error ("cannot initialize variable " ^ v ^ " with type " ^
-										e2 ^ " because it is declared as type " ^ e1))
-								)
-		| UDecl(ut, tn, v, Noexpr) -> ut
-		| UDecl(ut, tn, v, e) ->	(let t2 = (check_expr e env) in
-										try (check_type t2 UserType)
-										with Type_mismatch_error(e1, e2) ->
-											raise (Error ("cannot initialize variable " ^ v ^
-											" with type " ^ e2 ^ " because it is declared as type " ^ e1))
-									)
-
-	let rec sys_check_var_decl vdec env =
-		match vdec with
-		| VarDecl(t, v, e) -> if (variable_exists v env.scope) then
-								raise (Error ("variable " ^ v ^ " already declared"))
-							  else
-							  	let _ = (check_var_decl vdec env) in
-							  	(* no error so add to symbol table *)
-							  	let _ = env.scope.variables <- vdec::env.scope.variables in
-							  		true
-		| UDecl(ut, tn, v, e) ->	if (variable_exists v env.scope) then
-										raise (Error ("variable " ^ v ^ " already declared"))
-									else
-										if (table_exists tn env.scope) then
-											let _ = (check_var_decl vdec env) in
-											(* no error caught so add to symbol table *)
-											let _ = env.scope.variables <- VarDecl(ut, v, e)::env.scope.variables in
-												true
-										else
-											raise (Error ("unable to declare user type for table " ^
-											tn ^ " because table does not exist"))
-
-	let rec check_formal f env =
-		match f with
-		| Formal(t, n) ->	if (variable_exists n env.scope) then
-								raise (Error ("formal parameter with name " ^ n ^ " already declared"))
-							else
-								(* add formal to symbol table by making a new VarDecl out of it *)
-								let _ = env.scope.variables <- VarDecl(t, n, Noexpr)::env.scope.variables in
-									true
-
-	let rec is_assign expr =
-		match expr with
-		| Assign(l, asgn, r) -> raise (Error ("cannot have assignment in loop condition"))
-		| _ -> false
-
-	let rec check_stmt s env =
-		match s with
-		| Block(stmts) -> 	let _ = (List.map (fun x -> check_stmt x env) stmts) in NoType
-		| Expr(expr) -> 	(check_expr expr env)
-		| Return(expr) -> 	if (check_expr expr env) == env.ret_type then
-								env.ret_type
-							else
-								raise (Error ("invalid return type"))
-		| If(e, s, Nostmt) -> 	if (not (is_assign e)) then
-									NoType
-								else
-									NoType
-		| If(e, s1, s2) -> 	if (not (is_assign e)) then
-								NoType
-							else
-								NoType
-		| While(expr, stmts) ->	if (not (is_assign expr)) then
-									NoType
-								else
-									NoType
-		| For(expr1, expr2, expr3, stmts) -> 	if (not (is_assign expr2)) then
-													NoType
-												else
-													NoType
-		| ConnectDB -> NoType
-		| CloseDB -> NoType
-		| Nostmt -> NoType
-
-	(* obsolete now that return type tracked in env *)
-	let rec get_return fdef stmts env =
-		let r_type = fdef.return_type in
-		if r_type != VoidType then
-			try
-				List.find (fun s ->
-								match s with
-								| Return(expr) -> ((check_expr expr env) = r_type)
-								| _ -> false ) stmts
-			with Not_found ->
-				raise (Error ("function " ^ fdef.fname ^ " declared with return type of " ^
-				(string_of_coral_type r_type) ^ " but has no return statement"))
-		else
-			try
-				List.find (fun s ->
-								match s with
-								| Return(expr) -> raise (Error ("function " ^ fdef.fname ^ " should not have return statement"))
-								| _ -> false) stmts
-			with Not_found -> Nostmt
-
-	let rec check_fdef fdef env =
-		let _ = (List.map (fun x -> check_formal x env) fdef.formals) in
-			let _ = (List.map (fun x -> sys_check_var_decl x env) fdef.locals) in
-				let _ = (List.map (fun x -> check_stmt x env) fdef.body) in
-					(*let _ = (get_return fdef fdef.body env) in*)
-						true
-
-	let rec sys_check_fdef fdef env =
-		let f_name = fdef.fname in
-
-		if (function_exists f_name env.scope) then
-			raise (Error ("function " ^ f_name ^ " redeclared"))
-		else
-			let scope' = { parent = Some(env.scope);
-						   variables = [];
-						   functions = [];
-						   table_list = [];
-						   table_attrs = [] } in
-
-			let env' = { env with scope = scope';
-						 ret_type = fdef.return_type } in
-			
-			let _ = (check_fdef fdef env') in
-			(* no error thrown, add function to symbol table *)
-			let _ = env.scope.functions <- fdef::env.scope.functions in
-				true
-
-	let rec attr_name a =
-		match a with
-		| AttrLabel(s) -> s
-
-	let rec check_attr attr env = 
-		match attr with
-		| Attr(l, t) -> let name = (attr_name l) in
-						if (attr_exists name env.scope) then
-							raise (Error ("redeclaration of attribute " ^ name))
-						else
-							let _ = env.scope.table_attrs <- (t, name)::env.scope.table_attrs in
-								true
-
-	let rec check_key k_dec env =
-		match k_dec with
-		| PrimaryKey(label) -> 	let name = (attr_name label) in
-								if (attr_exists name env.scope) then
-									true
-								else
-									raise (Error ("primary key declared for non-existent attribute " ^ name))
-		| _ -> false
-
-	let rec check_table_body tbody env =
-		match tbody with
-		| TableBody(ag, kd, fd) -> 	let _ = (List.map (fun x -> check_attr x env) ag) in
-										let _ = (List.map (fun x -> check_key x env) kd) in
-											true
-
-	let rec check_table table env =
-		let t_name = (get_table_name table) in
-
-		if (table_exists t_name env.scope) then
-			raise (Error ("table " ^ t_name ^ " redeclared"))
-		else
-			let scope' = { parent = Some(env.scope);
-						   variables = [];
-						   functions = [];
-						   table_list = [];
-						   table_attrs = [] } in
-			let env' = { env with scope = scope' } in
-
-			let _ = (check_table_body table.tbbody env') in
-			(* no error so add table to symbol table *)
-			let _ = env.scope.table_list <- table::env.scope.table_list in
-				true
-
-	let rec check_table_block tblock env =
-		match tblock with
-		| TableBlock(tables) -> let _ = (List.map (fun x -> check_table x env) tables) in
-									true
-		| _ -> false
-
-	let rec check_program (p:program) =
-
-		let global_scope = {
-			parent = None;
-			variables = [];
-			functions = [];
-			table_list = [];
-			table_attrs = [];
-		} in
-
-		let global_env = {
-			scope = global_scope;
-			ret_type = NoType;
-			in_loop = false;
-			in_query = false;
-			in_table = "";
-		} in
-
-		let _ = (check_conn_block p.conn) in
-			let _ = check_table_block p.tables global_env in
-				let _ = (List.map (fun x -> sys_check_var_decl x global_env) p.globals) in
-					let _ = (List.map (fun x -> sys_check_fdef x global_env) p.funcs) in
-						true
 
 `generator.ml`
 
@@ -2217,266 +1759,263 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	  String.make lvl '\t'
 
 	let rec str_of_type t =
-		match t with
-		| IntType -> "Integer"
-		| StringType -> "String"
-		| VoidType -> "Void"
-		| TableType -> "Table"
-		| FloatType -> "Float"
-		| FileType -> "File" (* should never come up in SQL query *)
-		| NoType -> "" (* should never actually happen *)
-		| UserType -> ""
+	    match t with
+	    | IntType -> "Integer"
+	    | StringType -> "String"
+	    | VoidType -> "Void"
+	    | TableType -> "Table"
+	    | FloatType -> "Float"
+	    | FileType -> "File" (* should never come up in SQL query *)
+	    | NoType -> "" (* should never actually happen *)
+	    | UserType -> ""
 
 	let rec str_of_asgn a =
-		match a with
-		| Eql -> "="
-		| Ple -> "+="
-		| Mie -> "-="
-		| Mue -> "*="
-		| Dve -> "/="
+	    match a with
+	    | Eql -> " = "
+	    | Ple -> " += "
+	    | Mie -> " -= "
+	    | Mue -> " *= "
+	    | Dve -> " /= "
 
 	let rec str_of_op o =
-		match o with
-		| Add -> "+"
-		| Sub -> "-"
-		| Mult -> "*"
-		| Div -> "/"
-		| Mod -> "%"
-		| Exp -> "**"
-		| Equal -> "=="
-		| Neq -> "!="
-		| Less -> "<"
-		| Leq -> "<="
-		| Greater -> ">"
-		| Geq -> ">="
-		| Or -> "or"
-		| And -> "and"
+	    match o with
+	    | Add -> " + "
+	    | Sub -> " - "
+	    | Mult -> " * "
+	    | Div -> " / "
+	    | Mod -> " % "
+	    | Exp -> " ** "
+	    | Equal -> " == "
+	    | Neq -> " != "
+	    | Less -> " < "
+	    | Leq -> " <= "
+	    | Greater -> " > "
+	    | Geq -> " >= "
+	    | Or -> " or "
+	    | And -> " and "
 
 	let rec str_of_uop u =
-		match u with
-		| Incr -> "+1"
-		| Decr -> "-1"
+	    match u with
+	    | Incr -> " +1 "
+	    | Decr -> " -1 "
 
 	let rec str_of_conn_label co =
-		match co with
-		| ServerConn -> "setServer"
-		| PortConn -> "setPort"
-		| UserConn -> "setUser"
-		| PassConn -> "setPass"
-		| TypeConn -> "setConnType"
-		| DBConn -> "setDBName"
+	    match co with
+	    | ServerConn -> "setServer"
+	    | PortConn -> "setPort"
+	    | UserConn -> "setUser"
+	    | PassConn -> "setPass"
+	    | TypeConn -> "setConnType"
+	    | DBConn -> "setDBName"
 
 	let rec str_of_conn_attr ca =
-		match ca with
-		| ConnAttr(cl, a) -> (str_of_conn_label cl) ^ "(" ^ a ^ ")"
+	    match ca with
+	    | ConnAttr(cl, a) -> (str_of_conn_label cl) ^ "(" ^ a ^ ")"
 
 	let rec str_of_conn_block cb =
-		match cb with
-		| ConnBlock(a1, a2, a3, a4, a5, a6) -> (str_of_conn_attr a1) ^
-			"\n" ^ (str_of_conn_attr a2) ^ "\n" ^ (str_of_conn_attr a3)
-			^ "\n" ^ (str_of_conn_attr a4) ^ "\n" ^ (str_of_conn_attr a5)
-			^ "\n" ^ (str_of_conn_attr a6) ^ "\n"
-		| NoConnBlock -> ""
+	    match cb with
+	    | ConnBlock(a1, a2, a3, a4, a5, a6) -> (str_of_conn_attr a1) ^
+	        "\n" ^ (str_of_conn_attr a2) ^ "\n" ^ (str_of_conn_attr a3)
+	        ^ "\n" ^ (str_of_conn_attr a4) ^ "\n" ^ (str_of_conn_attr a5)
+	        ^ "\n" ^ (str_of_conn_attr a6) ^ "\n"
+	    | NoConnBlock -> ""
 
 	let rec str_of_attr_label al =
-		match al with
-		| AttrLabel(l) -> l
+	    match al with
+	    | AttrLabel(l) -> l
 
 	let rec str_of_attr a =
-		match a with
-		| Attr(a, t) -> (str_of_attr_label a) ^ " = Column(" ^ (str_of_type t) ^ ")"
+	    match a with
+	    | Attr(a, t) -> (str_of_attr_label a) ^ " = Column(" ^ (str_of_type t) ^ ")"
 
 	let rec str_of_attr_group ag lvl =
-		(let l = "\n" ^ (tab (lvl)) in
-			(String.concat l (List.map str_of_attr ag)))
+	    (let l = "\n" ^ (tab (lvl)) in
+	        (String.concat l (List.map str_of_attr ag)))
 
 	let rec str_of_key k =
-		match k with
-		| PrimaryKey(al) -> "PrimaryKeyConstraint('" ^ (str_of_attr_label al) ^ "')"
-		| ForeignKey(al) -> "ForeignKey('" ^ (str_of_attr_label al) ^ "')"
+	    match k with
+	    | PrimaryKey(al) -> "PrimaryKeyConstraint('" ^ (str_of_attr_label al) ^ "')"
+	    (*| ForeignKey(al) -> "ForeignKey('" ^ (str_of_attr_label al) ^ "')" *)
 
 	let rec str_of_query_filter q =
-		match q with
-		(* Get rid of quotes in a string *)
-		| StringLiteral(l) -> let len = (String.length l) in
-								(String.sub l 1 (len-2) )
-		| IntLiteral(l) -> string_of_int(l)
-		| FPLiteral(l) -> string_of_float(l)
-		| Id(s) -> s
-		| Binop(a, op, b) -> (str_of_query_filter a) ^ (str_of_op op) ^ ":" ^ (str_of_query_filter a)
-		| Assign(l, asgn, r) -> l ^ "=" ^ ":" ^ l
+	    match q with
+	    (* Get rid of quotes in a string *)
+	    | StringLiteral(l) -> let len = (String.length l) in
+	                            (String.sub l 1 (len-2) )
+	    | IntLiteral(l) -> string_of_int(l)
+	    | FPLiteral(l) -> string_of_float(l)
+	    | Id(s) -> s
+	    | Binop(a, op, b) -> (str_of_query_filter a) ^ (str_of_op op) ^ ":" ^ (str_of_query_filter a)
+	    | Assign(l, asgn, r) -> l ^ "=" ^ ":" ^ l
 
-		| Call(s, expr) -> "" (* should not ever be called in this context *)
-		| Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
-		| Neg(expr) -> "-" ^ (str_of_query_filter expr)
-		| Pos(expr) -> "+" ^ (str_of_query_filter expr)
-		| Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
-		| Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
-		| FPrint(s, expr) -> ""
-		| FRead(s) -> ""
-		| Open(s, p) -> ""
-		| Close(s) -> ""
-		| AddTableCall(s) -> ""
-		| GetTableCall(s, expr) -> ""
-		| TableCall(s, p, expr) -> ""
-		| TableAttr(s, p) -> ""
-		| Parens(expr) -> ""
-		| Array(s, expr) -> ""
-		| SizeOf(e) -> ""
-		| Noexpr -> ""
+	    | Call(s, expr) -> "" (* should not ever be called in this context *)
+	    | Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
+	    | Neg(expr) -> "-" ^ (str_of_query_filter expr)
+	    | Pos(expr) -> "+" ^ (str_of_query_filter expr)
+	    | Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
+	    | Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
+	    | FPrint(s, expr) -> ""
+	    | FRead(s) -> ""
+	    | Open(s, p) -> ""
+	    | Close(s) -> ""
+	    | AddTableCall(s) -> ""
+	    | GetTableCall(s, expr) -> ""
+	    | TableCall(s, p, expr) -> ""
+	    | TableAttr(s, p) -> ""
+	    | Parens(expr) -> ""
+	    | Array(s, expr) -> ""
+	    | SizeOf(e) -> ""
+	    | Noexpr -> ""
 
 	let rec str_of_query_params q =
-		match q with
-		| StringLiteral(l) -> l
-		| IntLiteral(l) -> string_of_int(l)
-		| FPLiteral(l) -> string_of_float(l)
-		| Id(s) -> s
-		| Binop(a, op, b) -> (str_of_query_params a) ^ "=" ^ (str_of_query_params b)
+	    match q with
+	    | StringLiteral(l) -> l
+	    | IntLiteral(l) -> string_of_int(l)
+	    | FPLiteral(l) -> string_of_float(l)
+	    | Id(s) -> s
+	    | Binop(a, op, b) -> (str_of_query_params a) ^ "=" ^ (str_of_query_params b)
 
-		| Assign(l, asgn, r) -> l ^ "=" ^ (str_of_query_params r)
-		| Call(s, expr) -> "" (* should not ever be called in this context *)
-		| Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
-		| Neg(expr) -> "-" ^ (str_of_query_params expr)
-		| Pos(expr) -> "+" ^ (str_of_query_params expr)
-		| Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
-		| Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
-		| FPrint(s, expr) -> ""
-		| FRead(s) -> ""
-		| Open(s, p) -> ""
-		| Close(s) -> ""
-		| SizeOf(e) -> ""
-		| AddTableCall(s) -> ""
-		| GetTableCall(s, expr) -> ""
-		| TableCall(s, p, expr) -> ""
-		| TableAttr(s, p) -> ""
-		| Parens(expr) -> ""
-		| Array(s, expr) -> ""
-		| Noexpr -> ""
+	    | Assign(l, asgn, r) -> l ^ "=" ^ (str_of_query_params r)
+	    | Call(s, expr) -> "" (* should not ever be called in this context *)
+	    | Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
+	    | Neg(expr) -> "-" ^ (str_of_query_params expr)
+	    | Pos(expr) -> "+" ^ (str_of_query_params expr)
+	    | Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
+	    | Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
+	    | FPrint(s, expr) -> ""
+	    | FRead(s) -> ""
+	    | Open(s, p) -> ""
+	    | Close(s) -> ""
+	    | SizeOf(e) -> ""
+	    | AddTableCall(s) -> ""
+	    | GetTableCall(s, expr) -> ""
+	    | TableCall(s, p, expr) -> ""
+	    | TableAttr(s, p) -> ""
+	    | Parens(expr) -> ""
+	    | Array(s, expr) -> ""
+	    | Noexpr -> ""
 
 	let rec str_of_expr exp =
-		match exp with
-		| IntLiteral(l) -> string_of_int(l)
-		| StringLiteral(l) -> l
-		| FPLiteral(l) -> string_of_float(l)
-		| Id(s) -> s
-		| Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
-		| TableAttr(t, a) -> t ^ "." ^ a
-		| Open(fp, rw) -> "open(" ^ fp ^ ", " ^ rw ^ ")"
-		| Close(e) -> e ^ ".close()"
-		| FPrint(fp, e) -> fp ^ ".write(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
-		| FRead(fp) -> fp ^ ".readline()"
-		| SizeOf(e) -> "sizeof("^ (str_of_expr e) ^ ")"
-		| AddTableCall(f1) -> "controller.session.add(" ^ f1 ^ ")"
-		| GetTableCall(f1, e) -> "controller.session.query(" ^ f1 ^ ").filter(\"" ^ (String.concat " and " (List.map str_of_query_filter e)) ^ "\").params(" ^ (String.concat " , " (List.map str_of_query_params e)) ^ ")"
-		| TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
-		| Print(e) -> "print(" ^ (String.concat "," (List.map str_of_expr e)) ^ ", end='')"
-		| Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
-		| Unop(a, uop) -> a ^ "=" ^ a ^ (str_of_uop uop)
-		| Notop(e) -> "not " ^ (str_of_expr e)
-		| Neg(e) -> "-" ^ (str_of_expr e)
-		| Pos(e) -> "+" ^ (str_of_expr e)
-		| Assign(l, asgn, r) -> l ^ (str_of_asgn asgn) ^ (str_of_expr r)
-		| Parens(p) -> "(" ^ (str_of_expr p) ^ ")"
-		| Array(id, e) -> id ^ "[" ^ (str_of_expr e) ^ "]"
-		| Noexpr -> ""
+	    match exp with
+	    | IntLiteral(l) -> string_of_int(l)
+	    | StringLiteral(l) -> l
+	    | FPLiteral(l) -> string_of_float(l)
+	    | Id(s) -> s
+	    | Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
+	    | TableAttr(t, a) -> t ^ "." ^ a
+	    | Open(fp, rw) -> "open(" ^ fp ^ ", " ^ rw ^ ")"
+	    | Close(e) -> e ^ ".close()"
+	    | FPrint(fp, e) -> fp ^ ".write(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
+	    | FRead(fp) -> fp ^ ".readline()"
+	    | SizeOf(e) -> "sizeof("^ (str_of_expr e) ^ ")"
+	    | AddTableCall(f1) -> "controller.session.add(" ^ f1 ^ ")"
+	    | GetTableCall(f1, e) -> "controller.session.query(" ^ f1 ^ ").filter(\"" ^ (String.concat " and " (List.map str_of_query_filter e)) ^ "\").params(" ^ (String.concat " , " (List.map str_of_query_params e)) ^ ")"
+	    | TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
+	    | Print(e) -> "print(" ^ (String.concat "," (List.map str_of_expr e)) ^ ", end='')"
+	    | Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
+	    | Unop(a, uop) -> a ^ "=" ^ a ^ (str_of_uop uop)
+	    | Notop(e) -> "not " ^ (str_of_expr e)
+	    | Neg(e) -> "-" ^ (str_of_expr e)
+	    | Pos(e) -> "+" ^ (str_of_expr e)
+	    | Assign(l, asgn, r) -> l ^ (str_of_asgn asgn) ^ (str_of_expr r)
+	    | Parens(p) -> "(" ^ (str_of_expr p) ^ ")"
+	    | Array(id, e) -> id ^ "[" ^ (str_of_expr e) ^ "]"
+	    | Noexpr -> ""
 
 	let rec str_of_var_decl vdec lvl =
-		match vdec with
-		| VarDecl(t, v, Noexpr) -> (tab lvl) ^ v ^ "= None"
-		| VarDecl(t, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
-		| UDecl(ut, tn, v, Noexpr) -> (tab lvl) ^ v ^ "= None"
-		| UDecl(ut, tn, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
+	    match vdec with
+	    | VarDecl(t, v, Noexpr) -> (tab lvl) ^ v ^ "= None"
+	    | VarDecl(t, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
+	    | UDecl(ut, tn, v, Noexpr) -> (tab lvl) ^ v ^ "= None"
+	    | UDecl(ut, tn, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
+	    | GVarDecl(t, v, Noexpr) -> (tab lvl) ^ "global " ^ v
+	    | GVarDecl(t, v, e) -> (tab lvl) ^ "global " ^ v ^ "\n" ^ (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
 
 	let rec str_of_formal f =
-		match f with
-		| Formal(t, n) -> "" ^ n
+	    match f with
+	    | Formal(t, n) -> "" ^ n
 
 	let rec str_of_stmt s lvl =
-		match s with
-		| Block(stmts) -> (let l = "\n" ^ (tab lvl) in
-							(String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (stmts))))
-		| Expr(expr) -> str_of_expr expr
-		| Return(expr) -> "return " ^ (str_of_expr expr)
-		| If(e, s, Nostmt) -> "if " ^ str_of_expr e ^ ":\n" ^ (tab (lvl+2)) ^ str_of_stmt s (lvl+2)
-		| If(e, s1, s2) -> "if (" ^ str_of_expr e ^ "):\n" ^ (tab (lvl+2)) ^ str_of_stmt s1 (lvl+2)
-						^ "\n" ^ (tab (lvl+1)) ^ "else:\n" ^ (tab (lvl+2)) ^ str_of_stmt s2 (lvl+2)
+	    match s with
+	    | Block(stmts) -> (let l = "\n" ^ (tab lvl) in
+	                        (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (stmts))))
+	    | Expr(expr) -> str_of_expr expr
+	    | Return(expr) -> "return " ^ (str_of_expr expr)
+	    | If(e, s, Nostmt) -> "if " ^ str_of_expr e ^ ":\n" ^ (tab (lvl+2)) ^ str_of_stmt s (lvl+2)
+	    | If(e, s1, s2) -> "if (" ^ str_of_expr e ^ "):\n" ^ (tab (lvl+2)) ^ str_of_stmt s1 (lvl+2)
+	                    ^ "\n" ^ (tab (lvl+1)) ^ "else:\n" ^ (tab (lvl+2)) ^ str_of_stmt s2 (lvl+2)
 
-		| While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
-							"while " ^ (str_of_expr expr) ^ ":" ^
-							l ^ (str_of_stmt stmts (lvl+2)) )
-		| For(expr1, expr2, expr3, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
-							(str_of_expr expr1) ^ "\n" ^ (tab (lvl+1)) ^ "while " ^ (str_of_expr expr2) ^ ":" ^
-							l ^ (str_of_stmt stmts (lvl+2)) ^
-							"\n" ^ (tab (lvl+2)) ^ (str_of_expr expr3))
-		| ConnectDB -> "controller.Base.metadata.create_all(controller.engine)"
-		| CloseDB -> "controller.session.commit()"
-		| Nostmt -> ""
+	    | While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
+	                        "while " ^ (str_of_expr expr) ^ ":" ^
+	                        l ^ (str_of_stmt stmts (lvl+2)) )
+	    | For(expr1, expr2, expr3, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
+	                        (str_of_expr expr1) ^ "\n" ^ (tab (lvl+1)) ^ "while " ^ (str_of_expr expr2) ^ ":" ^
+	                        l ^ (str_of_stmt stmts (lvl+2)) ^
+	                        "\n" ^ (tab (lvl+2)) ^ (str_of_expr expr3))
+	    | ConnectDB -> "controller.Base.metadata.create_all(controller.engine)"
+	    | CloseDB -> "controller.session.commit()"
+	    | Nostmt -> ""
 
 	let rec str_of_table_label tl =
-		match tl with
-		| TableLabel(l) -> "" ^ l
+	    match tl with
+	    | TableLabel(l) -> "" ^ l
 
 	let str_of_fdef fdef globals lvl =
-		(tab lvl) ^ "def " ^ fdef.fname ^ "(" ^
-				(String.concat "," (List.map str_of_formal fdef.formals)) ^ "):\n"
+	    (tab lvl) ^ "def " ^ fdef.fname ^ "(" ^
+	            (String.concat "," (List.map str_of_formal fdef.formals)) ^ "):\n"
 
-		^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
-						(String.concat l
-							(List.map
-								(fun x-> "global " ^ (str_of_var_decl x (lvl)))
-							globals)))
-						^ "\n"
+	    ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
+	                            (String.concat l (List.map (fun x-> str_of_var_decl x (lvl)) fdef.locals)))
+	                    ^ "\n"
 
-		^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
-								(String.concat l (List.map (fun x-> str_of_var_decl x (lvl)) fdef.locals)))
-						^ "\n"
-
-		^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
-								(let ll = (String.concat l (List.map (fun x-> str_of_stmt x (lvl)) fdef.body)) in
-									match ll with
-									| "" -> "return"
-									| _ -> ll))
+	    ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
+	                            (let ll = (String.concat l (List.map (fun x-> str_of_stmt x (lvl)) fdef.body)) in
+	                                match ll with
+	                                | "" -> "return"
+	                                | _ -> ll))
 
 	let rec str_of_table_body tbb lvl =
-		match tbb with
-		| TableBody(ag, kd, fd) -> (str_of_attr_group ag (lvl)) ^ "\n" ^ (tab lvl) ^ "__table_args__= ("
-				^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n"
-				^ (String.concat "\n" (List.map (fun x-> str_of_fdef x [] (lvl)) fd))
+	    match tbb with
+	    | TableBody(ag, kd, fd) -> (str_of_attr_group ag (lvl)) ^ "\n" ^ (tab lvl) ^ "__table_args__= ("
+	            ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n"
+	            ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x [] (lvl)) fd))
 
 	let rec str_of_table tb =
-		"class " ^ (str_of_table_label tb.tbname) ^ "(Base):\n" ^
-				(* cleanup these 1's later *)
-		(tab 1) ^
-					"__tablename__ = '" ^ "" ^ (str_of_table_label tb.tbname)^ "'" ^ "\n" ^ (tab 1) ^
-					(str_of_table_body tb.tbbody 1 )
+	    "class " ^ (str_of_table_label tb.tbname) ^ "(Base):\n" ^
+	            (* cleanup these 1's later *)
+	    (tab 1) ^
+	                "__tablename__ = '" ^ "" ^ (str_of_table_label tb.tbname)^ "'" ^ "\n" ^ (tab 1) ^
+	                (str_of_table_body tb.tbbody 1 )
 
 	let rec str_of_table_block tb =
-		match tb with
-		| TableBlock(tables) -> (String.concat "\n" (List.map str_of_table tables))
-		| NoTableBlock -> ""
+	    match tb with
+	    | TableBlock(tables) -> (String.concat "\n" (List.map str_of_table tables))
+	    | NoTableBlock -> ""
 
 	let str_of_program program =
-			"#!/usr/bin/env python\n" ^
-			"from __future__ import print_function\n" ^
-			"import coral_backend\n" ^
-			"from coral_backend import *\n" ^
-			"from coral_backend.controller import *" ^
-			"\n\n" ^
-			(let l = (str_of_conn_block program.conn) in
-			match l with
-			| "" -> "conn_block = False\n\n"
-			| _ -> l ^ "conn_block = True\n\n" )
-			^ "\n\n" ^
-			 (str_of_table_block program.tables) ^ "\n\n"
+	        "#!/usr/bin/env python\n" ^
+	        "from __future__ import print_function\n" ^
+	        "import coral_backend\n" ^
+	        "from coral_backend import *\n" ^
+	        "from coral_backend.controller import *" ^
+	        "\n\n" ^
+	        (let l = (str_of_conn_block program.conn) in
+	        match l with
+	        | "" -> "conn_block = False\n\n"
+	        | _ -> l ^ "conn_block = True\n\n" )
+	        ^ "\n\n" ^
+	         (str_of_table_block program.tables) ^ "\n\n"
 
-			 ^ (let l = "\n" in
-			(String.concat l (List.map (fun x-> str_of_var_decl x 0) program.globals)) ^ "\n")
+	         ^ (let l = "\n" in
+	        (String.concat l (List.map (fun x-> str_of_var_decl x 0) program.globals)) ^ "\n")
 
-			^ (let l = "\n" in
-					(String.concat l
-						(List.map (fun x-> str_of_fdef x program.globals 0) program.funcs))
-						^ "\n\nif __name__ == '__main__':\n\tif (conn_block):\n\t\tconnectDB()\n\tmain()"
-				)
+	        ^ (let l = "\n" in
+	                (String.concat l
+	                    (List.map (fun x-> str_of_fdef x program.globals 0) program.funcs))
+	                    ^ "\n\nif __name__ == '__main__':\n\tif (conn_block):\n\t\tconnectDB()\n\tmain()"
+	            )
+
+
 
 `coral.ml`
 
@@ -2495,9 +2034,9 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	   let lexbuf = Lexing.from_channel source in
 	   let program = 
 	  (*   try*)
-		   Parser.program Scanner.token lexbuf 
+	       Parser.program Scanner.token lexbuf 
 	   (*  with _ ->
-		   exit 2 *)
+	       exit 2 *)
 	   in
 	   let _ = Semantic.check_program(program) in
 	   let python_source_code = (str_of_program program) in
@@ -2512,3 +2051,4 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	match make_executable with
 	0 -> "Success!"
 	| _ -> "Error";
+
