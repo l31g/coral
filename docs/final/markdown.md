@@ -1059,6 +1059,8 @@ Upon install, tests are performed to ensure the product behaves as expected.
 Regression Tests:
 Our main testing methodology went through the test files, which gave an indication for all the behaviour that was and was not supported. We included tests with a multitude of language features, as well as tests which are geared toward a singular purpose.
 
+We have two stages of tests, one for file compilation, and another for runtime errors. These correspond to output files `filename.err` and `filename.out`.
+
 An Example Test:
 
 	#cordbconn
@@ -1182,7 +1184,10 @@ The expected output is to be added to the file `output.txt` as specified in the 
 
 	Similarly, you learn the importance of maintaining good off-line documentation, or at the very least having at least one person in the group per moving part, that knows that part through and through. Keeping everyone in the group updated as to progress and where we were in development was a key challenge for us, and pretty much mandated that we develop while physically sitting next to each other. Though I definitely learned this through every other large-scale programming project I've been a part of, this project confirmed that above all, proximity to your fellow programmers is key. Remotely working, or working independently will slow down the development process with unnecessary confusion.
 
-* ***Luis Pena*** :
+* ***Luis E. Pena*** :
+	Before this project I had only worked in smaller groups. This project taught me that it is a lot harder than I previously thought to work in larger groups. It is more difficult to divide up the work and synchronize with each of the teammates. The upside of having more teammates is that the group is more resilient, and it does not lose inertia when teammates are not able to attend a coding meeting.  
+
+	Working with OCaml was confusing at first, but we kept it and it was totally worth it. Adding features using OCaml was simple and quick. Our source code is short and elegant. I want to try using a functional programming language in future projects because functional languages require a completely different way of thinking.
 
 * ***Miguel A. Yanez*** :
 	This project has been one of the most challenging yet rewarding experiences during my time here at Columbia. Building a programming language that is elegant, and simple, yet functional is a very interesting problem. Through designing and implementing CORaL I have learned and grown to appreciate the details and complexity that bright minds like those of Brian Kerninghan and Dennis Ritchie faced when developing C.
