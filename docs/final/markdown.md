@@ -1,4 +1,4 @@
-Title: 	CORaL Project Report  
+﻿Title: 	CORaL Project Report  
 Author:	Shane Chin, sac2171  
 	Molly Karcher, mdk2133  
 	Luis E. P. lep2141  
@@ -619,7 +619,157 @@ CORaL Backend setup.py:
 	        )
 ## Test Plan [test] ##
 
-bli blo blu
+For testing, we used a combination of different methods. We had a main testing python script, and a test subdirectory which included a variety of tests for different functionality.
+You can run either one test, or them all, allowing you to do easy regression testing.
+
+Compliance Tests:
+Which we used with Hello World once the basic features of our compiler were written.
+
+Production Tests:
+We did production tests (tests covering performance and quality control) manually via checking the system logs. If we found any tests, or group of tests were taking an inordinate amount of time, we would dig deeper to try and drill down the issue. Pushes of non-working code were not accepted.
+
+Acceptance Tests:
+Upon install, tests are performed to ensure the product behaves as expected.
+
+Regression Tests:
+Our main testing methodology went through the test files, which gave an indication for all the behaviour that was and was not supported. We included tests with a multitude of language features, as well as tests which are geared toward a singular purpose.
+
+An Example Test:
+
+	#cordbconn
+	server="";
+	user="";
+	password="memory";
+	port="";
+	DBName="";
+	type="sqlite";
+	#enddbconn
+
+	#cordb
+	#enddb
+
+	void main() {	
+
+		int i = 0;
+	
+		printf(i);
+	
+		/* this is a comment */
+		printf(i);
+
+		/* this is a multi line
+		comment */
+
+		// single line comment
+
+
+		printf(i);
+	}
+
+With expected outut:
+	0
+	0
+	0
+
+
+A more complicated test:
+	#cordbconn
+
+	server="";
+	
+user="";
+
+	password="";
+
+	port="";
+	
+DBName="";
+
+	type="sqlite";
+	
+#enddbconn
+	
+
+#cordb
+Table
+	Person {
+
+		firstName : string;
+
+		lastName : string;
+
+		age : int;
+
+		primary_key(firstName);
+	
+};
+	
+#enddb
+
+
+
+	int main() {
+    
+		File fp;
+
+		int i;
+
+		int size;
+
+		user_t Person u;
+    
+		user_t Person result;
+		user_t Person molly = Person(firstName="molly", age=22);
+
+    		user_t Person miguel = Person(firstName="miguel", age=22);
+    
+		user_t Person shane = Person(firstName="shane", age=22);
+    
+		user_t Person brian = Person(firstName="brian", age=21);
+
+    
+		molly.add();
+
+		miguel.add();
+
+		shane.add();
+		brian.add();
+
+
+		connectDB;
+
+ 
+		fp = fopen("output.txt", "w");
+
+		fprintf(fp, "People over the age of 21\n");
+
+		result = Person.get(age>21);
+    size = sizeof(result);
+
+
+		for(i=0; i < size; i++) {
+			u = result[i];
+
+			fprintf(fp, u.firstName + "\n");
+
+		}
+    
+		fclose(fp);
+
+		closeDB;
+
+		return 0;
+
+	}
+
+
+Expected value manually tested as test program doesn't support file output:
+
+molly
+miguel
+shane
+
+
 
 ## Conclusions [conc] ##
 
