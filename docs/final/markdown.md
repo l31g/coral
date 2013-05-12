@@ -14,11 +14,11 @@ Date: 	May 10, 2013
 
 ***Authors:***  
 
-* Shane Chin, sac2171  
-* Molly Karcher, mdk2133  
-* Luis E. P. lep2141  
-* Brian Wagner, bhw2113  
-* Miguel Yanez, may2114  
+* Shane Chin, sac2171, Testing & Verification
+* Molly Karcher, mdk2133, Language Guru
+* Luis E. P. lep2141, Systems Architect
+* Brian Wagner, bhw2113, Project Manager
+* Miguel Yanez, may2114, Systems Integrator
 
 ***Affiliation:***
 
@@ -28,9 +28,9 @@ Date: 	May 10, 2013
 
 ###Design Goals of the CORaL Programming Language###
 
-Our language addresses the problem of no native support in high-level languages for SQL queries and table manipulation. Currently, in order to talk to SQL databases in languages such as C, a bunch of complicated code is required and the queries are still implemented directly as ugly SQL statements represented by strings in your program. Our language will have specific data types and new keywords that will allow users to directly access and manipulate tables. Once the compiler is run, these commands can be translated into SQL commands.
+CORaL addresses the problem of no native support in high-level languages for SQL queries and table manipulation. Currently, in order to talk to SQL databases in languages such as C, a bunch of complicated code is required and the queries are still implemented directly as ugly SQL statements represented by strings in your program. Our language will have specific data types and new keywords that will allow users to directly access and manipulate tables. Once the compiler is run, these commands can be translated into SQL commands.
 
-The target users of our language are programmers who need to access and manipulate large amounts of data quickly and easily. We will assume that users have experience with high-level languages (i.e. Java/C) and knowledge of databases and database management, but may not have deep knowledge of SQL, just relational algebra.
+The target users of our language are programmers who need to access and manipulate large amounts of data quickly and easily. We will assume that users have experience with high-level languages (i.e. Java/C) knowledge of databases and database management, but may not have deep knowledge of SQL, just relational algebra.
 
 Different from high-level programming languages, the scope of SQL includes data insert, query, update and delete, schema creation and modification, and data access control. As such it makes the way users program and communicate different than they would with higher-level languages. Also, due to SQL’s roots in relational algebra and tuple relational calculus, the structure of the language is radically different from high-level languages. SQL became a standard of the American National Standards Institute (ANSI) in 1986, and of the International Organization for Standards (ISO) in 1987. Since then, the standard has been enhanced several times with added features. Many have attempted to implement variations of SQL that allow the user to program in a more procedural fashion; this has made the language to branch of depending on the different vendors.
 
@@ -76,13 +76,22 @@ Here we present five simple CORaL programs with the aim of introducing the reade
 
 ### Getting Started With CORaL ###
 
-As per tradition, the first program we present you with is the timeless “Hello, world.” Once you see these two words appear on your console, you’ve taken the first step towards unleashing the power of the CORaL language. Let this short program be your stepping stone to much greater things.  
+Before you can begin writing programs in CORaL, you need to first ensure that you have the CORaL compiler installed on your local machine. After you unzip the CORaL package, you can use the following commands to compile and install the source. 
+
+	make all
+	make install
+	make backend
+
+The first command will compile all the source, and the second will compile the source, install dependencies, and install coralc into /usr/local/bin so that you are able to run the coral compiler from the command line. THe last command will install the Python backend and dependencies that are required to run the CORaL executable file.
+
+And now, let's start writing CORaL. As per tradition, the first program we present you with is the timeless “Hello, world.” Once you see these two words appear on your console, you’ve taken the first step towards unleashing the power of the CORaL language. Let this short program be your stepping stone to much greater things.  
 The CORaL program to print “Hello, world” is shown below:
 
 	void main()
 	{
 		printf("Hello, world\n");
 	}
+
 Now that we’ve written it, it’s time to compile and run it. CORaL programs are typically saved in files with the extension “.cl” and compiled with the command
 
 	coralc hello.cl
@@ -90,12 +99,15 @@ Now that we’ve written it, it’s time to compile and run it. CORaL programs a
 This will produce as output an executable file named 
 
 	hello.clx
+
 If everything has proceeded as expected so far, after inputting the command
 
-	./hello.clx  
+	./hello.clx 
+
 you will be greeted by the text
 
 	Hello, world  
+
 And just like that, you're a CORaL programmer!  
 
 By now, you may be wondering exactly what makes CORaL, well, CORaL. The above program looks almost exactly like C code, and it would be valid at this point to raise the question "Why not just use C?" As promised, CORaL, does support object-relational database creating, manipulation, and querying, but a CORaL program is not required to implement this. We'll soon demonstrate how to incorporate this functionality into your program, but first, allow us to dive a little deeper into "bare bones," or "offline," CORaL.  
@@ -114,17 +126,20 @@ The next program we present will show off many aspects of "bare bones" CORaL tha
 
 An understanding of the source code for this program will enable the user to do almost anything with the offline version of CORaL. Here we introduce functions, variables, arrays, loops, string formatting, and commenting.
 
-
 	
 	void printExp(int b, int e)
 	{
 		int result = b**e;
-		printf("The result of " + b " ^ " + e + 
-				" is " + result);
+		printf("The result is "); 
+		printf(result);
 	}
 
 	int main()
 	{
+	   /* 
+		*	This is a really long comment that goes over
+		*  	multiple lines
+		*/
 		int base = 2;
 		int exp = 3;
 		// Call the exponentiation function
@@ -133,28 +148,35 @@ An understanding of the source code for this program will enable the user to do 
 	}
 
 
+Compiling and running this CORaL program should produce the output:
+
+	The result is 8
+
 The general structure and implementation of this program should still be familiar to C and Java programmers, but there are some subtle differences. As in C, the lines that begin with either `//` or `/*` are comments, and ignored by the compiler. Comments beginning with `//` extend to the end of the current line; comments beginning with `/*` extend until the `*/` and can stretch over multiple lines.
 
 You will again observe that our first function is the `main()` function. This time, however, we have prefaced the declaration with `int`. This means that the return value of the function is going to be an `int`, which is a data type in CORaL. It is customary (as it is in C) to return 0 at the end of a successfully run `main` function, and return a nonzero value in the event of an error.
 
 Unlike our "Hello, world" program, the `main` function here includes a call to a separate, user-defined function called `printExp`. This is where the differences from C begin to arise. CORaL has shed the bulky notion of header files, and does not require the user to provide prototypes for functions. Instead, the CORaL compiler finds functions not defined in the included libraries, and looks for them elsewhere in the code (assuming the programmer did the due diligence of implementing them). In our case, the definition of `printExp` precedes the statement in `main`  at which it is called, so that the compiler can still find it at compile time. As with `printf`, the `printExp` function is called by simply typing the name and providing arguments with parentheses.
 
-This program has also introduced us to our first variables. This program uses `int` values to hold the values of numbers and their squares, and then prints them using the `printf` function. The program also uses arrays, but we'll get to those in a moment. Other datatypes supported by CORaL include `float`, `string`, `void`, and `Table`.
+This program has also introduced us to our first variables. This program uses `int` values to hold the values of numbers and their squares, and then prints them using the `printf` function. Other datatypes supported by CORaL include `float`, `string`, `void`, and `Table`.
 
 Control flow in CORaL is similar to that of most other high-level languages. CORaL accepts the following control flow
 
 	for(expr; condition; expr) {
+		// do something
 	}
 	
 	while (condition) {
-	// do something
+		// do something 
 	}
 	
 	if (condition) {
-	// do something
-	} else {
-	// do something else
+		// do something
+	} 
+	else {
+		// do something else
 	}
+
 We expect that these constructs should be familiar enough to our readers, so we will not elaborate further.
 
 ### Connecting to and Creating a Database in CORaL ###
@@ -172,7 +194,7 @@ The first thing to do is create a connection to a server
 	type = "mysql";
 	#enddbconn
 
-For our purposes instead of having someone host a server instance we will user the following connection block that works with in-memory SQLite3.
+For our purposes instead of having someone host a server instance we will user the following connection block that works with in-memory SQLite3. If you have unzipped and installed CORaL as directed above, you local machine should be ready-to-go to connect to SQLite3.
 
 	#cordbconn
 	server="";
@@ -192,7 +214,7 @@ Now let us create a simple database, with only one table, and add an entry to it
 	    age : int;
 	    primary_key(firstName);
 	};
-#enddb
+	#enddb
  
 	int main()
 	{
@@ -211,9 +233,13 @@ The actual definition of databases in CORaL takes place outside of the other fun
 
 After the creation of the `Person` table, that table can be referenced and accessed by all functions within a CORaL program. Creating a new `Person` object is done with the lines
 
-	user_t Person samplePerson = Person(firstName = "John", lastName = "Example", age = 25
+	user_t Person samplePerson = Person(firstName="John", lastName ="Example", age=25);
 
-In CORaL, new database object are always defined using the `user_t [name of table] [variable name] = [name of table](attribute list)` syntax. The various object attributes are filled in between the parentheses following the name of the object, and are done in the key-value format. The order of the keys does not matter, and any values not specified will be filled in as `null`.
+In CORaL, new database object are always defined using the following syntx:
+
+	`user_t [name of table] [variable name] = [name of table](attribute list)` 
+
+The various object attributes are filled in between the parentheses following the name of the object, and are done in the key-value format. The order of the keys does not matter, and any values not specified will be filled in as `null`.
 
 To formally add the new object to the database table, CORaL simply invokes the function `[new table row].add()`.
 
@@ -222,11 +248,21 @@ To formally add the new object to the database table, CORaL simply invokes the f
 The above program demonstrates how to define and populate a new database within a CORaL program. A database, however, isn't of much use to the user unless it can be queried. The below program will demonstrate how to create queries, and also how to print the results to local files. We're going to define the same database schema as the previous example, but omit the code filling it for the sake of clarity.
 
 	#cordbconn
-	// The same connection as used above.
+	server="";
+	user="";
+	password="";
+	port="";
+	DBName="";
+	type="sqlite";
 	#enddbconn
 
 	#cordb
-	// The same connection as used above.
+	Table Person {
+	    firstName : string;
+	    lastName : string;
+	    age : int;
+	    primary_key(firstName);
+	};
 	#enddb
 
 	int main() {
