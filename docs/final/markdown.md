@@ -581,24 +581,43 @@ The `#cordb` marks the beginning of the section and `#enddb` marks the end of th
 
 ### Global Declarations ###
 
-The global declarations are the top level of the grammar.
+The global declarations are the top level of the grammar, and consist of global variables and functions. These are visible to all parts of the CORaL program.
 
 #### Global Variables ####
 
-Global variables can be declared after the database blocks, but before the function definitions.
+Global variables can be declared after the database blocks, but before the function definitions. They are declared with the following syntax:
+
+	global int myGlobalInt;
+
+They can also be initialized during declaration, as follows:
+
+	global int myString = "Hello";
+
+Now, the variables `myGlobalInt` and `myString` can be accessed from within any function body in the rest of the program.
 
 #### Function Definitions ####
 
 A CORaL function definition will have the following structure
 
-	[type-specifier] [identifier] ([parameter-type-list]){[statement-list]}
-Functions may return `void`, `int`, `float`, `string`, and `Table`. The parameter type list must declare the types of each parameter unless the only parameter is `void`, which signifies that the function accepts no parameters.
+	[dtype] [identifier] ( [formals_opt] ) { [statement-list] }
+
+The `dtype` specifies the return type of the function. Functions may return a value of type `int`, `float`, `string`, `Table`, or `user_t`. If a function is declared with a return type of `void`, it cannot return a value.
+
+The formals_opt is a list of formal parameters for the function. A formal parameter is declared with: `dtype ID`, where the `dtype` is a type and `ID` is the name of the parameter. The parameter list is to be left empty if a function receives no formal parameters.
+
+The body of a function is a list of statements, and must be written within brackets `{ }`.
 
 #### Scope ####
 
-The source text for a program will be kept in one file that will be compiled at one time. Upon compilation time, the scope of the identifiers will be validated.
+Scope is defined as the region of the program text within which the identifier's characteristics are understood. In CORaL, scopes are determined at compile time. The same identifier may be used for different purposes as long as their uses fall into different namespaces. 
 
-The lexical scope of an identifier is the region of the program text within which the identifier's characteristics are understood. The same identifier may be used for different purposes as long as their uses fall into different namespaces. The scope of a parameter of a function definition begins at the start of the block defining the function, and persists though the function until the function declaration ends at the end of its declarator, and persists to the end of the block. The scope of a table is the entirety of the program.
+* The scope of a table is the entire program.
+* The scope of a global variable is the entire program.
+* The scope of a function is the entire program.
+* The scope of an instance variable is the body of the function it is declared within.
+* The scope of a formal parameter is the body of the function to which it belongs.
+
+Functions have global scope, but they must be declared above the point at which they are called, and cannot be called recursively.
 
 ### Grammar ###
 
@@ -1056,6 +1075,8 @@ Upon install, tests are performed to ensure the product behaves as expected.
 Regression Tests:
 Our main testing methodology went through the test files, which gave an indication for all the behaviour that was and was not supported. We included tests with a multitude of language features, as well as tests which are geared toward a singular purpose.
 
+We have two stages of tests, one for file compilation, and another for runtime errors. These correspond to output files `filename.err` and `filename.out`.
+
 An Example Test:
 
 	#cordbconn
@@ -1179,7 +1200,10 @@ The expected output is to be added to the file `output.txt` as specified in the 
 
 	Similarly, you learn the importance of maintaining good off-line documentation, or at the very least having at least one person in the group per moving part, that knows that part through and through. Keeping everyone in the group updated as to progress and where we were in development was a key challenge for us, and pretty much mandated that we develop while physically sitting next to each other. Though I definitely learned this through every other large-scale programming project I've been a part of, this project confirmed that above all, proximity to your fellow programmers is key. Remotely working, or working independently will slow down the development process with unnecessary confusion.
 
-* ***Luis Pena*** :
+* ***Luis E. Pena*** :
+	Before this project I had only worked in smaller groups. This project taught me that it is a lot harder than I previously thought to work in larger groups. It is more difficult to divide up the work and synchronize with each of the teammates. The upside of having more teammates is that the group is more resilient, and it does not lose inertia when teammates are not able to attend a coding meeting.  
+
+	Working with OCaml was confusing at first, but we kept it and it was totally worth it. Adding features using OCaml was simple and quick. Our source code is short and elegant. I want to try using a functional programming language in future projects because functional languages require a completely different way of thinking.
 
 * ***Miguel A. Yanez*** :
 	This project has been one of the most challenging yet rewarding experiences during my time here at Columbia. Building a programming language that is elegant, and simple, yet functional is a very interesting problem. Through designing and implementing CORaL I have learned and grown to appreciate the details and complexity that bright minds like those of Brian Kerninghan and Dennis Ritchie faced when developing C.
