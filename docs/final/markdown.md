@@ -871,109 +871,70 @@ An Example Test:
 		printf(i);
 	}
 
-With expected outut:
-	0
-	0
-	0
+Running this test program should output the following:
 
+	000
 
-A more complicated test:
+A more complicated test is shown here:
+	
 	#cordbconn
-
 	server="";
-	
-user="";
-
+	user="";
 	password="";
-
 	port="";
-	
-DBName="";
-
+	DBName="";
 	type="sqlite";
-	
-#enddbconn
-	
+	#enddbconn
 
-#cordb
-Table
-	Person {
-
+	#cordb
+	Table Person {
 		firstName : string;
-
 		lastName : string;
-
 		age : int;
-
-		primary_key(firstName);
-	
-};
-	
-#enddb
-
-
+		primary_key(firstName);	
+	};
+	#enddb
 
 	int main() {
-    
 		File fp;
-
 		int i;
-
 		int size;
-
 		user_t Person u;
-    
 		user_t Person result;
+		
 		user_t Person molly = Person(firstName="molly", age=22);
-
-    		user_t Person miguel = Person(firstName="miguel", age=22);
-    
+    	user_t Person miguel = Person(firstName="miguel", age=22);
 		user_t Person shane = Person(firstName="shane", age=22);
-    
 		user_t Person brian = Person(firstName="brian", age=21);
-
     
 		molly.add();
-
 		miguel.add();
-
 		shane.add();
 		brian.add();
 
-
 		connectDB;
-
  
 		fp = fopen("output.txt", "w");
-
 		fprintf(fp, "People over the age of 21\n");
-
 		result = Person.get(age>21);
-    size = sizeof(result);
-
+    	size = sizeof(result);
 
 		for(i=0; i < size; i++) {
 			u = result[i];
-
 			fprintf(fp, u.firstName + "\n");
 
 		}
-    
 		fclose(fp);
-
 		closeDB;
-
 		return 0;
-
 	}
 
 
-Expected value manually tested as test program doesn't support file output:
+The expected output is to be added to the file `output.txt` as specified in the fopen. However, with our current test suite, we could not test writing to files so we did a manual testing of all tests that included file manipulation. This test is still present in the test suite, but just prints to STDOUT in order to more properly test the database functionality. Below is the expected output (or what would be in `output.txt`) after the above program is run:
 
-molly
-miguel
-shane
-
+	molly
+	miguel
+	shane
 
 
 ## Conclusions [conc] ##
@@ -983,17 +944,9 @@ shane
 ###Individual Lessons###
 
 * ***Shane Chin*** :
+	This project has taught me the importance of regression testing in software development; I had heard of the practice bieng used but rarely really understood the merit without the help of an incredibly difficult and large program. I learned the merit to reducing the scope of your project in areas in which it is too ambitious. 
 
-	This project has taught me the importance of regression testing in software development; I had heard of the practice bieng used but rarely 
-
-really understood the merit without the help of an incredibly difficult and large program. I learned the merit to reducing the scope of your project 
-
-in areas in which it is too ambitious. 
-
-	I learned the joys of working with a highly productive, punctual team, which was really willing to put in the work required. I look forward 
-
-to trying to create my next language!
-
+	I learned the joys of working with a highly productive, punctual team, which was really willing to put in the work required. I look forward to trying to create my next language!
 
 * ***Molly Karcher*** : 
 	Throughout the duration of this project I learned first and foremost, the importance of flexibility in design. Our original design plan (at least as far as the grammar was concerned) ended up being pretty drastically different than originally planned, and the whole team had to be open to and understanding of a dynamically changing product. 
