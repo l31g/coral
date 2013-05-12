@@ -1,4 +1,4 @@
-Title: 	CORaL Project Report  
+﻿Title: 	CORaL Project Report  
 Author:	Shane Chin, sac2171  
 	Molly Karcher, mdk2133  
 	Luis E. P. lep2141  
@@ -549,7 +549,7 @@ We had the following programming and development environment:
 * Languages: OCaml, OCamlyacc, OCamllex, Python
 * Development: Sublime Text 2, GitHub, Google Drive, GNU Make
 
-CORaL can be compiled and installed using a series of Makefile commands. The installer and the locations used follow the Unix conventions.
+CORaL can be compiled and installed using a series of Makefile commands. The installer and the locations used follow the Unix conventions. The appropriate permissions are needed to install certain components of CORaL.
 
 Here are the following commands which can be run from the top-level directory of the CORaL directory.
 
@@ -560,15 +560,265 @@ Here are the following commands which can be run from the top-level directory of
 * `make backend_clean`: Cleans the backend install.
 * `make clean` : Cleans all directories.
 
+Top-level Makefile:
+
+	SUBDIRS = src
+	PYTHONBUILD = build dist
+	all:
+		@for i in $(SUBDIRS); do \
+		echo "make all in $$i..."; \
+		(cd $$i; $(MAKE) $(MFLAGS) all); done
+
+	install: backend_clean backend clean
+		@for i in $(SUBDIRS); do \
+		echo "make all in $$i..."; \
+		(cd $$i; $(MAKE) $(MFLAGS) install); done
+
+	backend:
+		echo "making Backend"
+		cd dependencies; tar xvzf *; cd SQLAlchemy-0.8.1; python setup.py install
+		python setup.py install
+
+	backend_clean:
+		rm -rf $(PYTHONBUILD)
+		rm -rf /dependencies/SQLAlchemy-0.8.1
+
+	test: test/test.py
+		python test/test.py
+
+	clean: backend_clean
+		@for i in $(SUBDIRS); do \
+		echo "Clearing in $$i..."; \
+		(cd $$i; $(MAKE) $(MFLAGS) clean); done
+
+CORaL Makefile:
+
+	LEX = ocamllex
+	YACC = ocamlyacc
+	OCAML = ocamlc
+
+	OBJS = parser.cmo scanner.cmo ast.cmo semantic.cmo generator.cmo coral.cmo
+
+	OUTPUTS = *.cmo *.cmi *.mli *~ scanner.ml parser.ml parser.output
+	BINDIR = ./build
+
+	install: all
+		cp coralc /usr/local/bin
+
+	all: coralc
+		chmod a+x coralc
+
+	coralc : $(OBJS)
+		$(OCAML) -o coralc $(OBJS)
+		chmod +x coralc
+
+	parser.ml parser.mli : parser.mly
+		$(YACC) -v parser.mly
+
+	scanner.ml : scanner.mll
+		$(LEX) scanner.mll
+
+	%.cmo : %.ml
+		$(OCAML) -c $<
+
+	%.cmi : %.mli
+		$(OCAML) -c $<
+
+	.PHONY : clean
+	clean:
+		rm -rf $(OUTPUTS)
+		rm -rf $(BINDIR)
+		rm -rf coralc
 
 
+	ast.cmo:
+	ast.cmx:
+	generator.cmo: ast.cmo
+	generator.cmx: ast.cmx
+	coral.cmo: semantic.cmo scanner.cmo parser.cmi generator.cmo ast.cmo
+	coral.cmx: semantic.cmx scanner.cmx parser.cmx generator.cmx ast.cmx
+	parser.cmo: ast.cmo parser.cmi
+	parser.cmx: ast.cmx parser.cmi
+	scanner.cmo: parser.cmi
+	scanner.cmx: parser.cmx
+	parser.cmi: ast.cmo
+
+
+CORaL Backend setup.py:
+
+	from distutils.core import setup
+	setup(name='CORaL Backend',
+	        version='1.0',
+	        description='CORaL Backend Utilities',
+	        packages=['coral_backend'],
+
+	        )
 ## Test Plan [test] ##
 
-bli blo blu
+For testing, we used a combination of different methods. We had a main testing python script, and a test subdirectory which included a variety of tests for different functionality.
+You can run either one test, or them all, allowing you to do easy regression testing.
+
+Compliance Tests:
+Which we used with Hello World once the basic features of our compiler were written.
+
+Production Tests:
+We did production tests (tests covering performance and quality control) manually via checking the system logs. If we found any tests, or group of tests were taking an inordinate amount of time, we would dig deeper to try and drill down the issue. Pushes of non-working code were not accepted.
+
+Acceptance Tests:
+Upon install, tests are performed to ensure the product behaves as expected.
+
+Regression Tests:
+Our main testing methodology went through the test files, which gave an indication for all the behaviour that was and was not supported. We included tests with a multitude of language features, as well as tests which are geared toward a singular purpose.
+
+An Example Test:
+
+	#cordbconn
+	server="";
+	user="";
+	password="memory";
+	port="";
+	DBName="";
+	type="sqlite";
+	#enddbconn
+
+	#cordb
+	#enddb
+
+	void main() {	
+
+		int i = 0;
+	
+		printf(i);
+	
+		/* this is a comment */
+		printf(i);
+
+		/* this is a multi line
+		comment */
+
+		// single line comment
+
+
+		printf(i);
+	}
+
+With expected outut:
+	0
+	0
+	0
+
+
+A more complicated test:
+	#cordbconn
+
+	server="";
+	
+user="";
+
+	password="";
+
+	port="";
+	
+DBName="";
+
+	type="sqlite";
+	
+#enddbconn
+	
+
+#cordb
+Table
+	Person {
+
+		firstName : string;
+
+		lastName : string;
+
+		age : int;
+
+		primary_key(firstName);
+	
+};
+	
+#enddb
+
+
+
+	int main() {
+    
+		File fp;
+
+		int i;
+
+		int size;
+
+		user_t Person u;
+    
+		user_t Person result;
+		user_t Person molly = Person(firstName="molly", age=22);
+
+    		user_t Person miguel = Person(firstName="miguel", age=22);
+    
+		user_t Person shane = Person(firstName="shane", age=22);
+    
+		user_t Person brian = Person(firstName="brian", age=21);
+
+    
+		molly.add();
+
+		miguel.add();
+
+		shane.add();
+		brian.add();
+
+
+		connectDB;
+
+ 
+		fp = fopen("output.txt", "w");
+
+		fprintf(fp, "People over the age of 21\n");
+
+		result = Person.get(age>21);
+    size = sizeof(result);
+
+
+		for(i=0; i < size; i++) {
+			u = result[i];
+
+			fprintf(fp, u.firstName + "\n");
+
+		}
+    
+		fclose(fp);
+
+		closeDB;
+
+		return 0;
+
+	}
+
+
+Expected value manually tested as test program doesn't support file output:
+
+molly
+miguel
+shane
+
+
 
 ## Conclusions [conc] ##
 
-blo blu bla
+###Individual Lessons###
+
+* ***Miguel A. Yanez*** :
+	This project has been one of the most challenging yet rewarding experiences during my time here at Columbia. Building a programming language that is elegant, and simple, yet functional is a very interesting problem. Through designing and implementing CORaL I have learned and grown to appreciate the details and complexity that bright minds like those of Brian Kerninghan and Dennis Ritchie faced when developing C.
+
+	My role as integrator led me to be familiar with every working component of CORaL as I was responsible for making sure that the language as a whole held together. Using Git to manage everyones changes proved very helpful. We also used GitHub's issue tracking system, so that there was a central place where all the issues were kept. 
+
+	Time management also proved to be quite effective as our meetings were always efficient and effective. Everyone's opinions were voiced and we handled disagreements in a respectful manner. Our iterative development style also proved quite useful for this in that if there were any changes to be made, it was easy to do so. 
+
+	Overall this has been a great experience, and I look forward to implementing another programming language as a personal project.
 
 ## Appendix [appendix] ##
 
