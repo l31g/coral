@@ -321,11 +321,11 @@ With a working knowledge of CORaL queries under your belt, you can begin fully u
 
 ### Introduction ###
 
-This manual describes the CORaL 1.0 language as established in May of 2013. It is modeled after the C Reference Manual included in Appendix A of *The C Programming Language* by Kernighan and Ritchie.
+This manual describes the CORaL 1.0 language as established in May of 2013. It is modeled after the C Reference Manual included in Appendix A of *The C Programming Language* by Kernighan and Ritchie. CORaL (C-like Object-Relational Language) integrates elements of C with native SQL support, that can be written directly into your source program. 
 
 ### Lexical Conventions ###
 
-CORaL programs are translated in several phases. Translation begins with searching for the `#` character in order to look for the `#cordbconn` and `#coordb` tags, which will be used to connect and create the database objects. Distinguishing between expressions defined inside and outside of these database definition tags is a main component of the preprocessing of a program, before the program is broken down into a series of tokens.
+CORaL programs are translated in several phases. Translation begins with searching for the `#` character in order to look for the `#cordbconn` and `#enddb` tags, which will be used to connect to a database, after which you can create database objects. This is similar to, but not exactly the same as a preprocessor element, in that it does not do any preprocessing. The CORaL backend reads between the tags and connects to the corresponding database when it sees the connectDB command within a CORaL program. So essentially, everything between the tags is read in by the compiler, but only processed and used when the programmer explicitly asks for a connection. Next, there are `#corddb` and `#enddb` tags, between which the programmer may define the database tables that they wish to include in their program, and then add them to the database that they have connected to. The programmer may only use this functionality if they also provide a database connection scheme between the `#corddbconn` and `#enddbconn` tags. 
 
 #### Tokens ####
 
