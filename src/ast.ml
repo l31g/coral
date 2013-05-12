@@ -75,7 +75,6 @@ type expr =
     | Neg of expr
     | Pos of expr
     | Notop of expr
-    | SizeOf of expr list
     | Print of expr list
     | FPrint of string * expr list
     | FRead of string
