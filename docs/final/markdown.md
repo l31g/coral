@@ -687,7 +687,7 @@ The stylesheet we used during development, which has been included in our souce 
 
 ### Project Timeline ###
 
-As explained above, the development of our compiler was heavily weighted toward the end of the semester. To wit, we include the graph of the team's commits to our git repo, as well as a chart of code additions versus deletions, below.
+As explained above, the development of our compiler was heavily weighted toward the end of the semester. To wit, we include the graph of the team's commits to our git repo, as well as a chart of code additions versus deletions, below. ![commits][] ![add_del][]
 
 [commits]: commits.png
 
