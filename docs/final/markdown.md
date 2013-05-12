@@ -917,7 +917,7 @@ February 12: We meet to discuss potential language ideas. A few are more "pet" l
 
 February 15: We meet with Jared during his office hours, and he tells us that the C-like language that manipulates databases sounds like the coolest idea. We decide to run with that one.
 
-February 20: We meet to divide up the work for our white paper. We name our language CORaL (C-like Object-Relational Language), and come up with buzzwords.
+February 20: We meet to divide up the work for our white paper. We name our language CORaL (C-like Object-Relational Language)
 
 March 3: We meet and begin discussing how to implement our language. Some work is preliminarily divided up. Miguel and Luis are to begin outlining the compiler architecture, and Brian is going to work on the language tutorial.
 
