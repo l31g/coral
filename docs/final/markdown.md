@@ -516,7 +516,83 @@ The lexical scope of an identifier is the region of the program text within whic
 
 ### Grammar ###
 
+The grammar of our language is specified below. Syntax for understanding the description of the grammar can be found in the syntax section. 
 
+	program		->	conn_block table_block global_decl_list fdef_list
+	
+	fdef_list	->	
+				|	fdef_list fdef  
+				
+	fdef		->	dtype ID LPAREN formals_opt RPAREN LBRACKET var_decl_list stmt_list RBRACKET
+
+	stmt_list	->  
+				|	stmt_list  stmt
+
+	stmt		->	expr SEMI
+				|	error
+				|	CONNECTDB SEMI
+				|	CLOSEDB SEMI
+				|	LBRACKET stmt_list RBRACKET
+				|	RETURN expr SEMI
+				|	IF LPAREN expr RPAREN stmt NOELSE
+				|	IF LPAREN expr RPAREN stmt ELSE stmt
+				|	WHILE LPAREN expr RPAREN stmt
+				|	FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
+
+	expr		->	INTLITERAL
+				|	STRINGLITERAL
+				|	FPLITERAL
+				|	ID ASSIGN expr
+				|	ID PLEG expr
+				|	ID MIEQ expr
+				|	ID MUEQ expr
+				|	ID DVEQ expr
+				|	expr PLUS expr
+				|	expr MINUS expr
+				|	expr TIMES expr
+				|	expr DIVIDE expr
+				|	expr MOD expr
+				|	expr EXP expr
+				|	expr EQ expr
+				|	expr NEQ expr
+				|	expr LT expr
+				|	expr LEQ expr
+				|	expr GT expr
+				|	expr GEQ expr
+				|	expr OR expr
+				|	expr AND expr
+				|	ID
+				|	NOT expr
+				|	ID INCR
+				|	ID DECR
+				|	MINUS expr
+				|	PLUS expr
+				|	SIZEOF LPAREN expr RPAREN
+				|	PRINT LPAREN actuals_opt RPAREN
+				|	FPRINT LPAREN ID COMMA actuals_opt RPAREN
+				|	FREAD LPAREN ID RPAREN
+				|	CLOSE LPAREN ID RPAREN
+				|	OPEN LPAREN STRINGLITERAL COMMA STRINGLITERAL RPAREN
+				|	ID LPAREN actuals_opt RPAREN
+				|	ID LSQUARE expr RSQUARE
+				|	ID DOT ADD LPAREN RPAREN
+				|	ID DOT GET LPAREN actuals_opt RPAREN
+				|	ID DOT ID LPAREN actuals_opt RPAREN
+				|	ID DOT ID
+				|	LPAREN expr RPAREN
+
+	expr_opt	->  
+				|	expr
+
+	formals_opt	->	
+				|	formal_list
+
+	formal_list	->	formal
+				|	formal_list COMMA formal
+
+	formal		-> dtype ID
+
+	actuals_opt	->
 
 ## Project Plan [plan] ##
 
@@ -627,11 +703,11 @@ CORaL evolved significantly from that which we had originally proposed at the be
 
 Because of the dramatic differences that we began to notice at the beginning of implementation, when writing our grammar into our parser.mly file, we essentially began writing the grammar from scratch, rather than basing it off of the grammar in our original LRM. As such, it was crucial for every team member involved in writing the grammar to both understand the overall structure and goal of the grammar, and discuss with the team when making any radical changes. 
 
-In order to get a full working compiler, we needed to scale back on a few components that we had originally promised. We completely eliminated the idea of having functions within our Tables, as well as inheritance on Tables. Of all the changes that we made, these two stand out as the most drastic changes that we made to our original design decisions. However, after lengthy implementation discussions we decided that the time it would have taken us to implement these features could have been better spent perfecting the more crucial aspects of CORaL. These features were not entirely eliminated from our grammar, but we did not have time to perform any of our semantic checks on said elements, including type-checking and checking against and adding to the Table symbol table. As a general rule, any feautures that we ended up deciding not the fully implement remained in our grammar and now just throw semantic errors.  
+In order to get a full working compiler, we needed to scale back on a few components that we had originally promised. We completely eliminated the idea of having functions within our Tables, as well as inheritance on Tables. Of all the changes that we made, these two stand out as the most drastic changes that we made to our original design decisions. However, after lengthy implementation discussions we decided that the time it would have taken us to implement these features could have been better spent perfecting the more crucial aspects of CORaL. These features were not entirely eliminated from our grammar, but we did not have time to perform any of our semantic checks on said elements, including type-checking and checking against and adding to the Table symbol table. As a general rule, any features that we ended up deciding not the fully implement remained in our grammar and now just throw semantic errors.  
 
 Of all compiler tools, that which is most important is the language your compiler is written in. For this, our team chose OCaml, a language which all members of the team were unfamiliar with, but which was recommended to us for it's ease-of-use and minimal code required when writing compilers. Of course, the other required compiler tools were just lex and yacc, to be used for lexing and parsing our source program. Lex was utilized in the scanner.mll file, and yacc was utilized in the parser.mly file; both can be viewed our source code, in the appendix of this document. OCaml has lex and yacc built in (OCamllex, OCamlyacc), so there was no integration required. 
 
-The only unusualy library that was required by our compiler was SQLAlchemy. Because CORaL is compiled into Python, we were able to use SQLAlchemy to do most of the heavy lifting on the backend. SQLAlchemy is a database tookkit and object-relational mapper for python. The CORaL compiler utilizes this when performing all of it's signature built-in functions that perform queries, inserts, or operations on Table objects within your database.  
+The only unusual library that was required by our compiler was SQLAlchemy. Because CORaL is compiled into Python, we were able to use SQLAlchemy to do most of the heavy lifting on the backend. SQLAlchemy is a database toolkit and object-relational mapper for python. The CORaL compiler utilizes this when performing all of it's signature built-in functions that perform queries, inserts, or operations on Table objects within your database.  
 
 Throughout the development process, it was relatively easy to maintain consistency between the language reference manual (LRM) and the compiler. Aside from the grammar, the content of the LRM was robust when originally written, and thus all development was based off of this content. Rather than requiring steps to keep them consistent, the compiler was based off of the LRM, so there was little to no need for consistency checks.
 
@@ -924,6 +1000,9 @@ to trying to create my next language!
 
 
 * ***Molly Karcher*** : 
+	Throughout the duration of this project I learned first and foremost, the importance of flexibility in design. Our original design plan (at least as far as the grammar was concerned) ended up being pretty drastically different than originally planned, and the whole team had to be open to and understanding of a dynamically changing product. 
+
+	Similarly, you learn the importance of maintaining good off-line documentation, or at the very least having at least one person in the group per moving part, that knows that part through and through. Keeping everyone in the group updated as to progress and where we were in development was a key challenge for us, and pretty much mandated that we develop while physically sitting next to each other. Though I definitely learned this through every other large-scale programming project I've been a part of, this project confirmed that above all, proximity to your fellow programmers is key. Remotely working, or working independently will slow down the development process with unnecessary confusion.
 
 * ***Luis Pena*** :
 
