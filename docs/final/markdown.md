@@ -551,7 +551,7 @@ The final function is `fclose` which is very simple. It just takes the file poin
 
 ### Database Connection ###
 
-In order to use a database in CORaL, a connection must be made at the top of the program. The following is the grammar that specifies how to create a connection.
+In order to use a database in CORaL, a connection must be made at the top of the program. The following is the grammar that specifies how to create a connection. We have briefly touched on this before, but will discuss it in detail here. 
 
 #### Connection Attributes ####
 
@@ -559,25 +559,53 @@ The attributes of a connection specify the connection details in order to connec
 
 #### Section ####
 
-In order to define the section where the database connection details will be specified the following identifiers `#cordbconn`, `#enddbconn` will be used.  
-The `#cordbconn` marks the beginning of the section and `#enddbconn` marks the end of the section where database connection details are specified.
+In order to define the section where the database connection details will be specified the  identifiers `#cordbconn` and `#enddbconn` will be used. The `#cordbconn` marks the beginning of the section and `#enddbconn` marks the end of the section where database connection details are specified. The database connection will take exactly six arguments and if the programmer requests a database connection with `connectDB` and these connection parameters are not specified, then it will not compile. An example of a connection would be the following:
+
+	#cordbconn
+	server = "localhost";
+	user = "user";
+	password = "pass";
+	port = "8888";
+	DBName = "People";
+	type = "mysql";
+	#enddbconn
+
+The connection variables `server`, `user`, `password`, `port`, `DBName`, and `type` are all required by the compiler. 
 
 ### Database Schema ###
 
-Throughout the discussion of our database schema, it is beneficial to the reader to have a basic understanding of SQL and ER Diagram vocabulary.
+In this section we will describe how the database schemas can be written within a CORaL program. Throughout the discussion of our database schema, it is beneficial to the reader to have a basic understanding of SQL and ER Diagram vocabulary. 
+
+#### Section ####
+
+In order to define the section where the database schema details will be specified the identifiers `#cordb` and `#enddb` are used. The `#cordb` marks the beginning of the section and `#enddb` marks the end of the section where database schema detailers are specified.
+
+	#cordb
+
+		// define your schema here
+
+	#enddb
 
 #### Table Attributes ####
 
-The attributes of the table are equivalent to the columns of a table in a relational database. The attributes specify the type of the columns as well as their names. Apart from defining the columns of a table, one must specify the constraints on the table. This can be easily done using `primary key()` and `foreign key()`.
+The attributes of the table are equivalent to the columns of a table in a relational database. The attributes specify the type of the columns as well as their names. Apart from defining the columns of a table, one must specify the constraints on the table. This can be easily done using `primary_key()` and `foreign_key()` keywords that we have previously defined.
+
+Some examples are the following:
+
+	name: string;
+	age: int;
+
 
 #### Table Body ####
 
 The body of the table consists of the collection of attributes, along with their primary and foreign key declarations.
 
-#### Section ####
+In the following example, the single attribute of the table is `name` which is of type `string` and is denoted as the primary_key of the Person table.
 
-In order to define the section where the database schema details will be specified the following preprocessor identifiers `#cordb` and `#enddb` are used.  
-The `#cordb` marks the beginning of the section and `#enddb` marks the end of the section where database schema detailers are specified.
+	Table Person {
+		name: string;
+		primary_key(name);
+	}
 
 ### Global Declarations ###
 
