@@ -10,17 +10,17 @@ Date: 	May 10, 2013
 
 # CORaL Project Report #
 
-*Last Updated: May 11, 2013*
+*Last Updated: May 11, 2013*  
 
 ***Authors:***  
 
-* Shane Chin, sac2171, Testing & Verification
-* Molly Karcher, mdk2133, Language Guru
-* Luis E. P. lep2141, Systems Architect
-* Brian Wagner, bhw2113, Project Manager
-* Miguel Yanez, may2114, Systems Integrator
+* Shane Chin, sac2171, Testing & Verification  
+* Molly Karcher, mdk2133, Language Guru  
+* Luis E. P. lep2141, Systems Architect  
+* Brian Wagner, bhw2113, Project Manager  
+* Miguel Yanez, may2114, Systems Integrator  
 
-***Affiliation:***
+***Affiliation:***   
 
 * Columbia University  
 
@@ -28,13 +28,13 @@ Date: 	May 10, 2013
 
 ###Design Goals of the CORaL Programming Language###
 
-CORaL addresses the problem of no native support in high-level languages for SQL queries and table manipulation. Currently, in order to talk to SQL databases in languages such as C, a bunch of complicated code is required and the queries are still implemented directly as ugly SQL statements represented by strings in your program. Our language will have specific data types and new keywords that will allow users to directly access and manipulate tables. Once the compiler is run, these commands can be translated into SQL commands.
+CORaL addresses the problem of no native support in high-level languages for SQL queries and table manipulation. Currently, in order to talk to SQL databases in languages such as C, a bunch of complicated code is required and the queries are still implemented directly as ugly SQL statements represented by strings in your program. Our language will have specific data types and new keywords that will allow users to directly access and manipulate tables. Once the compiler is run, these commands can be translated into SQL commands.  
 
-The target users of our language are programmers who need to access and manipulate large amounts of data quickly and easily. We will assume that users have experience with high-level languages (i.e. Java/C) knowledge of databases and database management, but may not have deep knowledge of SQL, just relational algebra.
+The target users of our language are programmers who need to access and manipulate large amounts of data quickly and easily. We will assume that users have experience with high-level languages (i.e. Java/C) knowledge of databases and database management, but may not have deep knowledge of SQL, just relational algebra.  
 
 Different from high-level programming languages, the scope of SQL includes data insert, query, update and delete, schema creation and modification, and data access control. As such it makes the way users program and communicate different than they would with higher-level languages. Also, due to SQL’s roots in relational algebra and tuple relational calculus, the structure of the language is radically different from high-level languages. SQL became a standard of the American National Standards Institute (ANSI) in 1986, and of the International Organization for Standards (ISO) in 1987. Since then, the standard has been enhanced several times with added features. Many have attempted to implement variations of SQL that allow the user to program in a more procedural fashion; this has made the language to branch of depending on the different vendors.
 
-One of the first languages that seeked to combine the power of a high-level programming language with the database manipulation capabilities of SQL is Embedded SQL. Embedded SQL statements are SQL statements written inline with the program source code of the host language. The embedded SQL statements are parsed by an embedded SQL preprocessor and replaced by host-language calls to a code library.
+One of the first languages that sought to combine the power of a high-level programming language with the database manipulation capabilities of SQL is Embedded SQL. Embedded SQL statements are SQL statements written inline with the program source code of the host language. The embedded SQL statements are parsed by an embedded SQL preprocessor and replaced by host-language calls to a code library.
 
 Another such attempt to bridge the gap of procedural languages and SQL is Oracle’s PL/SQL. PL/SQL’s general syntax resembles that of Ada or Pascal. It supports variables, conditions, loops and exceptions.  
 
@@ -209,10 +209,10 @@ Now let us create a simple database, with only one table, and add an entry to it
 
 	#cordb
 	Table Person {
-	    firstName : string;
-	    lastName : string;
-	    age : int;
-	    primary_key(firstName);
+		firstName : string;
+		lastName : string;
+		age : int;
+		primary_key(firstName);
 	};
 	#enddb
  
@@ -235,7 +235,7 @@ After the creation of the `Person` table, that table can be referenced and acces
 
 	user_t Person samplePerson = Person(firstName="John", lastName ="Example", age=25);
 
-In CORaL, new database object are always defined using the following syntx:
+In CORaL, new database object are always defined using the following syntax:
 
 	`user_t [name of table] [variable name] = [name of table](attribute list)` 
 
@@ -258,45 +258,45 @@ The above program demonstrates how to define and populate a new database within 
 
 	#cordb
 	Table Person {
-	    firstName : string;
-	    lastName : string;
-	    age : int;
-	    primary_key(firstName);
+		firstName : string;
+		lastName : string;
+		age : int;
+		primary_key(firstName);
 	};
 	#enddb
 
 	int main() {
-	    File fp;
-	    int i;
-	    int size;
-	    user_t Person u;
-	    user_t Person result;    
-	    
-	    connectDB;
-	    user_t Person molly = Person(firstName="molly", age=22);
-	    user_t Person miguel = Person(firstName="miguel", age=22);
-	    user_t Person shane = Person(firstName="shane", age=22);
-	    user_t Person brian = Person(firstName="brian", age=21);
+		File fp;
+		int i;
+		int size;
+		user_t Person u;
+		user_t Person result;	
+		
+		connectDB;
+		user_t Person molly = Person(firstName="molly", age=22);
+		user_t Person miguel = Person(firstName="miguel", age=22);
+		user_t Person shane = Person(firstName="shane", age=22);
+		user_t Person brian = Person(firstName="brian", age=21);
 
-	    molly.add();
-	    miguel.add();
-	    shane.add();
-	    brian.add();
+		molly.add();
+		miguel.add();
+		shane.add();
+		brian.add();
 
-	    fp = fopen("output.txt", "w");
-	    fprintf(fp, "People over the age of 21\n");
-	    result = Person.get(age>21);
-	    size = sizeof(result);
+		fp = fopen("output.txt", "w");
+		fprintf(fp, "People over the age of 21\n");
+		result = Person.get(age>21);
+		size = sizeof(result);
 
-	    for(i=0; i < size; i++) {
+		for(i=0; i < size; i++) {
 		u = result[i];
-	        fprintf(fp, u.firstName + "\n");
-	    }
-	    fclose(fp);
-	    
-	    closeDB;
+			fprintf(fp, u.firstName + "\n");
+		}
+		fclose(fp);
+		
+		closeDB;
 
-	    return 0;
+		return 0;
 	}
 
 Here is the output of this program as they would be displayed in `query_results.txt`:
@@ -914,11 +914,11 @@ CORaL Backend setup.py:
 
 	from distutils.core import setup
 	setup(name='CORaL Backend',
-	        version='1.0',
-	        description='CORaL Backend Utilities',
-	        packages=['coral_backend'],
+			version='1.0',
+			description='CORaL Backend Utilities',
+			packages=['coral_backend'],
 
-	        )
+			)
 ## Test Plan [test] ##
 
 For testing, we used a combination of different methods. We had a main testing python script, and a test subdirectory which included a variety of tests for different functionality.
@@ -1000,10 +1000,10 @@ A more complicated test is shown here:
 		user_t Person result;
 		
 		user_t Person molly = Person(firstName="molly", age=22);
-    	user_t Person miguel = Person(firstName="miguel", age=22);
+		user_t Person miguel = Person(firstName="miguel", age=22);
 		user_t Person shane = Person(firstName="shane", age=22);
 		user_t Person brian = Person(firstName="brian", age=21);
-    
+	
 		molly.add();
 		miguel.add();
 		shane.add();
@@ -1014,7 +1014,7 @@ A more complicated test is shown here:
 		fp = fopen("output.txt", "w");
 		fprintf(fp, "People over the age of 21\n");
 		result = Person.get(age>21);
-    	size = sizeof(result);
+		size = sizeof(result);
 
 		for(i=0; i < size; i++) {
 			u = result[i];
@@ -1062,6 +1062,15 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	Overall this has been a great experience, and I look forward to implementing another programming language as a personal project.
 
 * ***Brian Wagner*** :
+	I would say that this project has been my favorite large-scale programming project while at Columbia. It was definitely the most rewarding, and I learned an extraordinary amount at the same time. Being able to define our own language from the ground-up, and then see that through to the implementation of its compiler provided a great sense of ownership over the project, and it's incredible to be able to point to a working programming language and know that it is partly "mine."
+
+	Seeing how a compiler works, and how all the different components interact in order to translate a language, was a fascinating experience, and I think we made a good decision in choosing to implement the language in OCaml. This way, not only did we learn how a compiler works, we also learned how to program in a functional language, something that none of us had done before. I greatly enjoyed the challenge provided by learning a new language as you develop, and I have come away from this project with a strong interest in functional languages. I will definitely use OCaml again in the future.
+
+	I also learned a lot about working on a team to develop software. I had never worked on a team of this size during a programming project before, so this was a new experience, especially since I served as the team leader. Our team decided to do most of our development in a group setting, and I learned that that is a powerful way to ensure that everyone is committed and doing his or her part. The environment created by having a full team in the same area working together allows for open communication, collaboration, and support, and is a great way to make progress, assuming distractions can be limited. Overall, we did a great job at this.
+
+	Creating CORaL taught me a lot about functional languages and software development, and it also provided a new way of looking at existing programming languages. For example, partway through our project, we were trying to implement user-defined types, and realized that it was analogous to the way the C language uses structs, so we provided our own keyword, user_t, to serve as a sort of "struct" for CORaL.
+
+	All in all, this project was difficult, but the rewards and amount learned were certainly worth it. I think I may even try to create some smaller esoteric languages in the future on my own time.
 
 ###Advice for Future Teams###
 
@@ -1071,7 +1080,7 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	The lecture focuses heavily on theory, rather than implementation. It would be better to have a clearer connection between the two. When it came to being prepared for the final, the lectures definitely prepared us. But when it came to actually writing the compiler, we felt completely lost as to how to begin and ended up learning a lot of the implementation details from looking at Professor Edwards COMS W4115 slides from last semester. Solely based on lectures and homework assignments, we were ill-prepared to begin writing the compiler.
 
 * ***Course Content*** :
-	Lambda Calculus - We would like to see much more on usage, implementation, and interpretation of lambda calculus in the course, as well as it's applications to functional programming. We felt lambda calculus was a bit brushed over, and we did not get a full understanding 
+	Lambda Calculus - We would like to see much more on usage, implementation, and interpretation of lambda calculus in the course, as well as its applications to functional programming. We felt lambda calculus was a bit brushed over, and we did not get a full understanding 
 
 	Code optimization - This topic was covered rather heavily in lectures, and we believe that a lot of this content was superfluous, mostly because we did not need to do any code optimization when implementing our own compiler. Since we were just translating into a different language in our implementation, all of the code optimization steps that we had learned about in lectures were completely useless in this regard. Perhaps this topic could be shortened a little. 
 
@@ -1208,11 +1217,11 @@ The expected output is to be added to the file `output.txt` as specified in the 
 `parser.mly`
 
 	%{ open Ast
-	    open Lexing
-	    let parse_error msg =
-	        let start_pos = Parsing.rhs_start_pos 1 in
-	            let lineNo = start_pos.pos_lnum in
-	                print_endline ("There is a " ^ msg ^ " near line #" ^ string_of_int lineNo)
+		open Lexing
+		let parse_error msg =
+			let start_pos = Parsing.rhs_start_pos 1 in
+				let lineNo = start_pos.pos_lnum in
+					print_endline ("There is a " ^ msg ^ " near line #" ^ string_of_int lineNo)
 
 	%}
 
@@ -1253,8 +1262,8 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	program:
 		conn_block table_block global_decl_list fdef_list 	{ {
 								conn = $1;
-	                            tables = $2;
-	                            globals = List.rev $3;
+								tables = $2;
+								globals = List.rev $3;
 								funcs = List.rev $4
 			} }
 
@@ -1279,10 +1288,10 @@ The expected output is to be added to the file `output.txt` as specified in the 
 
 	stmt:
 		expr SEMI							{ Expr ($1) }
-		| error                            	{ Expr(Noexpr) }
-	    | CONNECTDB SEMI                   	{ ConnectDB }
-	    | CLOSEDB SEMI                      { CloseDB }
-	    | LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
+		| error								{ Expr(Noexpr) }
+		| CONNECTDB SEMI				   	{ ConnectDB }
+		| CLOSEDB SEMI					  { CloseDB }
+		| LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
 		| RETURN expr SEMI 					{ Return($2) }
 		| IF LPAREN expr RPAREN stmt %prec NOELSE		{ If($3, $5, Nostmt)}
 		| IF LPAREN expr RPAREN stmt ELSE stmt 			{ If($3, $5, $7) }
@@ -1319,16 +1328,16 @@ The expected output is to be added to the file `output.txt` as specified in the 
 		| ID DECR 						{ Unop($1, Decr) }
 		| MINUS expr 					{ Neg($2)}
 		| PLUS expr  					{ Pos($2)}
-	    | SIZEOF LPAREN expr RPAREN     { SizeOf($3) }
+		| SIZEOF LPAREN expr RPAREN	 { SizeOf($3) }
 		| PRINT LPAREN actuals_opt RPAREN		{ Print($3) }
-	    | FPRINT LPAREN ID COMMA actuals_opt RPAREN 	{ FPrint($3, $5) }
-	    | FREAD LPAREN  ID RPAREN             	{ FRead($3) }
-	    | CLOSE LPAREN ID RPAREN              	{ Close($3) }
-	    | OPEN LPAREN STRINGLITERAL COMMA STRINGLITERAL RPAREN	{ Open($3, $5) }
+		| FPRINT LPAREN ID COMMA actuals_opt RPAREN 	{ FPrint($3, $5) }
+		| FREAD LPAREN  ID RPAREN			 	{ FRead($3) }
+		| CLOSE LPAREN ID RPAREN			  	{ Close($3) }
+		| OPEN LPAREN STRINGLITERAL COMMA STRINGLITERAL RPAREN	{ Open($3, $5) }
 		| ID LPAREN actuals_opt RPAREN	{ Call($1, $3) }
-	    | ID LSQUARE expr RSQUARE     	{ Array($1, $3) }
-	    | ID DOT ADD LPAREN RPAREN 		{ AddTableCall($1) }
-	    | ID DOT GET LPAREN actuals_opt RPAREN 	{ GetTableCall($1, $5) }
+		| ID LSQUARE expr RSQUARE	 	{ Array($1, $3) }
+		| ID DOT ADD LPAREN RPAREN 		{ AddTableCall($1) }
+		| ID DOT GET LPAREN actuals_opt RPAREN 	{ GetTableCall($1, $5) }
 		| ID DOT ID LPAREN actuals_opt RPAREN	{ TableCall($1, $3, $5) }
 		| ID DOT ID						{ TableAttr($1, $3) }
 		| LPAREN expr RPAREN			{ Parens($2) }
@@ -1371,60 +1380,60 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	var_decl:
 		| dtype ID ASSIGN expr SEMI		{ VarDecl($1, $2, $4) }
 		| dtype ID SEMI					{ VarDecl($1, $2, Noexpr) }
-	    | dtype ID ID ASSIGN expr SEMI  { UDecl($1, $2, $3, $5) }
-	    | dtype ID ID SEMI              { UDecl($1, $2, $3, Noexpr) }
+		| dtype ID ID ASSIGN expr SEMI  { UDecl($1, $2, $3, $5) }
+		| dtype ID ID SEMI			  { UDecl($1, $2, $3, Noexpr) }
 
 	dtype:
-	    VOID   { VoidType }
-	    | INT  { IntType }
-	    | STRING { StringType }
-	    | TABLE { TableType }
-	    | FLOAT { FloatType }
-	    | FILE  { FileType }
-	    | USERTYPE { UserType }
+		VOID   { VoidType }
+		| INT  { IntType }
+		| STRING { StringType }
+		| TABLE { TableType }
+		| FLOAT { FloatType }
+		| FILE  { FileType }
+		| USERTYPE { UserType }
 
 	conn_label:
-	    SERVER      { ServerConn }
-	    | PORT      { PortConn }
-	    | USER      { UserConn }
-	    | PASS      { PassConn }
-	    | TYPE      { TypeConn }
-	    | DBNAME    { DBConn }
+		SERVER	  { ServerConn }
+		| PORT	  { PortConn }
+		| USER	  { UserConn }
+		| PASS	  { PassConn }
+		| TYPE	  { TypeConn }
+		| DBNAME	{ DBConn }
 
 	conn_attribute:
-	    conn_label ASSIGN STRINGLITERAL SEMI { ConnAttr($1, $3) }
+		conn_label ASSIGN STRINGLITERAL SEMI { ConnAttr($1, $3) }
 
 	conn_block:
-	                                { NoConnBlock }
-	    | CORDBCONN
-	    conn_attribute conn_attribute
-	    conn_attribute conn_attribute
-	    conn_attribute conn_attribute
-	    ENDDBCONN                       { ConnBlock($2, $3, $4, $5, $6, $7) }
+									{ NoConnBlock }
+		| CORDBCONN
+		conn_attribute conn_attribute
+		conn_attribute conn_attribute
+		conn_attribute conn_attribute
+		ENDDBCONN					   { ConnBlock($2, $3, $4, $5, $6, $7) }
 
 	attribute_label:
-	    ID      { AttrLabel($1) }
+		ID	  { AttrLabel($1) }
 
 	attribute:
-	    attribute_label COLON dtype SEMI		{ Attr($1,$3) }
+		attribute_label COLON dtype SEMI		{ Attr($1,$3) }
 
 	attribute_group:
-	     attribute               	{ [$1] }
-	    | attribute_group attribute { $2 :: $1 }
+		 attribute			   	{ [$1] }
+		| attribute_group attribute { $2 :: $1 }
 
 	key_decls_list:
 									{ [] }
 		| key_decls_list key_decls 	{ $2 :: $1 }
 
 	key_decls:
-	    PRIMARYKEY LPAREN attribute_label RPAREN SEMI { PrimaryKey($3) }
-	    | FOREIGNKEY LPAREN attribute_label RPAREN SEMI { ForeignKey($3) }
+		PRIMARYKEY LPAREN attribute_label RPAREN SEMI { PrimaryKey($3) }
+		| FOREIGNKEY LPAREN attribute_label RPAREN SEMI { ForeignKey($3) }
 
 	table_label:
 		ID 		{ TableLabel($1) }
 
 	table_body:
-	    attribute_group key_decls_list fdef_list { TableBody($1,$2,$3) }
+		attribute_group key_decls_list fdef_list { TableBody($1,$2,$3) }
 
 	table:
 		TABLE table_label LBRACKET table_body RBRACKET	SEMI { {
@@ -1437,124 +1446,124 @@ The expected output is to be added to the file `output.txt` as specified in the 
 		| tables_list table { $2 :: $1 }
 
 	table_block:
-	                                { NoTableBlock }
-	    | CORDB tables_list ENDDB { TableBlock($2) }
+									{ NoTableBlock }
+		| CORDB tables_list ENDDB { TableBlock($2) }
 
 
 `ast.ml`
 
 	type op = (* Binary operators *)
-	    Add
-	    | Sub
-	    | Mult
-	    | Div
-	    | Mod
-	    | Equal
-	    | Neq
-	    | Less
-	    | Leq
-	    | Greater
-	    | Geq
-	    | And
-	    | Or
-	    | Exp
+		Add
+		| Sub
+		| Mult
+		| Div
+		| Mod
+		| Equal
+		| Neq
+		| Less
+		| Leq
+		| Greater
+		| Geq
+		| And
+		| Or
+		| Exp
 
 	type uop = (* ++ and -- operators *)
-	    Incr
-	    | Decr
+		Incr
+		| Decr
 
 	type asignmt = (* =, +=, -=, *=, /= *)
-	    Eql
-	    | Ple
-	    | Mie
-	    | Mue
-	    | Dve
+		Eql
+		| Ple
+		| Mie
+		| Mue
+		| Dve
 
 	type dtype =
-	    VoidType
-	    | IntType
-	    | StringType
-	    | TableType
-	    | NoType
-	    | FloatType
-	    | FileType
-	    | UserType
+		VoidType
+		| IntType
+		| StringType
+		| TableType
+		| NoType
+		| FloatType
+		| FileType
+		| UserType
 
 
 	type conn_label =
-	    ServerConn
-	    | PortConn
-	    | UserConn
-	    | PassConn
-	    | TypeConn
-	    | DBConn
+		ServerConn
+		| PortConn
+		| UserConn
+		| PassConn
+		| TypeConn
+		| DBConn
 
 	type conn_attribute =
-	    ConnAttr of conn_label * string
+		ConnAttr of conn_label * string
 
 	type conn_block =
-	    ConnBlock of conn_attribute * conn_attribute * conn_attribute * conn_attribute * conn_attribute * conn_attribute
-	    | NoConnBlock
+		ConnBlock of conn_attribute * conn_attribute * conn_attribute * conn_attribute * conn_attribute * conn_attribute
+		| NoConnBlock
 
 	type attr_label =
-	    AttrLabel of string
+		AttrLabel of string
 
 	type attribute =
-	    Attr of attr_label * dtype
+		Attr of attr_label * dtype
 
 	type key_decls =
-	    PrimaryKey of attr_label
-	    | ForeignKey of attr_label
+		PrimaryKey of attr_label
+		| ForeignKey of attr_label
 
 	type table_label =
-	    TableLabel of string
+		TableLabel of string
 
 	type expr =
-	    IntLiteral of int
-	    | StringLiteral of string
-	    | FPLiteral of float
+		IntLiteral of int
+		| StringLiteral of string
+		| FPLiteral of float
 		| Id of string
 		| Call of string * expr list
-	    | Binop of expr * op * expr
-	    | Unop of string * uop
-	    | Neg of expr
-	    | Pos of expr
-	    | Notop of expr
-	    | Print of expr list
-	    | FPrint of string * expr list
-	    | FRead of string
-	    | Assign of string * asignmt * expr
-	    | Open of string * string
-	    | Close of string
-	    | AddTableCall of string
-	    | GetTableCall of string * expr list
-	    | TableCall of string * string * expr list
-	    | TableAttr of string * string
-	    | Parens of expr
-	    | Array of string * expr
-	    | SizeOf of expr
-	    | Noexpr
+		| Binop of expr * op * expr
+		| Unop of string * uop
+		| Neg of expr
+		| Pos of expr
+		| Notop of expr
+		| Print of expr list
+		| FPrint of string * expr list
+		| FRead of string
+		| Assign of string * asignmt * expr
+		| Open of string * string
+		| Close of string
+		| AddTableCall of string
+		| GetTableCall of string * expr list
+		| TableCall of string * string * expr list
+		| TableAttr of string * string
+		| Parens of expr
+		| Array of string * expr
+		| SizeOf of expr
+		| Noexpr
 
 	type var_decl =
-	    VarDecl of dtype * string * expr
-	    | UDecl of dtype * string * string * expr
+		VarDecl of dtype * string * expr
+		| UDecl of dtype * string * string * expr
 
 	type formal =
-	    Formal of dtype * string
+		Formal of dtype * string
 
 	type stmt =
-	    Block of stmt list
+		Block of stmt list
 		| Expr of expr
-	    | Return of expr
-	    | If of expr * stmt * stmt
-	    | For of expr * expr * expr * stmt
-	    | While of expr * stmt
-	    | CloseDB
-	    | ConnectDB
-	    | Nostmt
+		| Return of expr
+		| If of expr * stmt * stmt
+		| For of expr * expr * expr * stmt
+		| While of expr * stmt
+		| CloseDB
+		| ConnectDB
+		| Nostmt
 
 	type func_def = {
-	        return_type : dtype;
+			return_type : dtype;
 			fname	: string;
 			formals	: formal list;
 			locals	: var_decl list;
@@ -1562,22 +1571,22 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	}
 
 	type table_body =
-	    TableBody of attribute list * key_decls list * func_def list
+		TableBody of attribute list * key_decls list * func_def list
 
 	type table = {
-	    tbname : table_label;
-	    tbbody : table_body;
+		tbname : table_label;
+		tbbody : table_body;
 	}
 
 	type table_block =
-	    TableBlock of table list
-	    | NoTableBlock
+		TableBlock of table list
+		| NoTableBlock
 
 	type program = {
-	            conn : conn_block;
-	            tables : table_block;
-	            globals : var_decl list;
-	            funcs  : func_def list;
+				conn : conn_block;
+				tables : table_block;
+				globals : var_decl list;
+				funcs  : func_def list;
 	}
 
 `semantic.ml`
@@ -1605,31 +1614,31 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	(* helper funcs for printing error messages *)
 	let rec string_of_coral_type t =
 		match t with
-	    VoidType -> "void"
-	    | IntType -> "int"
-	    | StringType -> "string"
-	    | TableType -> "Table"
-	    | FloatType -> "float"
-	    | FileType -> "File"
-	    | UserType -> "user_t"
-	    | NoType -> "null_type" (* values which cannot be assigned *)
+		VoidType -> "void"
+		| IntType -> "int"
+		| StringType -> "string"
+		| TableType -> "Table"
+		| FloatType -> "float"
+		| FileType -> "File"
+		| UserType -> "user_t"
+		| NoType -> "null_type" (* values which cannot be assigned *)
 
 	let rec string_of_coral_op o =
 		match o with
-	    Add -> "+"
-	    | Sub -> "-"
-	    | Mult -> "*"
-	    | Div -> "/"
-	    | Mod -> "%"
-	    | Equal -> "=="
-	    | Neq -> "!="
-	    | Less -> "<"
-	    | Leq -> "<="
-	    | Greater -> ">="
-	    | Geq -> ">"
-	    | And -> "&&"
-	    | Or -> "||"
-	    | Exp -> "**"
+		Add -> "+"
+		| Sub -> "-"
+		| Mult -> "*"
+		| Div -> "/"
+		| Mod -> "%"
+		| Equal -> "=="
+		| Neq -> "!="
+		| Less -> "<"
+		| Leq -> "<="
+		| Greater -> ">="
+		| Geq -> ">"
+		| And -> "&&"
+		| Or -> "||"
+		| Exp -> "**"
 
 	(* check types *)
 	exception Error of string
@@ -1637,9 +1646,9 @@ The expected output is to be added to the file `output.txt` as specified in the 
 
 
 	let check_type t1 t2 =
-	    if (not(t1 = t2)) then
-	        raise ( Type_mismatch_error((string_of_coral_type t1), (string_of_coral_type t2)))
-	    else t1
+		if (not(t1 = t2)) then
+			raise ( Type_mismatch_error((string_of_coral_type t1), (string_of_coral_type t2)))
+		else t1
 
 	(* find functions in symbol table *)
 	let rec function_exists fname scope =
@@ -1744,53 +1753,53 @@ The expected output is to be added to the file `output.txt` as specified in the 
 
 	(* check db connection section *)
 	let rec check_conn_label co =
-	    match co with
-	    | ServerConn -> co
-	    | PortConn -> co
-	    | UserConn -> co
-	    | PassConn -> co
-	    | TypeConn -> co
-	    | DBConn -> co
+		match co with
+		| ServerConn -> co
+		| PortConn -> co
+		| UserConn -> co
+		| PassConn -> co
+		| TypeConn -> co
+		| DBConn -> co
 
 	let rec check_conn_attr ca  =
-	    match ca with
-	    | ConnAttr(cl, a) -> try
-	                            (check_conn_label cl)
-	                        with _ ->
-	                            raise(Error("ConnLabel Error"))
+		match ca with
+		| ConnAttr(cl, a) -> try
+								(check_conn_label cl)
+							with _ ->
+								raise(Error("ConnLabel Error"))
 
 	let rec check_conn_block cb =
-	    match cb with
-	    | ConnBlock(a1, a2, a3, a4, a5, a6) ->
-	        let _ = (check_conn_attr a1) in
-	        let _ = (check_conn_attr a2) in
-	        let _ = (check_conn_attr a3) in
-	        let _ = (check_conn_attr a4) in
-	        let _ = (check_conn_attr a5) in
-	        let _ = (check_conn_attr a6) in
-	        NoType
-	    | NoConnBlock -> NoType
+		match cb with
+		| ConnBlock(a1, a2, a3, a4, a5, a6) ->
+			let _ = (check_conn_attr a1) in
+			let _ = (check_conn_attr a2) in
+			let _ = (check_conn_attr a3) in
+			let _ = (check_conn_attr a4) in
+			let _ = (check_conn_attr a5) in
+			let _ = (check_conn_attr a6) in
+			NoType
+		| NoConnBlock -> NoType
 
 	let rec check_expr exp env =
-	    match exp with
-	    | IntLiteral(l) -> IntType
-	    | StringLiteral(l) -> StringType
-	    | FPLiteral(l) -> FloatType
+		match exp with
+		| IntLiteral(l) -> IntType
+		| StringLiteral(l) -> StringType
+		| FPLiteral(l) -> FloatType
 		| Id(v) -> (variable_type (find_variable v env.scope))
 		| Call(f, e) -> if (function_exists f env.scope) then
-	    					let f1 = (find_function f env.scope) in
-	    					let fmls = f1.formals in
-	    					if ((List.length fmls) != (List.length e)) then
-	    						raise (Error ("improper number of arguments to function " ^ f1.fname))
-	    					else
-	    						let _ = (List.map2 (fun x y -> check_actual x y env) fmls e) in
-	    							NoType
-	    				else
-	    					if (table_exists f env.scope) then
-	    						UserType
-	    					else
-	    						let _ = (find_function f env.scope) in
-	    							NoType
+							let f1 = (find_function f env.scope) in
+							let fmls = f1.formals in
+							if ((List.length fmls) != (List.length e)) then
+								raise (Error ("improper number of arguments to function " ^ f1.fname))
+							else
+								let _ = (List.map2 (fun x y -> check_actual x y env) fmls e) in
+									NoType
+						else
+							if (table_exists f env.scope) then
+								UserType
+							else
+								let _ = (find_function f env.scope) in
+									NoType
 		| TableAttr(t, a) ->	if ((variable_type (find_variable t env.scope)) == UserType) then
 									NoType
 								else
@@ -1823,59 +1832,59 @@ The expected output is to be added to the file `output.txt` as specified in the 
 									else
 										raise (Error ("the .get() function can only be called on Tables"))
 		| TableCall(f1, f2, e) -> NoType (* not used *)
-	    | Print(e) -> 	let _ = (List.map (fun x -> check_expr x env) e) in
-	    					NoType
-	    | Binop(a, op, b) -> (let t1 = (check_expr a env) in
-	                         (let t2 = (check_expr b env) in
-	                            if(t1=FloatType && t2=IntType) then
-	                            	t1
-	                            else
-	                            	if(t1=IntType && t2=FloatType) then
-	                            		t2
-	                            	else
-	                            		try (check_type t1 t2)
-	                            		with Type_mismatch_error(e1, e2) ->
-	                            			raise (Error ("operator " ^ (string_of_coral_op op) ^
-	                            			" cannot be applied to arguments of type " ^ e1 ^ " and " ^ e2))
-	                        ))
-	    | Unop(a, uop) -> let t = (variable_type (find_variable a env.scope)) in
-	    					if (t = IntType || t = FloatType) then
-	    						t
-	    					else
-	    						raise (Error ("improper operator used on variable " ^ a))
+		| Print(e) -> 	let _ = (List.map (fun x -> check_expr x env) e) in
+							NoType
+		| Binop(a, op, b) -> (let t1 = (check_expr a env) in
+							 (let t2 = (check_expr b env) in
+								if(t1=FloatType && t2=IntType) then
+									t1
+								else
+									if(t1=IntType && t2=FloatType) then
+										t2
+									else
+										try (check_type t1 t2)
+										with Type_mismatch_error(e1, e2) ->
+											raise (Error ("operator " ^ (string_of_coral_op op) ^
+											" cannot be applied to arguments of type " ^ e1 ^ " and " ^ e2))
+							))
+		| Unop(a, uop) -> let t = (variable_type (find_variable a env.scope)) in
+							if (t = IntType || t = FloatType) then
+								t
+							else
+								raise (Error ("improper operator used on variable " ^ a))
 		| Notop(e) -> (check_expr e env)
 		| Neg(e) -> (check_expr e env)
 		| Pos(e) -> (check_expr e env)
-	    | Assign(l, asgn, r) -> if (env.in_query) then
-	    							if (attr_exists_in_table l env.in_table env.scope) then
-	    								(check_expr r env)
-	    							else
-	    								raise (Error ("cannot query for attribute " ^ l ^
-	    								" because it is not defined in table " ^ env.in_table))
-	    						else
-	    							(let t1 = (variable_type (find_variable l env.scope)) in
-	    							(let t2 = (check_expr r env) in
-	    						 	if (t1 == FloatType && t2 == IntType) then
-	    						 		t1
-	    						 	else
-	    						 		try (check_type t1 t2)
-	    								with Type_mismatch_error(e1, e2) ->
-	    									raise (Error ("cannot assign value of type " ^ e1 ^
-	    									" to variable of type " ^ e2))
-	    							))
-	    | Parens(p) -> (check_expr p env)
-	    | Array(id, e) -> 	if ((variable_type (find_variable id env.scope)) == UserType) then
-	    						if ((check_expr e env) == IntType) then
-	    							UserType
-	    						else
-	    							raise (Error ("argument to array must be an integer"))
-	    					else
-	    						raise (Error ("array notation can only be used on user types"))
-	    | SizeOf(e) -> 	if ((check_expr e env) == UserType) then
-	    					IntType
-	    				else
-	    					raise (Error ("sizeOf can only be used on a value of type user_t"))
-	    | Noexpr -> NoType
+		| Assign(l, asgn, r) -> if (env.in_query) then
+									if (attr_exists_in_table l env.in_table env.scope) then
+										(check_expr r env)
+									else
+										raise (Error ("cannot query for attribute " ^ l ^
+										" because it is not defined in table " ^ env.in_table))
+								else
+									(let t1 = (variable_type (find_variable l env.scope)) in
+									(let t2 = (check_expr r env) in
+								 	if (t1 == FloatType && t2 == IntType) then
+								 		t1
+								 	else
+								 		try (check_type t1 t2)
+										with Type_mismatch_error(e1, e2) ->
+											raise (Error ("cannot assign value of type " ^ e1 ^
+											" to variable of type " ^ e2))
+									))
+		| Parens(p) -> (check_expr p env)
+		| Array(id, e) -> 	if ((variable_type (find_variable id env.scope)) == UserType) then
+								if ((check_expr e env) == IntType) then
+									UserType
+								else
+									raise (Error ("argument to array must be an integer"))
+							else
+								raise (Error ("array notation can only be used on user types"))
+		| SizeOf(e) -> 	if ((check_expr e env) == UserType) then
+							IntType
+						else
+							raise (Error ("sizeOf can only be used on a value of type user_t"))
+		| Noexpr -> NoType
 
 	and check_actual formal actual env =
 		match formal with
@@ -1885,24 +1894,24 @@ The expected output is to be added to the file `output.txt` as specified in the 
 								^ " as argument but received value of type " ^ e2))
 
 	let rec check_var_decl vdec env =
-	    match vdec with
-	    | VarDecl(t, v, Noexpr) -> t
-	    | VarDecl(t, v, e) -> 	(let t2 = (check_expr e env) in
-	    						if (t == FloatType && t2 == IntType) then
-	    							t
-	    						else 
-	    							try (check_type t (check_expr e env))
-	    							with Type_mismatch_error(e1, e2) ->
-	    								raise (Error ("cannot initialize variable " ^ v ^ " with type " ^
-	    								e2 ^ " because it is declared as type " ^ e1))
-	    						)
-	    | UDecl(ut, tn, v, Noexpr) -> ut
-	    | UDecl(ut, tn, v, e) ->	(let t2 = (check_expr e env) in
-	    								try (check_type t2 UserType)
-	    								with Type_mismatch_error(e1, e2) ->
-	    									raise (Error ("cannot initialize variable " ^ v ^
-	    									" with type " ^ e2 ^ " because it is declared as type " ^ e1))
-	    							)
+		match vdec with
+		| VarDecl(t, v, Noexpr) -> t
+		| VarDecl(t, v, e) -> 	(let t2 = (check_expr e env) in
+								if (t == FloatType && t2 == IntType) then
+									t
+								else 
+									try (check_type t (check_expr e env))
+									with Type_mismatch_error(e1, e2) ->
+										raise (Error ("cannot initialize variable " ^ v ^ " with type " ^
+										e2 ^ " because it is declared as type " ^ e1))
+								)
+		| UDecl(ut, tn, v, Noexpr) -> ut
+		| UDecl(ut, tn, v, e) ->	(let t2 = (check_expr e env) in
+										try (check_type t2 UserType)
+										with Type_mismatch_error(e1, e2) ->
+											raise (Error ("cannot initialize variable " ^ v ^
+											" with type " ^ e2 ^ " because it is declared as type " ^ e1))
+									)
 
 	let rec sys_check_var_decl vdec env =
 		match vdec with
@@ -1926,9 +1935,9 @@ The expected output is to be added to the file `output.txt` as specified in the 
 											tn ^ " because table does not exist"))
 
 	let rec check_formal f env =
-	    match f with
-	    | Formal(t, n) ->	if (variable_exists n env.scope) then
-	    						raise (Error ("formal parameter with name " ^ n ^ " already declared"))
+		match f with
+		| Formal(t, n) ->	if (variable_exists n env.scope) then
+								raise (Error ("formal parameter with name " ^ n ^ " already declared"))
 							else
 								(* add formal to symbol table by making a new VarDecl out of it *)
 								let _ = env.scope.variables <- VarDecl(t, n, Noexpr)::env.scope.variables in
@@ -1940,32 +1949,32 @@ The expected output is to be added to the file `output.txt` as specified in the 
 		| _ -> false
 
 	let rec check_stmt s env =
-	    match s with
-	    | Block(stmts) -> 	let _ = (List.map (fun x -> check_stmt x env) stmts) in NoType
-	    | Expr(expr) -> 	(check_expr expr env)
-	    | Return(expr) -> 	if (check_expr expr env) == env.ret_type then
-	    						env.ret_type
-	    					else
-	    						raise (Error ("invalid return type"))
-	    | If(e, s, Nostmt) -> 	if (not (is_assign e)) then
-	    							NoType
-	    						else
-	    							NoType
-	    | If(e, s1, s2) -> 	if (not (is_assign e)) then
-	    						NoType
-	    					else
-	    						NoType
-	    | While(expr, stmts) ->	if (not (is_assign expr)) then
-	    							NoType
-	    						else
-	    							NoType
-	    | For(expr1, expr2, expr3, stmts) -> 	if (not (is_assign expr2)) then
-	    											NoType
-	    										else
-	    											NoType
-	    | ConnectDB -> NoType
-	    | CloseDB -> NoType
-	    | Nostmt -> NoType
+		match s with
+		| Block(stmts) -> 	let _ = (List.map (fun x -> check_stmt x env) stmts) in NoType
+		| Expr(expr) -> 	(check_expr expr env)
+		| Return(expr) -> 	if (check_expr expr env) == env.ret_type then
+								env.ret_type
+							else
+								raise (Error ("invalid return type"))
+		| If(e, s, Nostmt) -> 	if (not (is_assign e)) then
+									NoType
+								else
+									NoType
+		| If(e, s1, s2) -> 	if (not (is_assign e)) then
+								NoType
+							else
+								NoType
+		| While(expr, stmts) ->	if (not (is_assign expr)) then
+									NoType
+								else
+									NoType
+		| For(expr1, expr2, expr3, stmts) -> 	if (not (is_assign expr2)) then
+													NoType
+												else
+													NoType
+		| ConnectDB -> NoType
+		| CloseDB -> NoType
+		| Nostmt -> NoType
 
 	(* obsolete now that return type tracked in env *)
 	let rec get_return fdef stmts env =
@@ -2084,11 +2093,11 @@ The expected output is to be added to the file `output.txt` as specified in the 
 			in_table = "";
 		} in
 
-	    let _ = (check_conn_block p.conn) in
-	    	let _ = check_table_block p.tables global_env in
-	    		let _ = (List.map (fun x -> sys_check_var_decl x global_env) p.globals) in
-	    			let _ = (List.map (fun x -> sys_check_fdef x global_env) p.funcs) in
-	    				true
+		let _ = (check_conn_block p.conn) in
+			let _ = check_table_block p.tables global_env in
+				let _ = (List.map (fun x -> sys_check_var_decl x global_env) p.globals) in
+					let _ = (List.map (fun x -> sys_check_fdef x global_env) p.funcs) in
+						true
 
 `generator.ml`
 
@@ -2099,266 +2108,266 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	  String.make lvl '\t'
 
 	let rec str_of_type t =
-	    match t with
-	    | IntType -> "Integer"
-	    | StringType -> "String"
-	    | VoidType -> "Void"
-	    | TableType -> "Table"
-	    | FloatType -> "Float"
-	    | FileType -> "File" (* should never come up in SQL query *)
-	    | NoType -> "" (* should never actually happen *)
-	    | UserType -> ""
+		match t with
+		| IntType -> "Integer"
+		| StringType -> "String"
+		| VoidType -> "Void"
+		| TableType -> "Table"
+		| FloatType -> "Float"
+		| FileType -> "File" (* should never come up in SQL query *)
+		| NoType -> "" (* should never actually happen *)
+		| UserType -> ""
 
 	let rec str_of_asgn a =
-	    match a with
-	    | Eql -> "="
-	    | Ple -> "+="
-	    | Mie -> "-="
-	    | Mue -> "*="
-	    | Dve -> "/="
+		match a with
+		| Eql -> "="
+		| Ple -> "+="
+		| Mie -> "-="
+		| Mue -> "*="
+		| Dve -> "/="
 
 	let rec str_of_op o =
-	    match o with
-	    | Add -> "+"
-	    | Sub -> "-"
-	    | Mult -> "*"
-	    | Div -> "/"
-	    | Mod -> "%"
-	    | Exp -> "**"
-	    | Equal -> "=="
-	    | Neq -> "!="
-	    | Less -> "<"
-	    | Leq -> "<="
-	    | Greater -> ">"
-	    | Geq -> ">="
-	    | Or -> "or"
-	    | And -> "and"
+		match o with
+		| Add -> "+"
+		| Sub -> "-"
+		| Mult -> "*"
+		| Div -> "/"
+		| Mod -> "%"
+		| Exp -> "**"
+		| Equal -> "=="
+		| Neq -> "!="
+		| Less -> "<"
+		| Leq -> "<="
+		| Greater -> ">"
+		| Geq -> ">="
+		| Or -> "or"
+		| And -> "and"
 
 	let rec str_of_uop u =
-	    match u with
-	    | Incr -> "+1"
-	    | Decr -> "-1"
+		match u with
+		| Incr -> "+1"
+		| Decr -> "-1"
 
 	let rec str_of_conn_label co =
-	    match co with
-	    | ServerConn -> "setServer"
-	    | PortConn -> "setPort"
-	    | UserConn -> "setUser"
-	    | PassConn -> "setPass"
-	    | TypeConn -> "setConnType"
-	    | DBConn -> "setDBName"
+		match co with
+		| ServerConn -> "setServer"
+		| PortConn -> "setPort"
+		| UserConn -> "setUser"
+		| PassConn -> "setPass"
+		| TypeConn -> "setConnType"
+		| DBConn -> "setDBName"
 
 	let rec str_of_conn_attr ca =
-	    match ca with
-	    | ConnAttr(cl, a) -> (str_of_conn_label cl) ^ "(" ^ a ^ ")"
+		match ca with
+		| ConnAttr(cl, a) -> (str_of_conn_label cl) ^ "(" ^ a ^ ")"
 
 	let rec str_of_conn_block cb =
-	    match cb with
-	    | ConnBlock(a1, a2, a3, a4, a5, a6) -> (str_of_conn_attr a1) ^
-	        "\n" ^ (str_of_conn_attr a2) ^ "\n" ^ (str_of_conn_attr a3)
-	        ^ "\n" ^ (str_of_conn_attr a4) ^ "\n" ^ (str_of_conn_attr a5)
-	        ^ "\n" ^ (str_of_conn_attr a6) ^ "\n"
-	    | NoConnBlock -> ""
+		match cb with
+		| ConnBlock(a1, a2, a3, a4, a5, a6) -> (str_of_conn_attr a1) ^
+			"\n" ^ (str_of_conn_attr a2) ^ "\n" ^ (str_of_conn_attr a3)
+			^ "\n" ^ (str_of_conn_attr a4) ^ "\n" ^ (str_of_conn_attr a5)
+			^ "\n" ^ (str_of_conn_attr a6) ^ "\n"
+		| NoConnBlock -> ""
 
 	let rec str_of_attr_label al =
-	    match al with
-	    | AttrLabel(l) -> l
+		match al with
+		| AttrLabel(l) -> l
 
 	let rec str_of_attr a =
-	    match a with
-	    | Attr(a, t) -> (str_of_attr_label a) ^ " = Column(" ^ (str_of_type t) ^ ")"
+		match a with
+		| Attr(a, t) -> (str_of_attr_label a) ^ " = Column(" ^ (str_of_type t) ^ ")"
 
 	let rec str_of_attr_group ag lvl =
-	    (let l = "\n" ^ (tab (lvl)) in
-	        (String.concat l (List.map str_of_attr ag)))
+		(let l = "\n" ^ (tab (lvl)) in
+			(String.concat l (List.map str_of_attr ag)))
 
 	let rec str_of_key k =
-	    match k with
-	    | PrimaryKey(al) -> "PrimaryKeyConstraint('" ^ (str_of_attr_label al) ^ "')"
-	    | ForeignKey(al) -> "ForeignKey('" ^ (str_of_attr_label al) ^ "')"
+		match k with
+		| PrimaryKey(al) -> "PrimaryKeyConstraint('" ^ (str_of_attr_label al) ^ "')"
+		| ForeignKey(al) -> "ForeignKey('" ^ (str_of_attr_label al) ^ "')"
 
 	let rec str_of_query_filter q =
-	    match q with
-	    (* Get rid of quotes in a string *)
-	    | StringLiteral(l) -> let len = (String.length l) in
-	                            (String.sub l 1 (len-2) )
-	    | IntLiteral(l) -> string_of_int(l)
-	    | FPLiteral(l) -> string_of_float(l)
-	    | Id(s) -> s
-	    | Binop(a, op, b) -> (str_of_query_filter a) ^ (str_of_op op) ^ ":" ^ (str_of_query_filter a)
-	    | Assign(l, asgn, r) -> l ^ "=" ^ ":" ^ l
+		match q with
+		(* Get rid of quotes in a string *)
+		| StringLiteral(l) -> let len = (String.length l) in
+								(String.sub l 1 (len-2) )
+		| IntLiteral(l) -> string_of_int(l)
+		| FPLiteral(l) -> string_of_float(l)
+		| Id(s) -> s
+		| Binop(a, op, b) -> (str_of_query_filter a) ^ (str_of_op op) ^ ":" ^ (str_of_query_filter a)
+		| Assign(l, asgn, r) -> l ^ "=" ^ ":" ^ l
 
-	    | Call(s, expr) -> "" (* should not ever be called in this context *)
-	    | Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
-	    | Neg(expr) -> "-" ^ (str_of_query_filter expr)
-	    | Pos(expr) -> "+" ^ (str_of_query_filter expr)
-	    | Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
-	    | Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
-	    | FPrint(s, expr) -> ""
-	    | FRead(s) -> ""
-	    | Open(s, p) -> ""
-	    | Close(s) -> ""
-	    | AddTableCall(s) -> ""
-	    | GetTableCall(s, expr) -> ""
-	    | TableCall(s, p, expr) -> ""
-	    | TableAttr(s, p) -> ""
-	    | Parens(expr) -> ""
-	    | Array(s, expr) -> ""
-	    | SizeOf(e) -> ""
-	    | Noexpr -> ""
+		| Call(s, expr) -> "" (* should not ever be called in this context *)
+		| Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
+		| Neg(expr) -> "-" ^ (str_of_query_filter expr)
+		| Pos(expr) -> "+" ^ (str_of_query_filter expr)
+		| Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
+		| Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
+		| FPrint(s, expr) -> ""
+		| FRead(s) -> ""
+		| Open(s, p) -> ""
+		| Close(s) -> ""
+		| AddTableCall(s) -> ""
+		| GetTableCall(s, expr) -> ""
+		| TableCall(s, p, expr) -> ""
+		| TableAttr(s, p) -> ""
+		| Parens(expr) -> ""
+		| Array(s, expr) -> ""
+		| SizeOf(e) -> ""
+		| Noexpr -> ""
 
 	let rec str_of_query_params q =
-	    match q with
-	    | StringLiteral(l) -> l
-	    | IntLiteral(l) -> string_of_int(l)
-	    | FPLiteral(l) -> string_of_float(l)
-	    | Id(s) -> s
-	    | Binop(a, op, b) -> (str_of_query_params a) ^ "=" ^ (str_of_query_params b)
+		match q with
+		| StringLiteral(l) -> l
+		| IntLiteral(l) -> string_of_int(l)
+		| FPLiteral(l) -> string_of_float(l)
+		| Id(s) -> s
+		| Binop(a, op, b) -> (str_of_query_params a) ^ "=" ^ (str_of_query_params b)
 
-	    | Assign(l, asgn, r) -> l ^ "=" ^ (str_of_query_params r)
-	    | Call(s, expr) -> "" (* should not ever be called in this context *)
-	    | Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
-	    | Neg(expr) -> "-" ^ (str_of_query_params expr)
-	    | Pos(expr) -> "+" ^ (str_of_query_params expr)
-	    | Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
-	    | Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
-	    | FPrint(s, expr) -> ""
-	    | FRead(s) -> ""
-	    | Open(s, p) -> ""
-	    | Close(s) -> ""
-	    | SizeOf(e) -> ""
-	    | AddTableCall(s) -> ""
-	    | GetTableCall(s, expr) -> ""
-	    | TableCall(s, p, expr) -> ""
-	    | TableAttr(s, p) -> ""
-	    | Parens(expr) -> ""
-	    | Array(s, expr) -> ""
-	    | Noexpr -> ""
+		| Assign(l, asgn, r) -> l ^ "=" ^ (str_of_query_params r)
+		| Call(s, expr) -> "" (* should not ever be called in this context *)
+		| Unop(s, uop) -> s ^ "=" ^ s ^ (str_of_uop uop)
+		| Neg(expr) -> "-" ^ (str_of_query_params expr)
+		| Pos(expr) -> "+" ^ (str_of_query_params expr)
+		| Notop(expr) -> "" (* the following few will never happen for the context of query filter*)
+		| Print(expr) -> ""  (* and just need definitions to eliminate compiler warnings *)
+		| FPrint(s, expr) -> ""
+		| FRead(s) -> ""
+		| Open(s, p) -> ""
+		| Close(s) -> ""
+		| SizeOf(e) -> ""
+		| AddTableCall(s) -> ""
+		| GetTableCall(s, expr) -> ""
+		| TableCall(s, p, expr) -> ""
+		| TableAttr(s, p) -> ""
+		| Parens(expr) -> ""
+		| Array(s, expr) -> ""
+		| Noexpr -> ""
 
 	let rec str_of_expr exp =
-	    match exp with
-	    | IntLiteral(l) -> string_of_int(l)
-	    | StringLiteral(l) -> l
-	    | FPLiteral(l) -> string_of_float(l)
-	    | Id(s) -> s
-	    | Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
-	    | TableAttr(t, a) -> t ^ "." ^ a
-	    | Open(fp, rw) -> "open(" ^ fp ^ ", " ^ rw ^ ")"
-	    | Close(e) -> e ^ ".close()"
-	    | FPrint(fp, e) -> fp ^ ".write(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
-	    | FRead(fp) -> fp ^ ".readline()"
-	    | SizeOf(e) -> "sizeof("^ (str_of_expr e) ^ ")"
-	    | AddTableCall(f1) -> "controller.session.add(" ^ f1 ^ ")"
-	    | GetTableCall(f1, e) -> "controller.session.query(" ^ f1 ^ ").filter(\"" ^ (String.concat " and " (List.map str_of_query_filter e)) ^ "\").params(" ^ (String.concat " , " (List.map str_of_query_params e)) ^ ")"
-	    | TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
-	    | Print(e) -> "print(" ^ (String.concat "," (List.map str_of_expr e)) ^ ", end='')"
-	    | Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
-	    | Unop(a, uop) -> a ^ "=" ^ a ^ (str_of_uop uop)
-	    | Notop(e) -> "not " ^ (str_of_expr e)
-	    | Neg(e) -> "-" ^ (str_of_expr e)
-	    | Pos(e) -> "+" ^ (str_of_expr e)
-	    | Assign(l, asgn, r) -> l ^ (str_of_asgn asgn) ^ (str_of_expr r)
-	    | Parens(p) -> "(" ^ (str_of_expr p) ^ ")"
-	    | Array(id, e) -> id ^ "[" ^ (str_of_expr e) ^ "]"
-	    | Noexpr -> ""
+		match exp with
+		| IntLiteral(l) -> string_of_int(l)
+		| StringLiteral(l) -> l
+		| FPLiteral(l) -> string_of_float(l)
+		| Id(s) -> s
+		| Call(f, e) -> f ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
+		| TableAttr(t, a) -> t ^ "." ^ a
+		| Open(fp, rw) -> "open(" ^ fp ^ ", " ^ rw ^ ")"
+		| Close(e) -> e ^ ".close()"
+		| FPrint(fp, e) -> fp ^ ".write(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
+		| FRead(fp) -> fp ^ ".readline()"
+		| SizeOf(e) -> "sizeof("^ (str_of_expr e) ^ ")"
+		| AddTableCall(f1) -> "controller.session.add(" ^ f1 ^ ")"
+		| GetTableCall(f1, e) -> "controller.session.query(" ^ f1 ^ ").filter(\"" ^ (String.concat " and " (List.map str_of_query_filter e)) ^ "\").params(" ^ (String.concat " , " (List.map str_of_query_params e)) ^ ")"
+		| TableCall(f1, f2, e) -> f1 ^ "." ^ f2 ^ "(" ^ (String.concat "," (List.map str_of_expr e)) ^ ")"
+		| Print(e) -> "print(" ^ (String.concat "," (List.map str_of_expr e)) ^ ", end='')"
+		| Binop(a, op, b) -> (str_of_expr a) ^ (str_of_op op) ^ (str_of_expr b)
+		| Unop(a, uop) -> a ^ "=" ^ a ^ (str_of_uop uop)
+		| Notop(e) -> "not " ^ (str_of_expr e)
+		| Neg(e) -> "-" ^ (str_of_expr e)
+		| Pos(e) -> "+" ^ (str_of_expr e)
+		| Assign(l, asgn, r) -> l ^ (str_of_asgn asgn) ^ (str_of_expr r)
+		| Parens(p) -> "(" ^ (str_of_expr p) ^ ")"
+		| Array(id, e) -> id ^ "[" ^ (str_of_expr e) ^ "]"
+		| Noexpr -> ""
 
 	let rec str_of_var_decl vdec lvl =
-	    match vdec with
-	    | VarDecl(t, v, Noexpr) -> (tab lvl) ^ v ^ "= None"
-	    | VarDecl(t, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
-	    | UDecl(ut, tn, v, Noexpr) -> (tab lvl) ^ v ^ "= None"
-	    | UDecl(ut, tn, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
+		match vdec with
+		| VarDecl(t, v, Noexpr) -> (tab lvl) ^ v ^ "= None"
+		| VarDecl(t, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
+		| UDecl(ut, tn, v, Noexpr) -> (tab lvl) ^ v ^ "= None"
+		| UDecl(ut, tn, v, e) -> (tab lvl) ^ (str_of_expr (Assign(v, Eql, e)))
 
 	let rec str_of_formal f =
-	    match f with
-	    | Formal(t, n) -> "" ^ n
+		match f with
+		| Formal(t, n) -> "" ^ n
 
 	let rec str_of_stmt s lvl =
-	    match s with
-	    | Block(stmts) -> (let l = "\n" ^ (tab lvl) in
-	                        (String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (stmts))))
-	    | Expr(expr) -> str_of_expr expr
-	    | Return(expr) -> "return " ^ (str_of_expr expr)
-	    | If(e, s, Nostmt) -> "if " ^ str_of_expr e ^ ":\n" ^ (tab (lvl+2)) ^ str_of_stmt s (lvl+2)
-	    | If(e, s1, s2) -> "if (" ^ str_of_expr e ^ "):\n" ^ (tab (lvl+2)) ^ str_of_stmt s1 (lvl+2)
-	                    ^ "\n" ^ (tab (lvl+1)) ^ "else:\n" ^ (tab (lvl+2)) ^ str_of_stmt s2 (lvl+2)
+		match s with
+		| Block(stmts) -> (let l = "\n" ^ (tab lvl) in
+							(String.concat l (List.map (fun x-> str_of_stmt x (lvl+1)) (stmts))))
+		| Expr(expr) -> str_of_expr expr
+		| Return(expr) -> "return " ^ (str_of_expr expr)
+		| If(e, s, Nostmt) -> "if " ^ str_of_expr e ^ ":\n" ^ (tab (lvl+2)) ^ str_of_stmt s (lvl+2)
+		| If(e, s1, s2) -> "if (" ^ str_of_expr e ^ "):\n" ^ (tab (lvl+2)) ^ str_of_stmt s1 (lvl+2)
+						^ "\n" ^ (tab (lvl+1)) ^ "else:\n" ^ (tab (lvl+2)) ^ str_of_stmt s2 (lvl+2)
 
-	    | While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
-	                        "while " ^ (str_of_expr expr) ^ ":" ^
-	                        l ^ (str_of_stmt stmts (lvl+2)) )
-	    | For(expr1, expr2, expr3, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
-	                        (str_of_expr expr1) ^ "\n" ^ (tab (lvl+1)) ^ "while " ^ (str_of_expr expr2) ^ ":" ^
-	                        l ^ (str_of_stmt stmts (lvl+2)) ^
-	                        "\n" ^ (tab (lvl+2)) ^ (str_of_expr expr3))
-	    | ConnectDB -> "controller.Base.metadata.create_all(controller.engine)"
-	    | CloseDB -> "controller.session.commit()"
-	    | Nostmt -> ""
+		| While(expr, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
+							"while " ^ (str_of_expr expr) ^ ":" ^
+							l ^ (str_of_stmt stmts (lvl+2)) )
+		| For(expr1, expr2, expr3, stmts) -> (let l = "\n" ^ (tab (lvl+2)) in
+							(str_of_expr expr1) ^ "\n" ^ (tab (lvl+1)) ^ "while " ^ (str_of_expr expr2) ^ ":" ^
+							l ^ (str_of_stmt stmts (lvl+2)) ^
+							"\n" ^ (tab (lvl+2)) ^ (str_of_expr expr3))
+		| ConnectDB -> "controller.Base.metadata.create_all(controller.engine)"
+		| CloseDB -> "controller.session.commit()"
+		| Nostmt -> ""
 
 	let rec str_of_table_label tl =
-	    match tl with
-	    | TableLabel(l) -> "" ^ l
+		match tl with
+		| TableLabel(l) -> "" ^ l
 
 	let str_of_fdef fdef globals lvl =
-	    (tab lvl) ^ "def " ^ fdef.fname ^ "(" ^
-	            (String.concat "," (List.map str_of_formal fdef.formals)) ^ "):\n"
+		(tab lvl) ^ "def " ^ fdef.fname ^ "(" ^
+				(String.concat "," (List.map str_of_formal fdef.formals)) ^ "):\n"
 
-	    ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
-	                    (String.concat l
-	                        (List.map
-	                            (fun x-> "global " ^ (str_of_var_decl x (lvl)))
-	                        globals)))
-	                    ^ "\n"
+		^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
+						(String.concat l
+							(List.map
+								(fun x-> "global " ^ (str_of_var_decl x (lvl)))
+							globals)))
+						^ "\n"
 
-	    ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
-	                            (String.concat l (List.map (fun x-> str_of_var_decl x (lvl)) fdef.locals)))
-	                    ^ "\n"
+		^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
+								(String.concat l (List.map (fun x-> str_of_var_decl x (lvl)) fdef.locals)))
+						^ "\n"
 
-	    ^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
-	                            (let ll = (String.concat l (List.map (fun x-> str_of_stmt x (lvl)) fdef.body)) in
-	                                match ll with
-	                                | "" -> "return"
-	                                | _ -> ll))
+		^ (tab (lvl+1)) ^ (let l = "\n" ^ (tab (lvl+1)) in
+								(let ll = (String.concat l (List.map (fun x-> str_of_stmt x (lvl)) fdef.body)) in
+									match ll with
+									| "" -> "return"
+									| _ -> ll))
 
 	let rec str_of_table_body tbb lvl =
-	    match tbb with
-	    | TableBody(ag, kd, fd) -> (str_of_attr_group ag (lvl)) ^ "\n" ^ (tab lvl) ^ "__table_args__= ("
-	            ^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n"
-	            ^ (String.concat "\n" (List.map (fun x-> str_of_fdef x [] (lvl)) fd))
+		match tbb with
+		| TableBody(ag, kd, fd) -> (str_of_attr_group ag (lvl)) ^ "\n" ^ (tab lvl) ^ "__table_args__= ("
+				^(String.concat ("\n"^(tab lvl)) (List.map str_of_key kd)) ^ ", {})\n"
+				^ (String.concat "\n" (List.map (fun x-> str_of_fdef x [] (lvl)) fd))
 
 	let rec str_of_table tb =
-	    "class " ^ (str_of_table_label tb.tbname) ^ "(Base):\n" ^
-	            (* cleanup these 1's later *)
-	    (tab 1) ^
-	                "__tablename__ = '" ^ "" ^ (str_of_table_label tb.tbname)^ "'" ^ "\n" ^ (tab 1) ^
-	                (str_of_table_body tb.tbbody 1 )
+		"class " ^ (str_of_table_label tb.tbname) ^ "(Base):\n" ^
+				(* cleanup these 1's later *)
+		(tab 1) ^
+					"__tablename__ = '" ^ "" ^ (str_of_table_label tb.tbname)^ "'" ^ "\n" ^ (tab 1) ^
+					(str_of_table_body tb.tbbody 1 )
 
 	let rec str_of_table_block tb =
-	    match tb with
-	    | TableBlock(tables) -> (String.concat "\n" (List.map str_of_table tables))
-	    | NoTableBlock -> ""
+		match tb with
+		| TableBlock(tables) -> (String.concat "\n" (List.map str_of_table tables))
+		| NoTableBlock -> ""
 
 	let str_of_program program =
-	        "#!/usr/bin/env python\n" ^
-	        "from __future__ import print_function\n" ^
-	        "import coral_backend\n" ^
-	        "from coral_backend import *\n" ^
-	        "from coral_backend.controller import *" ^
-	        "\n\n" ^
-	        (let l = (str_of_conn_block program.conn) in
-	        match l with
-	        | "" -> "conn_block = False\n\n"
-	        | _ -> l ^ "conn_block = True\n\n" )
-	        ^ "\n\n" ^
-	         (str_of_table_block program.tables) ^ "\n\n"
+			"#!/usr/bin/env python\n" ^
+			"from __future__ import print_function\n" ^
+			"import coral_backend\n" ^
+			"from coral_backend import *\n" ^
+			"from coral_backend.controller import *" ^
+			"\n\n" ^
+			(let l = (str_of_conn_block program.conn) in
+			match l with
+			| "" -> "conn_block = False\n\n"
+			| _ -> l ^ "conn_block = True\n\n" )
+			^ "\n\n" ^
+			 (str_of_table_block program.tables) ^ "\n\n"
 
-	         ^ (let l = "\n" in
-	        (String.concat l (List.map (fun x-> str_of_var_decl x 0) program.globals)) ^ "\n")
+			 ^ (let l = "\n" in
+			(String.concat l (List.map (fun x-> str_of_var_decl x 0) program.globals)) ^ "\n")
 
-	        ^ (let l = "\n" in
-	                (String.concat l
-	                    (List.map (fun x-> str_of_fdef x program.globals 0) program.funcs))
-	                    ^ "\n\nif __name__ == '__main__':\n\tif (conn_block):\n\t\tconnectDB()\n\tmain()"
-	            )
+			^ (let l = "\n" in
+					(String.concat l
+						(List.map (fun x-> str_of_fdef x program.globals 0) program.funcs))
+						^ "\n\nif __name__ == '__main__':\n\tif (conn_block):\n\t\tconnectDB()\n\tmain()"
+				)
 
 `coral.ml`
 
@@ -2377,9 +2386,9 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	   let lexbuf = Lexing.from_channel source in
 	   let program = 
 	  (*   try*)
-	       Parser.program Scanner.token lexbuf 
+		   Parser.program Scanner.token lexbuf 
 	   (*  with _ ->
-	       exit 2 *)
+		   exit 2 *)
 	   in
 	   let _ = Semantic.check_program(program) in
 	   let python_source_code = (str_of_program program) in
