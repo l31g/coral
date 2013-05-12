@@ -184,7 +184,7 @@ let rec check_expr exp env =
     					let _ = (find_function f env.scope) in
     						IntType
 	(* TODO TableAttr(t, a) *)
-	| Open(fp, rw) -> 	if (not (rw = "r" || rw = "w" || rw = "rw")) then
+	| Open(fp, rw) -> 	if (not (rw = "\"r\"" || rw = "\"w\"" || rw = "\"rw\"")) then
 								raise (Error ("second argument to open must be \"r\", \"w\", or \"rw\""))
 						else
 							FileType
