@@ -518,6 +518,82 @@ The lexical scope of an identifier is the region of the program text within whic
 
 The grammar of our language is specified below. Syntax for understanding the description of the grammar can be found in the syntax section. 
 
+	program		->	conn_block table_block global_decl_list fdef_list
+	
+	fdef_list	->	
+				|	fdef_list fdef  
+				
+	fdef		->	dtype ID LPAREN formals_opt RPAREN LBRACKET var_decl_list stmt_list RBRACKET
+
+	stmt_list	->  
+				|	stmt_list  stmt
+
+	stmt		->	expr SEMI
+				|	error
+				|	CONNECTDB SEMI
+				|	CLOSEDB SEMI
+				|	LBRACKET stmt_list RBRACKET
+				|	RETURN expr SEMI
+				|	IF LPAREN expr RPAREN stmt NOELSE
+				|	IF LPAREN expr RPAREN stmt ELSE stmt
+				|	WHILE LPAREN expr RPAREN stmt
+				|	FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
+
+	expr		->	INTLITERAL
+				|	STRINGLITERAL
+				|	FPLITERAL
+				|	ID ASSIGN expr
+				|	ID PLEG expr
+				|	ID MIEQ expr
+				|	ID MUEQ expr
+				|	ID DVEQ expr
+				|	expr PLUS expr
+				|	expr MINUS expr
+				|	expr TIMES expr
+				|	expr DIVIDE expr
+				|	expr MOD expr
+				|	expr EXP expr
+				|	expr EQ expr
+				|	expr NEQ expr
+				|	expr LT expr
+				|	expr LEQ expr
+				|	expr GT expr
+				|	expr GEQ expr
+				|	expr OR expr
+				|	expr AND expr
+				|	ID
+				|	NOT expr
+				|	ID INCR
+				|	ID DECR
+				|	MINUS expr
+				|	PLUS expr
+				|	SIZEOF LPAREN expr RPAREN
+				|	PRINT LPAREN actuals_opt RPAREN
+				|	FPRINT LPAREN ID COMMA actuals_opt RPAREN
+				|	FREAD LPAREN ID RPAREN
+				|	CLOSE LPAREN ID RPAREN
+				|	OPEN LPAREN STRINGLITERAL COMMA STRINGLITERAL RPAREN
+				|	ID LPAREN actuals_opt RPAREN
+				|	ID LSQUARE expr RSQUARE
+				|	ID DOT ADD LPAREN RPAREN
+				|	ID DOT GET LPAREN actuals_opt RPAREN
+				|	ID DOT ID LPAREN actuals_opt RPAREN
+				|	ID DOT ID
+				|	LPAREN expr RPAREN
+
+	expr_opt	->  
+				|	expr
+
+	formals_opt	->	
+				|	formal_list
+
+	formal_list	->	formal
+				|	formal_list COMMA formal
+
+	formal		-> dtype ID
+
+	actuals_opt	->
+
 ## Project Plan [plan] ##
 
 ### Development Process ###
