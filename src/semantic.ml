@@ -187,11 +187,13 @@ let rec check_expr exp env =
     						raise (Error ("improper number of arguments to function " ^ f1.fname))
     					else
     						let _ = (List.map2 (fun x y -> check_actual x y env) fmls e) in
-    							IntType
+    							NoType
     				else
-    					(*if (table_exists f env.scope) then*)
-    					let _ = (find_function f env.scope) in
-    						IntType
+    					if (table_exists f env.scope) then
+    						UserType
+    					else
+    						let _ = (find_function f env.scope) in
+    							NoType
 	(* TODO TableAttr(t, a) *)
 	| Open(fp, rw) -> 	if (not (rw = "\"r\"" || rw = "\"w\"" || rw = "\"rw\"")) then
 								raise (Error ("second argument to open must be \"r\", \"w\", or \"rw\""))
@@ -241,8 +243,8 @@ let rec check_expr exp env =
     						 	else
     						 		try (check_type t1 t2)
     								with Type_mismatch_error(e1, e2) ->
-    								raise (Error ("cannot assign value of type " ^ e1 ^
-    								" to variable of type " ^ e2))
+    									raise (Error ("cannot assign value of type " ^ e1 ^
+    									" to variable of type " ^ e2))
     						))
     | Parens(p) -> (check_expr p env)
     (* TODO Array(id, e) *)
@@ -250,16 +252,23 @@ let rec check_expr exp env =
 
 and check_actual formal actual env =
 	match formal with
-	| Formal(t, n) -> (check_type t (check_expr actual env))
+	| Formal(t, n) -> 	try (check_type t (check_expr actual env))
+						with Type_mismatch_error(e1, e2) -> 
+							raise (Error ("function expected value of type " ^ e1
+							^ " as argument but received value of type " ^ e2))
 
 let rec check_var_decl vdec env =
     match vdec with
     | VarDecl(t, v, Noexpr) -> t
-    | VarDecl(t, v, e) -> 	let t2 = (check_expr e env) in
+    | VarDecl(t, v, e) -> 	(let t2 = (check_expr e env) in
     						if (t == FloatType && t2 == IntType) then
     							t
     						else 
-    							(check_type t (check_expr e env))
+    							try (check_type t (check_expr e env))
+    							with Type_mismatch_error(e1, e2) ->
+    								raise (Error ("cannot initialize variable " ^ v ^ " with type " ^
+    								e2 ^ " because it is declared as type " ^ e1))
+    						)
     | UDecl(ut, tn, v, Noexpr) -> ut
     | UDecl(ut, tn, v, e) ->	let t2 = (check_expr e env) in
     								(check_type t2 UserType)
