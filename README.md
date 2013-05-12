@@ -1,22 +1,20 @@
 CORaL
 =====
 
-Here's version 0.2.
-
-Stuff is starting to look more and more pro. Basically, I've wanted to mask the fact that our code translates to Python and made it even more C like.
+Hey, welcome to version 1.0 of CORaL
 
 Here's how it works:
 
-1. Build the compiler:
+1. Build and install the compiler:
 
-    make coralc
+    make install
 
-2. The compiler is now in build/coralc. Run the following test:
+2. The compiler is now installed in `/usr/local/bin` Run it like so:
 
-    .build/coralc ../test/hello_world.cl
+	coralc path/to/program.cl
 
-3. This outputs a hello_world.clx executable. (Open up the source and see that its Python...YAY)
+3. This outputs a program.clx executable. (Open up the source and you'll see some Python)
 
 4. To execute, like C, do:
 
-    ./hello_world.clx
+    ./program.clx
