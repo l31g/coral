@@ -1038,6 +1038,15 @@ The expected output is to be added to the file `output.txt` as specified in the 
 
 ###CORaL Team Lessons###
 
+* ***Work Together, Together*** :
+	We chose to do a lot of the actual development work on our compiler with the whole team in the same room working together, and we found that this was an amazingly effective strategy. It lead to more communication, faster debugging, and overall a more solid integration of the components. It also increased accountability—everyone feels pressured to contribute when they're seated next to the people that they're supposed to be helping. We managed to be extremely efficient while not getting overly distracted, and are pleased with this strategy.
+
+* ***Ask the Internet, But Don't Forget Your Team*** :
+	We were implementing our compiler in OCaml, which is a language that was new to all of us. In addition, none of us had programmed in a functional language before. Thus, not only were we confronted by the task of writing a compiler, but the actual implementation was somewhat foreign to us. Thus, we ran into all sorts of OCaml syntax errors. However, we quickly learned that a lot of our problems were tricky, and that Stack Overflow wasn't too helpful with OCaml syntax errors. Our best resources therefore became each other, and it was often much quicker to have a teammate help you debug than to search aimlessly on the internet for the solution to your syntax error. Turns out Columbia students are pretty bright.
+
+* ***Functional Languages Are Powerful Tools*** :
+	Originally, we mostly decided to implement our compiler in OCaml just for the heck of it. We had heard from peers who took PLT with Prof. Edwards (and who had therefore used OCaml) that OCaml is great for compilers, and that could not have been more true. It took some getting used to the way of thinking about programming in a functional mindset, but we quickly learned just how powerful OCaml is. It allows us to write compicated recursive functions quickly and efficiently, and it amazed us how much we could do with so few lines of code. Not only this, but once you can get OCaml to compile, it generally works, which meant that we didn't need to do much debugging beyond sytax errors. We all think using OCaml was a great decision, and we recommend it to future teams wholeheartedly.
+
 ###Individual Lessons###
 
 * ***Shane Chin*** :
@@ -1073,6 +1082,21 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	All in all, this project was difficult, but the rewards and amount learned were certainly worth it. I think I may even try to create some smaller esoteric languages in the future on my own time.
 
 ###Advice for Future Teams###
+
+* ***Be Ambitious, But Not Too Ambitious*** :
+	While we were coming up with the ideas for what we would like our language to do, we wanted to implement tons of fancy built-in features that would make programming simpler for the programmer, but much more difficult for ourselves. In the end, we had to scale back some of the features that were simply too unreasonably difficult for the scope of this project. (We're leaving them as TODO's on our git repo though :) ) It is important that your final language stays true to the goal it is aiming for, but avoid adding features that aren't needed and will eat up too much dev time.
+
+* ***Use Meeting Time Efficiently*** :
+	Only schedule team meetings when you have to have them, and make sure that you have a clear idea of what needs to get done before you leave the meeting. It's okay if the purpose of a meeting is only to update the members on the state of the project, but don't fill meetings with useless banter or unproductive discussions.
+
+* ***Map out Your Development Plan*** :
+	We did our fair share of procrastinating, but we were really only able to get away with it because we had all discussed beforehand our plan of setting aside a specific week for development. It is beyond crucial that you plan out a schedule of deliverables and deadlines for features and components. It's okay to spend some time at the end doing panicked debugging, but this will only work if the features have already been implemented, or you will inevitably introduce more bugs implementing the rest of the features.
+
+* ***Make It Enjoyable*** :
+	Cliche/stupid as it sounds, it's still important, and it is in fact possible. We did our best to create an environment conducive to teamwork during our dev-athon. Having a nice, open space with plenty of light and taking regular breaks to get food and fresh air was critical to the preservation of our collective sanity. We also made sure that we were all focused, but that the atmosphere was still light enough to make it kind of fun.
+
+* ***Use OCaml (If you want)*** :
+	Like we said above, we went with OCaml as our development language, even though none of us had used it (or any other functional language before) before. This turned out to be a great decision, and added to the amount we learned during the project. It will blow your minds how powerful OCaml is, and how much it can do in five lines when it would have taken you 50 in C. OCaml is also great because often if it compiles, it works. It does exactly what you think it will, assuming you unerstand it.
 
 ###Suggestions to Instructors###
 
