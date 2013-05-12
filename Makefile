@@ -6,8 +6,10 @@ all:
 	echo "make all in $$i..."; \
 	(cd $$i; $(MAKE) $(MFLAGS) all); done
 
-install:
-	make -C clean backend all
+install:backend
+	@for i in $(SUBDIRS); do \
+	echo "make all in $$i..."; \
+	(cd $$i; $(MAKE) $(MFLAGS) install); done
 
 backend:
 	echo "making Backend"
@@ -24,4 +26,4 @@ test:
 clean: backend_clean
 	@for i in $(SUBDIRS); do \
 	echo "Clearing in $$i..."; \
-	(cd $$i; $(MAKE) $(MFLAGS) clean); done
+	(cd $$i; $(MAKE) $(MFLAGS) clean); done;

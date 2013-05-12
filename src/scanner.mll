@@ -90,6 +90,7 @@ rule token = parse
 	|	"#enddbconn"			{ ENDDBCONN }
 	|	"primary_key"			{ PRIMARYKEY }
 	| 	"foreign_key"			{ FOREIGNKEY }
+	|	"sizeof"				{ SIZEOF }
 	|	"string"				{ STRING }
 	|	"float"					{ FLOAT }
 	|	"add"					{ ADD }
