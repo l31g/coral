@@ -35,7 +35,8 @@ def global_get(table_name, **kwargs):
 
 def sizeof(query_result):
 
-    return query_result.count()
+    num = query_result.count()
+    return int(num)
 
 def setServer(s):
     global server

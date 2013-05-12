@@ -12,10 +12,10 @@ let _ =
    let source = open_in Sys.argv.(1) in
    let lexbuf = Lexing.from_channel source in
    let program = 
-     try
+  (*   try*)
        Parser.program Scanner.token lexbuf 
-     with _ ->
-       exit 2
+   (*  with _ ->
+       exit 2 *)
    in
    let _ = Semantic.check_program(program) in
    let python_source_code = (str_of_program program) in

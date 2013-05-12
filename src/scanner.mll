@@ -113,7 +113,7 @@ rule token = parse
 
 and comment = parse
 		"*/" { token lexbuf }
-		| "\n" { incrLineNum lexbuf; token lexbuf }
+		| "\n" { incrLineNum lexbuf; comment lexbuf }
 		| _	 { comment lexbuf }
 
 and singleComment = parse
