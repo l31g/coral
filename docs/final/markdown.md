@@ -1204,6 +1204,51 @@ The expected output is to be added to the file `output.txt` as specified in the 
 	miguel
 	shane
 
+Now that you know your way around CORaL, let's take a look at a slightly more complicated version of the classic "Hello World," utilizing the key features of CORaL. In this example, we'll create a database table, insert the string "Hello World\n" into said Table, and then return that string with a query to print it out to the console. 
+
+	
+	#cordbconn
+	server="";
+	user="";
+	password="memory";
+	port="";
+	DBName="";
+	type="sqlite";
+	#enddbconn
+
+	#cordb
+	Table Sentences {
+	    sentence : string;
+	    primary_key(sentence);
+	 };
+	#enddb
+
+	void main() {
+
+	        user_t Sentences s;
+	        user_t Sentences h;
+	        user_t Sentences hello_world;
+
+	        connectDB;
+
+	        hello_world = Sentences(sentence="Hello World\n");
+	        hello_world.add();
+
+	        h = Sentences.get();
+	        s = h[0];
+
+	        printf(s.sentence);
+
+	        closeDB;
+
+	}
+
+Here, we use the same connection block initialization. Then we create a `Table` called `Sentences` that has a single attribute `sentence` set as the primary key of that `Table`. Within our main method, we create a series of user-defined types (user_t types) of `Table` type `Sentences`. We then call our built in `connectDB` function to connect to our database, insert the sentence "Hello World\n" and add it to the database using our built-in `add()` function. We then use the built-in `get()` function to return all rows in the table, and print that out to the console. After compiling and running this program, the following will print out to the console:
+
+	Hello World
+
+And now you're officially a CORaL programmer!
+
 
 ## Conclusions [conc] ##
 
