@@ -1,4 +1,11 @@
-%{ open Ast %}
+%{ open Ast
+    open Lexing
+    let parse_error msg =
+        let start_pos = Parsing.rhs_start_pos 1 in
+            let lineNo = start_pos.pos_lnum in
+                print_endline (msg ^ " in line #" ^ string_of_int lineNo)
+
+%}
 
 %token PLUS MINUS TIMES MOD DIVIDE LPAREN RPAREN SEMI COLON ASSIGN
 %token LBRACKET RBRACKET CARAT DOT COMMA GT LT GEQ LEQ NEQ OR AND NOT
@@ -6,13 +13,13 @@
 %token EQ WHILE INT FOR RETURN PRINT VOID BREAK CONTINUE
 %token IF ELSE
 %token STRING GLOBAL
-%token NEWLINE FPRINT FREAD USERTYPE
+%token FPRINT FREAD USERTYPE
 %token FLOAT ADD GET CONNECTDB LSQUARE RSQUARE CLOSEDB OPEN CLOSE FILE
 %token <int> INTLITERAL
 %token <string> STRINGLITERAL
 %token <float> FPLITERAL
 %token <string> ID
-%token EOF
+%token EOF ERR
 
 /*CORaL*/
 %token CORDB, ENDDB, TABLE, SERVER, PORT, USER, PASS, TYPE, DBNAME
@@ -63,7 +70,8 @@ stmt_list:
 
 stmt:
 	expr SEMI							{ Expr ($1) }
-	| CONNECTDB SEMI                      { ConnectDB }
+	| error                            { Expr(Noexpr) }
+    | CONNECTDB SEMI                      { ConnectDB }
     | CLOSEDB SEMI                        { CloseDB }
     | LBRACKET stmt_list RBRACKET		{ Block(List.rev $2) }
 	| RETURN expr SEMI 					{ Return($2) }

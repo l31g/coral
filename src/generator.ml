@@ -13,6 +13,7 @@ let rec str_of_type t =
     | FloatType -> "Float"
     | FileType -> "File" (* should never come up in SQL query *)
     | NoType -> "" (* should never actually happen *)
+    | UserType -> ""
 
 let rec str_of_asgn a =
     match a with
