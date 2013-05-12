@@ -5,7 +5,7 @@ Author:	Shane Chin, sac2171
 	Brian Wagner, bhw2113  
 	Miguel Yanez, may2114  
 Affiliation:	Columbia University  
-Web:	https://github.com/l31g/coral
+Web:	https://github.com/l31g/coral  
 Date: 	May 10, 2013  
 
 # CORaL Project Report #
