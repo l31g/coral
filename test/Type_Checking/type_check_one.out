@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "Type_Checking/type_check_one.clx", line 6, in <module>
-    setServer("server")
-NameError: name 'setServer' is not defined
