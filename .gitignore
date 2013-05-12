@@ -8,6 +8,9 @@
 *.cmo
 *.cmi
 *.clx
+*.out
+*.cl.err
+*.clx
 src/build
 scanner.ml
 parser.ml
