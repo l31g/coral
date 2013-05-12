@@ -1,1 +1,0 @@
-Fatal error: exception Semantic.Error("cannot initialize variable b with type null_type because it is declared as type int")
