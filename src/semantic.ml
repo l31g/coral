@@ -26,7 +26,7 @@ let rec string_of_coral_type t =
     | FloatType -> "float"
     | FileType -> "File"
     | UserType -> "user_t"
-    | NoType -> "null_type"
+    | NoType -> "null_type" (* values which cannot be assigned *)
 
 let rec string_of_coral_op o =
 	match o with
@@ -70,7 +70,7 @@ let rec find_function fname scope =
 	with Not_found ->
 		match scope.parent with
 			Some(parent) -> find_function fname parent
-			| _ -> raise (Failure ("function " ^ fname ^ " not declared bro"))
+			| _ -> raise (Failure ("function " ^ fname ^ " referenced but not declared"))
 
 (* find variables in symbol table *)
 let rec variable_exists vname scope =
@@ -93,7 +93,7 @@ let rec find_variable vname scope =
 	with Not_found ->
 		match scope.parent with
 			Some(parent) -> find_variable vname parent
-			| _ -> raise (Failure ("variable " ^ vname ^ " not declared bro"))
+			| _ -> raise (Failure ("variable " ^ vname ^ " referenced but not declared"))
 
 let rec variable_type vdec =
 	match vdec with
@@ -119,7 +119,7 @@ let rec find_attr aname scope =
 	with Not_found ->
 		match scope.parent with
 		Some(parent) -> find_attr aname parent
-		| _ -> raise (Error ("attribute " ^ aname ^ " not declared bro"))
+		| _ -> raise (Error ("attribute " ^ aname ^ " referenced but not declared"))
 
 (* find tables in symbol table *)
 let rec get_table_name table =
@@ -141,7 +141,20 @@ let rec find_table tname scope =
 	with Not_found ->
 		match scope.parent with
 			Some(parent) -> find_table tname parent
-			| _ -> raise (Failure ("table " ^ tname ^ " not declared bro"))
+			| _ -> raise (Failure ("Table " ^ tname ^ " referenced but not declared"))
+
+let rec attr_exists_in_table aname tname scope =
+	let tbl = (find_table tname scope) in
+	let t_bod = tbl.tbbody in
+	
+	match t_bod with
+	| TableBody(ag, kd, fd) -> 	try
+									let _ = List.find (fun att ->
+													match att with
+													| Attr(a_label, t) ->
+																match a_label with
+																| AttrLabel(n) -> n = aname) ag in true
+								with Not_found -> false
 
 (* check db connection section *)
 let rec check_conn_label co =
@@ -172,8 +185,6 @@ let rec check_conn_block cb =
         NoType
     | NoConnBlock -> NoType
 
-(* let rec check_query exp = *)
-
 let rec check_expr exp env =
     match exp with
     | IntLiteral(l) -> IntType
@@ -194,7 +205,10 @@ let rec check_expr exp env =
     					else
     						let _ = (find_function f env.scope) in
     							NoType
-	(* TODO TableAttr(t, a) *)
+	| TableAttr(t, a) ->	if ((variable_type (find_variable t env.scope)) == UserType) then
+								NoType
+							else
+								raise (Error ("only user types have attributes"))
 	| Open(fp, rw) -> 	if (not (rw = "\"r\"" || rw = "\"w\"" || rw = "\"rw\"")) then
 								raise (Error ("second argument to open must be \"r\", \"w\", or \"rw\""))
 						else
@@ -219,7 +233,7 @@ let rec check_expr exp env =
 									UserType
 								else
 									raise (Error ("the .get() function can only be called on Tables"))
-	(* TODO TablCall(f1, f2, e) *)
+	| TableCall(f1, f2, e) -> NoType (* not used *)
     | Print(e) -> NoType
     | Binop(a, op, b) -> (let t1 = (check_expr a env) in
                          (let t2 = (check_expr b env) in
@@ -241,6 +255,7 @@ let rec check_expr exp env =
     						raise (Error ("improper operator used on variable " ^ a))
 	| Notop(e) -> (check_expr e env)
 	| Neg(e) -> (check_expr e env)
+	| Pos(e) -> (check_expr e env)
     | Assign(l, asgn, r) -> (let t1 = (variable_type (find_variable l env.scope)) in
     						(let t2 = (check_expr r env) in
     						 	if (t1 == FloatType && t2 == IntType) then
@@ -259,6 +274,10 @@ let rec check_expr exp env =
     							raise (Error ("argument to array must be an integer"))
     					else
     						raise (Error ("array notation can only be used on user types"))
+    | SizeOf(e) -> 	if ((check_expr e env) == UserType) then
+    					IntType
+    				else
+    					raise (Error ("sizeOf can only be used on a value of type user_t"))
     | Noexpr -> NoType
 
 and check_actual formal actual env =
@@ -351,6 +370,7 @@ let rec check_stmt s env =
     | CloseDB -> NoType
     | Nostmt -> NoType
 
+(* obsolete now that return type tracked in env *)
 let rec get_return fdef stmts env =
 	let r_type = fdef.return_type in
 	if r_type != VoidType then
@@ -374,14 +394,14 @@ let rec check_fdef fdef env =
 	let _ = (List.map (fun x -> check_formal x env) fdef.formals) in
 		let _ = (List.map (fun x -> sys_check_var_decl x env) fdef.locals) in
 			let _ = (List.map (fun x -> check_stmt x env) fdef.body) in
-				let _ = (get_return fdef fdef.body env) in
+				(*let _ = (get_return fdef fdef.body env) in*)
 					true
 
 let rec sys_check_fdef fdef env =
 	let f_name = fdef.fname in
 
 	if (function_exists f_name env.scope) then
-		raise (Error ("you already declared function " ^ f_name ^ " bro"))
+		raise (Error ("function " ^ f_name ^ " redeclared"))
 	else
 		let scope' = { parent = Some(env.scope);
 					   variables = [];
@@ -429,7 +449,7 @@ let rec check_table table env =
 	let t_name = (get_table_name table) in
 
 	if (table_exists t_name env.scope) then
-		raise (Error ("you already declared table " ^ t_name ^ " bro"))
+		raise (Error ("table " ^ t_name ^ " redeclared"))
 	else
 		let scope' = { parent = Some(env.scope);
 					   variables = [];
