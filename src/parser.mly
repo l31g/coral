@@ -165,8 +165,6 @@ dtype:
     | FILE  { FileType }
     | USERTYPE { UserType }
 
-/* CORaL segment of grammar */
-
 conn_label:
     SERVER      { ServerConn }
     | PORT      { PortConn }
