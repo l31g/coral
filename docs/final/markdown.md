@@ -164,23 +164,23 @@ Now that we have exhibited much of the basic functionality of CORaL, it is time 
 The first thing to do is create a connection to a server
 
 	#cordbconn
-	server = "localhost"
-	user = "user"
-	password = "pass"
-	port = "8888"
-	DBName = "People"
-	type = "mysql"
+	server = "localhost";
+	user = "user";
+	password = "pass";
+	port = "8888";
+	DBName = "People";
+	type = "mysql";
 	#enddbconn
 
 For our purposes instead of having someone host a server instance we will user the following connection block that works with in-memory SQLite3.
 
 	#cordbconn
-	server=""
-	user=""
-	password=""
-	port=""
-	DBName=""
-	type="sqlite"
+	server="";
+	user="";
+	password="";
+	port="";
+	DBName="";
+	type="sqlite";
 	#enddbconn
 
 Now let us create a simple database, with only one table, and add an entry to it. CORaL will have the ability to detect if the current database is already created, and create it if it does not already exists.
@@ -316,7 +316,153 @@ The term identifier can refer to a function or an object (objects includes varia
 
 #### Basic Types ####
 
+The basic types in CORaL are `int`, `float`, `string`, and `void`. An `int` supports arithmetic operations; the `float` type is a single-precision floating point number; a `string` is a sequence of characters. The `void` type is an empty value used as the return value for a function that does not return anything. The `Table` type represents a table in the database
 
+#### Derived Types####
+
+The derived types in CORaL are built out of the basic types in the following ways:  
+
+* *functions* that return an object of a given type
+* *tables* containing objects
+
+### Object and Lvalues ###
+
+Objects, as stated above, are regions of storage tagged with an identifying name. *Lvalues* are expressions that refer to objects. Some operations will produce *lvalues*, and others operate on *lvalues*.
+
+### Expressions ###
+
+The priority sequence of expressions is the same as the are presented within these subsections, and within each subsection the operations all have equal preference.
+
+#### Primary Expressions ####
+
+Primary expressions are identifiers, constants, strings, or expressions that are encased in parentheses.  
+
+#### Postfix Expressions ####
+
+Like all primary expressions, postfix expressions are also grouped left to right. When the expression is followed by a `.`*identifier*, it means that a method is being called on the function represented by the postfix expression. The postfix expressions `++` and `--` are used to increment or decrement the value of the operand represented by the expression by a value of one. 
+
+#### Unary Operators ####
+
+Expressions with unary operators are grouped right-to-left which is the opposite of everything that has come thus far. The operators `+` and `-` are the only unary operators in the language.
+
+#### Multiplicative Operators ####
+
+All of the operators must be given arithmetic types, so only `int` or `float` will be accepted as valid inputs to the expression. The `%` operator must have `int` type. The `*` operator yields multiplication, the `/` operator yields the quotient, the `%` yields the remainder, and the `**` operator yields exponentiation. If the second operand of the `/` or the `%` operator is `0` then the result will be undefined.
+
+#### Additive Operators ####
+
+The additive operators in the language are `+` and `-` and are also grouped from left-to-right. All the operands given to these operators need to be of arithmetic type. The result of the `+` operator is the sum of the operands and the result of the `-` table is the difference of the operands.
+
+#### Relational Operators ####
+
+The relational operators are grouped from left-to-right, the same way that the additive and multiplicative operators are. The operators are `<`, `>`,`<=`, and `>=`. The `<` operator denotes "less than" and will return   
+**REVIEW**
+
+#### Equality Operators ####
+
+**REVIEW**
+
+#### Logical AND Operator ####
+
+**REVIEW**
+
+#### Logical OR Operator ####
+
+**REVIEW**
+
+#### Assignment Expressions ####
+
+All of these expressions require an lvalue as left operand, and the lvalue must be modifiable: it must not have an incomplete type or be a function. The type of an assignment expression is that of the left operand, the value stored in the left operand after the assignment has taken place.
+
+An expression of the form `T1 op= T2` is equivalent to `T1 = T1 op (T2)` except that `T1` is evaluated only once.  
+The `=` assign,meant operator replaces the object referred to by the lvalue. Both operands must have the same type in order for the assignment to be executed properly.
+
+### Declarations ###
+
+Declarations determine the type and name of an identifier.
+
+#### Type Specifiers ####
+
+The type-specifiers assign a type to an object. They are: `void, int, string, float, and Table` Only one type-specifier is provided for a given declaration, unless they are used recursively to define an array.
+
+#### Initialization ####
+
+Objects can be initialized when declared in the following way
+
+	[type-specifier] [object-name] = [value]
+
+### Statements ###
+
+All statements in CORaL are executed and do not return values, but are rather executed for their effects. The groups are listed below.
+
+#### Expression Statement ####
+
+The majority of statements in CORaL ail fall into this category. Expression statements include assignments and function calls. Expressions can be null in certain cases.
+
+#### Selection Statements ####
+
+Selection statements are used for control flow within a function. In an `if` statement, the expression is evaluated, and the following statement is executed if the expression is true. Otherwise, the statement following the `else` will be evaluated, if an `else` is present. An `else` is always paired to the last `if` statement without a matched `else`.
+
+#### Iteration Statements ####
+
+Iteration statements are concerned with looping. There are two types: `while` and `for`.  
+In a `while` statement, the statement is evaluated as long as the expression is true. In a `for` statement, the first expression is evaluated to initialize the loop. The second expression must be arithmetic; the loop is executed as long as the second expression is true. The third expression is evaluated after every iteration of the loop and used for re-initialization.  
+In either iteration-statement, any expression may be omitted.
+
+#### Jump Statements ####
+
+There is only one jump statement in CORaL, the `return` statement. `return` statements are used by functions to return to the caller. If an expression is present, the value of the statement is also returned. This value will be of the same type specified in the function definition. If a return is provided with no expression or no return is provided at all, the value will be undefined. 
+
+### Database Connection ###
+
+In order to use a database in CORaL, a connection must be made at the top of the program. The following is the grammar that specifies how to create a connection.
+
+#### Connection Attributes ####
+
+The attributes of a connection specify the connection details in order to connect to the specified database at the desired server. These attributes are necessary for a program to function correctly, as without it the program will not be aware of what database to access. 
+
+#### Section ####
+
+In order to define the section where the database connection details will be specified the following preprocessor identifiers `#cordbconn`, `#enddbconn`.  
+The `#cordbconn` marks the beginning of the section and `#enddbconn` marks the end of the section where database connection details are specified.
+
+### Database Schema ###
+
+Throughout the discussion of our database schema, it is beneficial to the reader to have a basic understanding of SQL and ER Diagram vocabulary.
+
+#### Table Attributes ####
+
+The attributes of the table are equivalent to the columns of a table in a relational database. The attributes specify the type of the columns as well as their names. Apart from defining the columns of a table, one must specify the constraints on the table. This can be easily done using `primary key()` and `foreign key()`.
+
+#### Table Body ####
+
+The body of the table consists of the collection of attributes, along with their primary and foreign key declarations.
+
+#### Section ####
+
+In order to define the section where the database schema details will be specified the following preprocessor identifiers `#cordb` and `#enddb` are used.  
+The `#cordb` marks the beginning of the section and `#enddb` marks the end of the section where database schema detailers are specified.
+
+### Global Declarations ###
+
+The global declarations are the top level of the grammar.
+
+#### Global Variables ####
+
+Global variables can be declared after the database blocks, but before the function definitions.
+
+#### Function Definitions ####
+
+A CORaL function definition will have the following structure
+
+	[type-specifier] [identifier] ([parameter-type-list]){[statement-list]}
+Functions may return `void`, `int`, `float`, `string`, and `Table`. The parameter type list must declare the types of each parameter unless the only parameter is `void`, which signifies that the function accepts no parameters.
+
+#### Scope ####
+
+The source text for a program will be kept in one file that will be compiled at one time. Upon compilation time, the scope of the identifiers will be validated.
+
+The lexical scope of an identifier is the region of the program text within which the identifier's characteristics are understood. The same identifier may be used for different purposes as long as their uses fall into different namespaces. The scope of a parameter of a function definition 
 
 ## Project Plan [plan] ##
 
