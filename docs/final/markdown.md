@@ -807,11 +807,11 @@ However, this approach became difficult as the end of the semester neared, becau
 
 The assigned team member roles were as follows:
 
-	Brian : Team Manager
-	Molly : Language Guru
-	Luis : System Architect
-	Miguel : System Integrator
-	Shane : System Tester
+* **Brian:** Team Manager
+* **Molly:** Language Guru
+* **Luis:** System Architect
+* **Miguel:** System Integrator
+* **Shane:** System Tester
 
 In the initial stages, Miguel and Luis assembled a functioning shell of our compiler after learning how the layout should be and how the various parts worked together. Luis coded the scanner, while Miguel coded small parts of the syntax analyzer and code generator. Molly was in charge of the grammar, and added the rest of that into the syntax analyzer. I assisted with the code generator and syntax analyzer before tackling the semantic analyzer. Meanwhile, Shane wrote various tests and a script to run suites of tests on the different parts of our language. All members also wrote several small test cases on their own.
 

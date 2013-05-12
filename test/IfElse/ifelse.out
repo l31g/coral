@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "IfElse/ifelse.clx", line 6, in <module>
-    setServer("server")
-NameError: name 'setServer' is not defined
